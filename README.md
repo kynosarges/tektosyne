@@ -1,12 +1,17 @@
 [![Build Status](https://travis-ci.org/kynosarges/tektosyne.svg?branch=master)](https://travis-ci.org/kynosarges/tektosyne)
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://raw.githubusercontent.com/kynosarges/tektosyne/master/LICENSE.txt)
 
+
 #Tektosyne
+
 
 The Tektosyne Library for Java provides algorithms for computational geometry and graph-based pathfinding,
 along with supporting mathematical utilities and specialized collections.
 
+
+
 ##Overview
+
 
 The following list gives a summary of Tektosyne’s main features.
 See the [User’s Guide](https://github.com/kynosarges/tektosyne/raw/master/docs/TektosyneGuide.pdf) and the [Javadoc](https://kynosarges.github.io/tektosyne/javadoc/) class reference for more details.
@@ -21,7 +26,11 @@ See the [User’s Guide](https://github.com/kynosarges/tektosyne/raw/master/docs
 * Collections: generic linked list and generic quadrant tree, both with exposed node structure
 * Mathematical helper methods, including a library of Fortran 90 functions
 
+
+
 ###Samples
+
+
 The repository includes a [JavaFX demo application](https://github.com/kynosarges/tektosyne/raw/master/tektosyne-demo/demo-jar/tektosyne-demo.jar) that allows you to interactively explore many of these algorithms.
 Screenshots of two demo dialogs appear below.
 
@@ -30,6 +39,8 @@ Screenshots of two demo dialogs appear below.
 
 
 ###System Requirements
+
+
 The Tektosyne library itself requires only the Java SE 8 Compact 1 profile. The included GUI demo application requires Oracle JRE 8 Update 66 with JavaFX 8 or later, or an equivalent Java runtime environment. Windows users should consult Oracle Java on Windows to avoid Oracle’s unfortunate default Windows JRE. Please see the following for more information:
 
 * The ReadMe file contains usage information, the copyright notice, and a feature comparison with the original .NET edition.
@@ -37,4 +48,6 @@ The Tektosyne library itself requires only the Java SE 8 Compact 1 profile. The 
 
 
 ##License
+
+
 Tektosyne is © 2002–2016 by Christoph Nahr but available for free download under the MIT license.
