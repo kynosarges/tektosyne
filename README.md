@@ -32,7 +32,7 @@ Screenshots of two demo dialogs appear below.
 
 * Planar Subdivision Test: visualization and interactive manipulation of a randomly generated planar subdivision. The highlighted half-edge and vertex are nearest the (hidden) mouse cursor.
 * Graph Algorithms Test: shows A* pathfinding along the edges of a Delaunay triangulation (yellow dashes) of a random Voronoi diagram whose regions were assigned random step costs.
-
+![alt demo](https://raw.githubusercontent.com/kynosarges/tektosyne/master/docs/img/TektosyneDemo.png)
 
 ### System Requirements
 
