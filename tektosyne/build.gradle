@@ -1,0 +1,14 @@
+apply plugin: 'java'
+
+sourceCompatibility = source_compatibility
+targetCompatibility = target_compatibility
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // https://mvnrepository.com/artifact/junit/junit
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+
+}

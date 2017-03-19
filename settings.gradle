@@ -1,0 +1,3 @@
+rootProject.name = 'tektsosyne'
+include 'tektosyne'
+include 'tektosyne-demo'
