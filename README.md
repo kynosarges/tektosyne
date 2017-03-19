@@ -1,5 +1,7 @@
 [![Build Status](https://travis-ci.org/kynosarges/tektosyne.svg?branch=master)](https://travis-ci.org/kynosarges/tektosyne)
+[![codecov](https://codecov.io/gh/kynosarges/tektosyne/branch/master/graph/badge.svg)](https://codecov.io/gh/kynosarges/tektosyne)
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://raw.githubusercontent.com/kynosarges/tektosyne/master/LICENSE.txt)
+
 
 
 # Tektosyne
