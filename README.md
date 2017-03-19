@@ -9,8 +9,6 @@
 The Tektosyne Library for Java provides algorithms for computational geometry and graph-based pathfinding,
 along with supporting mathematical utilities and specialized collections.
 
-
-
 ## Overview
 
 The following list gives a summary of Tektosyne’s main features.
@@ -53,6 +51,46 @@ The Tektosyne library itself requires only the Java SE 8 Compact 1 profile.
 The included GUI demo application requires Oracle JRE 8 Update 66 with JavaFX 8 or later, or an equivalent Java runtime environment.
 Windows users should consult Oracle Java on Windows to avoid Oracle’s unfortunate default Windows JRE. Please see the following for more information:
 
+## Dependencies
+
+### Gradle
+```
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile group: 'org.kynosarges', name: 'tektosyne', version: '6.0.0'
+}
+```
+
+### Maven
+```
+  <repositories>
+    <repository>
+      <id>jcenter</id>
+      <url>http://jcenter.bintray.com </url>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+        <checksumPolicy>warn</checksumPolicy>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+        <checksumPolicy>warn</checksumPolicy>
+      </releases>
+    </repository>
+  </repositories>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.kynosarges</groupId>
+      <artifactId>tektosyne</artifactId>
+      <version>6.0.0</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+```
 
 ## License
 
