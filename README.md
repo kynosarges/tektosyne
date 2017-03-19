@@ -36,11 +36,10 @@ Screenshots of two demo dialogs appear below.
 
 ### System Requirements
 
+The Tektosyne library itself requires only the Java SE 8 Compact 1 profile.
 
-The Tektosyne library itself requires only the Java SE 8 Compact 1 profile. The included GUI demo application requires Oracle JRE 8 Update 66 with JavaFX 8 or later, or an equivalent Java runtime environment. Windows users should consult Oracle Java on Windows to avoid Oracle’s unfortunate default Windows JRE. Please see the following for more information:
-
-* The ReadMe file contains usage information, the copyright notice, and a feature comparison with the original .NET edition.
-* The WhatsNew file contains the annotated version history of the project, including links to weblog posts with further details on each release.
+The included GUI demo application requires Oracle JRE 8 Update 66 with JavaFX 8 or later, or an equivalent Java runtime environment.
+Windows users should consult Oracle Java on Windows to avoid Oracle’s unfortunate default Windows JRE. Please see the following for more information:
 
 
 ## License
