@@ -1,6 +1,22 @@
+# Folder view configuration files
+.DS_Store
+
+# Folder config file
+Desktop.ini
+
+# Thumbnail cache files
+._*
+Thumbs.db
+ehthumbs.db
+ehthumbs_vista.db
+
+# Files that might appear on external disks
+.Spotlight-V100
+.Trashes
+
+
 # Java class files
 *.class
-
 
 
 # Local configuration file (sdk path, etc)
