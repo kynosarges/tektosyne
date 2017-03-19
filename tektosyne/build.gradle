@@ -1,10 +1,92 @@
+
+plugins {
+    id "com.jfrog.bintray" version "1.7.3"
+}
+
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
 apply plugin: 'java'
 
 sourceCompatibility = source_compatibility
 targetCompatibility = target_compatibility
 
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+            groupId project_group
+            artifactId project_artifact
+            version project_version
+            artifact sourcesJar
+            artifact javadocJar
+            pom.withXml {
+                asNode().children().last() + {
+                    resolveStrategy = Closure.DELEGATE_FIRST
+                    name project_name
+                    description project_description
+                    url "https://github.com/kynosarges/tektosyne"
+                    scm {
+                        url "https://github.com/kynosarges/tektosyne.git"
+                        connection "scm:git:git://github.com/kynosarges/tektosyne.git"
+                        developerConnection "scm:git:ssh:git@github.com:kynosarges/tektosyne.git"
+                    }
+                    licenses {
+                        license {
+                            name project_license
+                            url project_license_url
+                            distribution 'repo'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id "PixelBumper"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_API_KEY')
+    publications = ['maven']
+    pkg {
+        repo = 'maven'
+        name = project_name
+        desc = project_description
+        licenses = [project_license_tag]
+        publicDownloadNumbers = true
+        websiteUrl = "https://github.com/kynosarges/tektosyne"
+        issueTrackerUrl = "https://github.com/kynosarges/tektosyne/issues"
+        vcsUrl = "https://github.com/kynosarges/tektosyne.git"
+        githubRepo = "kynosarges/tektosyne"
+        version {
+            name = project_version
+            desc = project_description
+            vcsTag = project_version
+            gpg {
+                sign = true
+            }
+        }
+    }
+}
+
 repositories {
     mavenCentral()
+    jcenter()
 }
 
 dependencies {

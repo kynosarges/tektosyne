@@ -1,10 +1,21 @@
 buildscript {
-    ext.project_name = 'tektosyne'
+    ext.project_name = 'Tektosyne'
     ext.project_group = 'org.kynosarges'
+    ext.project_artifact = 'tektosyne'
+    ext.project_description = 'The Tektosyne Library for Java provides algorithms for computational geometry and graph-based pathfinding, along with supporting mathematical utilities and specialized collections.'
     ext.project_version = '6.0.0'
+    ext.project_license = 'MIT License' // the full license name
+    ext.project_license_tag = 'MIT' // the license tag name
+    ext.project_license_url = 'https://raw.githubusercontent.com/kynosarges/tektosyne/master/LICENSE.txt' // link to the license
 
+    ext.your_github_name = 'PixelBumper'
 
     ext.source_compatibility = '1.8'
     ext.target_compatibility = '1.8'
+
+    repositories{
+        mavenCentral()
+        jcenter()
+    }
 
 }

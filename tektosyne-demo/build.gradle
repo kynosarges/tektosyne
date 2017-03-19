@@ -31,7 +31,7 @@ jfx {
     // minimal requirement for jfxJar-task
     mainClass = 'org.kynosarges.tektosyne.demo.TektosyneDemo'
 
-    jfxMainAppJarName = 'tektosyne-demo'
+    jfxMainAppJarName = 'tektosyne-demo.jar'
 
     // minimal requirement for jfxNative-task
     vendor = 'tektosyne'
