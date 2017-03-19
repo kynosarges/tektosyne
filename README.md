@@ -95,4 +95,4 @@ dependencies {
 ## License
 
 
-Tektosyne is © 2002–2016 by Christoph Nahr but available for free download under the MIT license.
+Tektosyne is © 2002–2016 by Christoph Nahr but available for free under the MIT license.
