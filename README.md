@@ -15,13 +15,21 @@ The following list gives a summary of Tektosyne’s main features.
 See the [User’s Guide](https://github.com/kynosarges/tektosyne/raw/master/docs/TektosyneGuide.pdf) and the [Javadoc](https://kynosarges.github.io/tektosyne/javadoc/) class reference for more details.
 
 * Geometric primitives: points (doubling as vectors), sizes, line segments, and rectangles, all available with int and double coordinates
+
 * Geometric algorithms: convex hull, point in polygon, intersections of two or more line segments, point location relative to line segments and rectangles, etc.
+
 * Lexicographic point ordering preferring x- or y-coordinates, with efficient nearest point and range search in sorted standard collections
+
 * Graph algorithms: A* pathfinding, path coverage, flood fill, line of sight, all performed on interfaces that can be implemented by arbitrary concrete geometric structures
+
 * Planar subdivision represented as doubly-connected edge list (DCEL), with support for graph algorithms, dynamic modification, and fast point location
+
 * Regular polygons and rectangular grids of squares or hexagons, with support for graph algorithms, mapping between grid & display coordinates, and conversion to DCEL subdivision
+
 * Voronoi diagram and Delaunay triangulation, with conversion to DCEL subdivision and consequently support for graph algorithms
+
 * Collections: generic linked list and generic quadrant tree, both with exposed node structure
+
 * Mathematical helper methods, including a library of Fortran 90 functions
 
 
