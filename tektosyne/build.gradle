@@ -5,6 +5,7 @@ plugins {
 
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
+apply plugin: 'jacoco' // needed for coverall code coverage analysis
 apply plugin: 'java'
 
 sourceCompatibility = source_compatibility
@@ -81,6 +82,13 @@ bintray {
                 sign = true
             }
         }
+    }
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        html.enabled false
     }
 }
 
