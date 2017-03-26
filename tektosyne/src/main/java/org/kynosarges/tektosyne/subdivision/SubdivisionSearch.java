@@ -806,6 +806,8 @@ public class SubdivisionSearch {
                     obj = right; break;
             }
 
+            assert(obj != null);
+
             if (obj instanceof Node)
                 return ((Node) obj).find(q);
 
