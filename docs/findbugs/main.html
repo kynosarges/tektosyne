@@ -1,0 +1,789 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>FindBugs Report</title>
+<style type="text/css">
+		.tablerow0 {
+			background: #EEEEEE;
+		}
+
+		.tablerow1 {
+			background: white;
+		}
+
+		.detailrow0 {
+			background: #EEEEEE;
+		}
+
+		.detailrow1 {
+			background: white;
+		}
+
+		.tableheader {
+			background: #b9b9fe;
+			font-size: larger;
+		}
+
+		.tablerow0:hover, .tablerow1:hover {
+			background: #aaffaa;
+		}
+
+		.priority-1 {
+		    color: red;
+		    font-weight: bold;
+		}
+		.priority-2 {
+		    color: orange;
+		    font-weight: bold;
+		}
+		.priority-3 {
+		    color: green;
+		    font-weight: bold;
+		}
+		.priority-4 {
+		    color: blue;
+		    font-weight: bold;
+		}
+		</style>
+<script type="text/javascript">
+			function toggleRow(elid) {
+				if (document.getElementById) {
+					element = document.getElementById(elid);
+					if (element) {
+						if (element.style.display == 'none') {
+							element.style.display = 'block';
+							//window.status = 'Toggle on!';
+						} else {
+							element.style.display = 'none';
+							//window.status = 'Toggle off!';
+						}
+					}
+				}
+			}
+		</script>
+</head>
+<body>
+<h1>
+<a href="http://findbugs.sourceforge.net">FindBugs</a> Report</h1>
+<h2>Project Information</h2>
+<p>Project: 
+		</p>
+<p>FindBugs version: 3.0.1</p>
+<p>Code analyzed:</p>
+<ul>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/Fortran.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/Angle.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/Compass.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/GeoUtils$ConvexHullVertex.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/GeoUtils$ConvexHullVertexComparator.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/GeoUtils.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/LineD.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/LineI.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/LineIntersection.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/LineLocation.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/LineRelation.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/MultiLineIntersection$1.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/MultiLineIntersection$EventPoint.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/MultiLineIntersection$SplitComparator.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/MultiLineIntersection$Status.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/MultiLineIntersection.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/MultiLinePoint$Line.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/MultiLinePoint.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/PointD.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/PointDComparator.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/PointDComparatorX.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/PointDComparatorY.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/PointI.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/PolygonGrid$1.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/PolygonGrid$GeometryOffsets.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/PolygonGrid$InstanceData.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/PolygonGrid.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/PolygonGridShift$1.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/PolygonGridShift.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/PolygonLocation.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/PolygonOrientation.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/RectD.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/RectI.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/RectLocation.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/RegularPolygon$1.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/RegularPolygon.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/SizeD.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/SizeI.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/Voronoi$1.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/Voronoi$FullEdge.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/Voronoi$HalfEdge.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/Voronoi$SiteVertex.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/Voronoi.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/VoronoiEdge.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/VoronoiResults$1.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/geometry/VoronoiResults.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/graph/AStar.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/graph/Coverage.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/graph/FloodFill.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/graph/Graph.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/graph/GraphAgent.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/graph/GraphPath.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/graph/NodeArc.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/graph/PathNode.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/graph/Visibility.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/MathUtils.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/NodeList$1.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/NodeList$Node.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/NodeList$NodeIterator.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/NodeList$ReverseNodeIterator.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/NodeList.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/QuadTree$1.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/QuadTree$EntryIterator.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/QuadTree$EntrySet.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/QuadTree$Node.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/QuadTree$ProbeStatus.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/QuadTree.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/subdivision/AddEdgeResult.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/subdivision/CreateEdgeResult.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/subdivision/EdgeCycle.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/subdivision/FindEdgeResult.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/subdivision/MoveEdgeResult.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/subdivision/PolygonGridMap.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/subdivision/RemoveEdgeResult.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/subdivision/SplitEdgeResult.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/subdivision/Subdivision$1.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/subdivision/Subdivision.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/subdivision/SubdivisionEdge.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/subdivision/SubdivisionElement.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/subdivision/SubdivisionElementType.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/subdivision/SubdivisionFace.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/subdivision/SubdivisionIntersection.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/subdivision/SubdivisionMap.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/subdivision/SubdivisionSearch$1.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/subdivision/SubdivisionSearch$EdgeNode.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/subdivision/SubdivisionSearch$Node.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/subdivision/SubdivisionSearch$Trapezoid.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/subdivision/SubdivisionSearch$VertexNode.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/subdivision/SubdivisionSearch.class</li>
+<li>/Users/PixelBumper/tektosyne/tektosyne/build/classes/main/org/kynosarges/tektosyne/subdivision/VoronoiMap.class</li>
+</ul>
+<p>
+<br/>
+<br/>
+</p>
+<h2>Metrics</h2>
+<p>7390 lines of code analyzed,
+	in 90 classes, 
+	in 4 packages.</p>
+<table width="500" cellpadding="5" cellspacing="2">
+<tr class="tableheader">
+<th align="left">Metric</th>
+<th align="right">Total</th>
+<th align="right">Density*</th>
+</tr>
+<tr class="tablerow0">
+<td>High Priority Warnings</td>
+<td align="right">5</td>
+<td align="right">0.68</td>
+</tr>
+<tr class="tablerow1">
+<td>Medium Priority Warnings</td>
+<td align="right">20</td>
+<td align="right">2.71</td>
+</tr>
+<tr class="$totalClass">
+<td>
+<b>Total Warnings</b>
+</td>
+<td align="right">
+<b>25</b>
+</td>
+<td align="right">
+<b>3.38</b>
+</td>
+</tr>
+</table>
+<p>
+<i>(* Defects per Thousand lines of non-commenting source statements)</i>
+</p>
+<p>
+<br/>
+<br/>
+</p>
+<h2>Contents</h2>
+<ul>
+<li>
+<a href="#Warnings_BAD_PRACTICE">Bad practice Warnings</a>
+</li>
+<li>
+<a href="#Warnings_CORRECTNESS">Correctness Warnings</a>
+</li>
+<li>
+<a href="#Warnings_MALICIOUS_CODE">Malicious code vulnerability Warnings</a>
+</li>
+<li>
+<a href="#Warnings_STYLE">Dodgy code Warnings</a>
+</li>
+<li>
+<a href="#Details">Details</a>
+</li>
+</ul>
+<h1>Summary</h1>
+<table width="500" cellpadding="5" cellspacing="2">
+<tr class="tableheader">
+<th align="left">Warning Type</th>
+<th align="right">Number</th>
+</tr>
+<tr class="tablerow0">
+<td>
+<a href="#Warnings_BAD_PRACTICE">Bad practice Warnings</a>
+</td>
+<td align="right">9</td>
+</tr>
+<tr class="tablerow1">
+<td>
+<a href="#Warnings_CORRECTNESS">Correctness Warnings</a>
+</td>
+<td align="right">1</td>
+</tr>
+<tr class="tablerow0">
+<td>
+<a href="#Warnings_MALICIOUS_CODE">Malicious code vulnerability Warnings</a>
+</td>
+<td align="right">1</td>
+</tr>
+<tr class="tablerow1">
+<td>
+<a href="#Warnings_STYLE">Dodgy code Warnings</a>
+</td>
+<td align="right">14</td>
+</tr>
+<tr class="tablerow0">
+<td>
+<b>Total</b>
+</td>
+<td align="right">
+<b>25</b>
+</td>
+</tr>
+</table>
+<h1>Warnings</h1>
+<p>Click on a warning row to see full context information.</p>
+<h2>
+<a name="Warnings_BAD_PRACTICE">Bad practice Warnings</a>
+</h2>
+<table class="warningtable" width="100%" cellspacing="0">
+<tr class="tableheader">
+<th align="left">Code</th>
+<th align="left">Warning</th>
+</tr>
+<tr class="tablerow1" onclick="toggleRow('N65850');">
+<td>
+<span class="priority-2">Co</span>
+</td>
+<td>org.kynosarges.tektosyne.geometry.GeoUtils$ConvexHullVertexComparator.compare(GeoUtils$ConvexHullVertex, GeoUtils$ConvexHullVertex) incorrectly handles double value</td>
+</tr>
+<tr class="detailrow1">
+<td/>
+<td>
+<p id="N65850" style="display: none;">
+<a href="#CO_COMPARETO_INCORRECT_FLOATING">Bug type CO_COMPARETO_INCORRECT_FLOATING (click for details)</a>
+<br/>In class org.kynosarges.tektosyne.geometry.GeoUtils$ConvexHullVertexComparator<br/>In method org.kynosarges.tektosyne.geometry.GeoUtils$ConvexHullVertexComparator.compare(GeoUtils$ConvexHullVertex, GeoUtils$ConvexHullVertex)<br/>Type double<br/>Should call Double.compare(double, double) instead<br/>Local variable named length<br/>At GeoUtils.java:[line 801]</p>
+</td>
+</tr>
+<tr class="tablerow0" onclick="toggleRow('N65930');">
+<td>
+<span class="priority-2">Co</span>
+</td>
+<td>org.kynosarges.tektosyne.geometry.GeoUtils$ConvexHullVertexComparator.compare(GeoUtils$ConvexHullVertex, GeoUtils$ConvexHullVertex) incorrectly handles double value</td>
+</tr>
+<tr class="detailrow0">
+<td/>
+<td>
+<p id="N65930" style="display: none;">
+<a href="#CO_COMPARETO_INCORRECT_FLOATING">Bug type CO_COMPARETO_INCORRECT_FLOATING (click for details)</a>
+<br/>In class org.kynosarges.tektosyne.geometry.GeoUtils$ConvexHullVertexComparator<br/>In method org.kynosarges.tektosyne.geometry.GeoUtils$ConvexHullVertexComparator.compare(GeoUtils$ConvexHullVertex, GeoUtils$ConvexHullVertex)<br/>Type double<br/>Should call Double.compare(double, double) instead<br/>Local variable named x<br/>At GeoUtils.java:[line 811]</p>
+</td>
+</tr>
+<tr class="tablerow1" onclick="toggleRow('N66010');">
+<td>
+<span class="priority-2">Co</span>
+</td>
+<td>org.kynosarges.tektosyne.geometry.GeoUtils$ConvexHullVertexComparator.compare(GeoUtils$ConvexHullVertex, GeoUtils$ConvexHullVertex) incorrectly handles double value</td>
+</tr>
+<tr class="detailrow1">
+<td/>
+<td>
+<p id="N66010" style="display: none;">
+<a href="#CO_COMPARETO_INCORRECT_FLOATING">Bug type CO_COMPARETO_INCORRECT_FLOATING (click for details)</a>
+<br/>In class org.kynosarges.tektosyne.geometry.GeoUtils$ConvexHullVertexComparator<br/>In method org.kynosarges.tektosyne.geometry.GeoUtils$ConvexHullVertexComparator.compare(GeoUtils$ConvexHullVertex, GeoUtils$ConvexHullVertex)<br/>Type double<br/>Should call Double.compare(double, double) instead<br/>Local variable named y<br/>At GeoUtils.java:[line 811]</p>
+</td>
+</tr>
+<tr class="tablerow0" onclick="toggleRow('N66315');">
+<td>
+<span class="priority-2">Co</span>
+</td>
+<td>org.kynosarges.tektosyne.geometry.MultiLineIntersection$SplitComparator.compare(PointD, PointD) incorrectly handles double value</td>
+</tr>
+<tr class="detailrow0">
+<td/>
+<td>
+<p id="N66315" style="display: none;">
+<a href="#CO_COMPARETO_INCORRECT_FLOATING">Bug type CO_COMPARETO_INCORRECT_FLOATING (click for details)</a>
+<br/>In class org.kynosarges.tektosyne.geometry.MultiLineIntersection$SplitComparator<br/>In method org.kynosarges.tektosyne.geometry.MultiLineIntersection$SplitComparator.compare(PointD, PointD)<br/>Type double<br/>Should call Double.compare(double, double) instead<br/>Local variable named d<br/>At MultiLineIntersection.java:[line 464]</p>
+</td>
+</tr>
+<tr class="tablerow1" onclick="toggleRow('N67268');">
+<td>
+<span class="priority-2">FS</span>
+</td>
+<td>Format string should use %n rather than \n in org.kynosarges.tektosyne.subdivision.SubdivisionSearch$EdgeNode.toString()</td>
+</tr>
+<tr class="detailrow1">
+<td/>
+<td>
+<p id="N67268" style="display: none;">
+<a href="#VA_FORMAT_STRING_USES_NEWLINE">Bug type VA_FORMAT_STRING_USES_NEWLINE (click for details)</a>
+<br/>In class org.kynosarges.tektosyne.subdivision.SubdivisionSearch$EdgeNode<br/>In method org.kynosarges.tektosyne.subdivision.SubdivisionSearch$EdgeNode.toString()<br/>Called method String.format(String, Object[])<br/>Format string "%d Y-Node %s \n	%s \n	%s"<br/>At SubdivisionSearch.java:[line 873]</p>
+</td>
+</tr>
+<tr class="tablerow0" onclick="toggleRow('N67342');">
+<td>
+<span class="priority-2">FS</span>
+</td>
+<td>Format string should use %n rather than \n in org.kynosarges.tektosyne.subdivision.SubdivisionSearch$Trapezoid.toString()</td>
+</tr>
+<tr class="detailrow0">
+<td/>
+<td>
+<p id="N67342" style="display: none;">
+<a href="#VA_FORMAT_STRING_USES_NEWLINE">Bug type VA_FORMAT_STRING_USES_NEWLINE (click for details)</a>
+<br/>In class org.kynosarges.tektosyne.subdivision.SubdivisionSearch$Trapezoid<br/>In method org.kynosarges.tektosyne.subdivision.SubdivisionSearch$Trapezoid.toString()<br/>Called method String.format(String, Object[])<br/>Format string "%d Trapezoid Parents %s \n	Left %s \n	Right %s \n	Top %s \n	Bottom %s \n	Left Upper %s, Lower %s \n	Right Upper %s, Lower %s"<br/>At SubdivisionSearch.java:[line 630]</p>
+</td>
+</tr>
+<tr class="tablerow1" onclick="toggleRow('N67416');">
+<td>
+<span class="priority-2">FS</span>
+</td>
+<td>Format string should use %n rather than \n in org.kynosarges.tektosyne.subdivision.SubdivisionSearch$VertexNode.toString()</td>
+</tr>
+<tr class="detailrow1">
+<td/>
+<td>
+<p id="N67416" style="display: none;">
+<a href="#VA_FORMAT_STRING_USES_NEWLINE">Bug type VA_FORMAT_STRING_USES_NEWLINE (click for details)</a>
+<br/>In class org.kynosarges.tektosyne.subdivision.SubdivisionSearch$VertexNode<br/>In method org.kynosarges.tektosyne.subdivision.SubdivisionSearch$VertexNode.toString()<br/>Called method String.format(String, Object[])<br/>Format string "%d X-Node %s \n	%s"<br/>At SubdivisionSearch.java:[line 949]</p>
+</td>
+</tr>
+<tr class="tablerow0" onclick="toggleRow('N66448');">
+<td>
+<span class="priority-2">Se</span>
+</td>
+<td>org.kynosarges.tektosyne.geometry.PointDComparatorX implements Comparator but not Serializable</td>
+</tr>
+<tr class="detailrow0">
+<td/>
+<td>
+<p id="N66448" style="display: none;">
+<a href="#SE_COMPARATOR_SHOULD_BE_SERIALIZABLE">Bug type SE_COMPARATOR_SHOULD_BE_SERIALIZABLE (click for details)</a>
+<br/>In class org.kynosarges.tektosyne.geometry.PointDComparatorX<br/>At PointDComparatorX.java:[lines 18-119]</p>
+</td>
+</tr>
+<tr class="tablerow1" onclick="toggleRow('N66483');">
+<td>
+<span class="priority-2">Se</span>
+</td>
+<td>org.kynosarges.tektosyne.geometry.PointDComparatorY implements Comparator but not Serializable</td>
+</tr>
+<tr class="detailrow1">
+<td/>
+<td>
+<p id="N66483" style="display: none;">
+<a href="#SE_COMPARATOR_SHOULD_BE_SERIALIZABLE">Bug type SE_COMPARATOR_SHOULD_BE_SERIALIZABLE (click for details)</a>
+<br/>In class org.kynosarges.tektosyne.geometry.PointDComparatorY<br/>At PointDComparatorY.java:[lines 18-119]</p>
+</td>
+</tr>
+</table>
+<h2>
+<a name="Warnings_CORRECTNESS">Correctness Warnings</a>
+</h2>
+<table class="warningtable" width="100%" cellspacing="0">
+<tr class="tableheader">
+<th align="left">Code</th>
+<th align="left">Warning</th>
+</tr>
+<tr class="tablerow1" onclick="toggleRow('N67178');">
+<td>
+<span class="priority-2">NP</span>
+</td>
+<td>Possible null pointer dereference of obj in org.kynosarges.tektosyne.subdivision.SubdivisionSearch$EdgeNode.find(PointD) on exception path</td>
+</tr>
+<tr class="detailrow1">
+<td/>
+<td>
+<p id="N67178" style="display: none;">
+<a href="#NP_NULL_ON_SOME_PATH_EXCEPTION">Bug type NP_NULL_ON_SOME_PATH_EXCEPTION (click for details)</a>
+<br/>In class org.kynosarges.tektosyne.subdivision.SubdivisionSearch$EdgeNode<br/>In method org.kynosarges.tektosyne.subdivision.SubdivisionSearch$EdgeNode.find(PointD)<br/>Value loaded from obj<br/>Dereferenced at SubdivisionSearch.java:[line 812]<br/>Null value at SubdivisionSearch.java:[line 786]<br/>Known null at SubdivisionSearch.java:[line 788]</p>
+</td>
+</tr>
+</table>
+<h2>
+<a name="Warnings_MALICIOUS_CODE">Malicious code vulnerability Warnings</a>
+</h2>
+<table class="warningtable" width="100%" cellspacing="0">
+<tr class="tableheader">
+<th align="left">Code</th>
+<th align="left">Warning</th>
+</tr>
+<tr class="tablerow1" onclick="toggleRow('N67110');">
+<td>
+<span class="priority-2">EI</span>
+</td>
+<td>org.kynosarges.tektosyne.geometry.VoronoiResults.voronoiRegions() may expose internal representation by returning VoronoiResults._voronoiRegions</td>
+</tr>
+<tr class="detailrow1">
+<td/>
+<td>
+<p id="N67110" style="display: none;">
+<a href="#EI_EXPOSE_REP">Bug type EI_EXPOSE_REP (click for details)</a>
+<br/>In class org.kynosarges.tektosyne.geometry.VoronoiResults<br/>In method org.kynosarges.tektosyne.geometry.VoronoiResults.voronoiRegions()<br/>Field org.kynosarges.tektosyne.geometry.VoronoiResults._voronoiRegions<br/>At VoronoiResults.java:[line 145]</p>
+</td>
+</tr>
+</table>
+<h2>
+<a name="Warnings_STYLE">Dodgy code Warnings</a>
+</h2>
+<table class="warningtable" width="100%" cellspacing="0">
+<tr class="tableheader">
+<th align="left">Code</th>
+<th align="left">Warning</th>
+</tr>
+<tr class="tablerow1" onclick="toggleRow('N66794');">
+<td>
+<span class="priority-2">DLS</span>
+</td>
+<td>Dead store to angle in org.kynosarges.tektosyne.geometry.RegularPolygon.circumscribe(double, double)</td>
+</tr>
+<tr class="detailrow1">
+<td/>
+<td>
+<p id="N66794" style="display: none;">
+<a href="#DLS_DEAD_LOCAL_STORE">Bug type DLS_DEAD_LOCAL_STORE (click for details)</a>
+<br/>In class org.kynosarges.tektosyne.geometry.RegularPolygon<br/>In method org.kynosarges.tektosyne.geometry.RegularPolygon.circumscribe(double, double)<br/>Local variable named angle<br/>At RegularPolygon.java:[line 270]</p>
+</td>
+</tr>
+<tr class="tablerow0" onclick="toggleRow('N66090');">
+<td>
+<span class="priority-1">FE</span>
+</td>
+<td>Test for floating point equality in org.kynosarges.tektosyne.geometry.LineIntersection.find(PointD, PointD, PointD, PointD)</td>
+</tr>
+<tr class="detailrow0">
+<td/>
+<td>
+<p id="N66090" style="display: none;">
+<a href="#FE_FLOATING_POINT_EQUALITY">Bug type FE_FLOATING_POINT_EQUALITY (click for details)</a>
+<br/>In class org.kynosarges.tektosyne.geometry.LineIntersection<br/>In method org.kynosarges.tektosyne.geometry.LineIntersection.find(PointD, PointD, PointD, PointD)<br/>At LineIntersection.java:[line 155]<br/>Another occurrence at LineIntersection.java:[line 156]<br/>Another occurrence at LineIntersection.java:[line 157]<br/>Another occurrence at LineIntersection.java:[line 158]</p>
+</td>
+</tr>
+<tr class="tablerow1" onclick="toggleRow('N66176');">
+<td>
+<span class="priority-1">FE</span>
+</td>
+<td>Test for floating point equality in org.kynosarges.tektosyne.geometry.LineIntersection.find(PointD, PointD, PointD, PointD, double)</td>
+</tr>
+<tr class="detailrow1">
+<td/>
+<td>
+<p id="N66176" style="display: none;">
+<a href="#FE_FLOATING_POINT_EQUALITY">Bug type FE_FLOATING_POINT_EQUALITY (click for details)</a>
+<br/>In class org.kynosarges.tektosyne.geometry.LineIntersection<br/>In method org.kynosarges.tektosyne.geometry.LineIntersection.find(PointD, PointD, PointD, PointD, double)<br/>At LineIntersection.java:[line 295]<br/>Another occurrence at LineIntersection.java:[line 296]<br/>Another occurrence at LineIntersection.java:[line 297]<br/>Another occurrence at LineIntersection.java:[line 298]</p>
+</td>
+</tr>
+<tr class="tablerow0" onclick="toggleRow('N66918');">
+<td>
+<span class="priority-1">FE</span>
+</td>
+<td>Test for floating point equality in org.kynosarges.tektosyne.geometry.Voronoi.isRightOf(Voronoi$HalfEdge, Voronoi$SiteVertex)</td>
+</tr>
+<tr class="detailrow0">
+<td/>
+<td>
+<p id="N66918" style="display: none;">
+<a href="#FE_FLOATING_POINT_EQUALITY">Bug type FE_FLOATING_POINT_EQUALITY (click for details)</a>
+<br/>In class org.kynosarges.tektosyne.geometry.Voronoi<br/>In method org.kynosarges.tektosyne.geometry.Voronoi.isRightOf(Voronoi$HalfEdge, Voronoi$SiteVertex)<br/>At Voronoi.java:[line 534]</p>
+</td>
+</tr>
+<tr class="tablerow1" onclick="toggleRow('N66971');">
+<td>
+<span class="priority-1">FE</span>
+</td>
+<td>Test for floating point equality in org.kynosarges.tektosyne.geometry.Voronoi.priQueueInsert(Voronoi$HalfEdge, Voronoi$SiteVertex, double)</td>
+</tr>
+<tr class="detailrow1">
+<td/>
+<td>
+<p id="N66971" style="display: none;">
+<a href="#FE_FLOATING_POINT_EQUALITY">Bug type FE_FLOATING_POINT_EQUALITY (click for details)</a>
+<br/>In class org.kynosarges.tektosyne.geometry.Voronoi<br/>In method org.kynosarges.tektosyne.geometry.Voronoi.priQueueInsert(Voronoi$HalfEdge, Voronoi$SiteVertex, double)<br/>At Voronoi.java:[line 880]</p>
+</td>
+</tr>
+<tr class="tablerow0" onclick="toggleRow('N67024');">
+<td>
+<span class="priority-1">FE</span>
+</td>
+<td>Test for floating point equality in org.kynosarges.tektosyne.geometry.Voronoi.storeVoronoiEdge(Voronoi$FullEdge)</td>
+</tr>
+<tr class="detailrow0">
+<td/>
+<td>
+<p id="N67024" style="display: none;">
+<a href="#FE_FLOATING_POINT_EQUALITY">Bug type FE_FLOATING_POINT_EQUALITY (click for details)</a>
+<br/>In class org.kynosarges.tektosyne.geometry.Voronoi<br/>In method org.kynosarges.tektosyne.geometry.Voronoi.storeVoronoiEdge(Voronoi$FullEdge)<br/>At Voronoi.java:[line 591]<br/>Another occurrence at Voronoi.java:[line 600]<br/>Another occurrence at Voronoi.java:[line 600]<br/>Another occurrence at Voronoi.java:[line 602]</p>
+</td>
+</tr>
+<tr class="tablerow1" onclick="toggleRow('N66864');">
+<td>
+<span class="priority-2">ICAST</span>
+</td>
+<td>Integral division result cast to double or float in org.kynosarges.tektosyne.geometry.RegularPolygon.inscribe(double, double)</td>
+</tr>
+<tr class="detailrow1">
+<td/>
+<td>
+<p id="N66864" style="display: none;">
+<a href="#ICAST_IDIV_CAST_TO_DOUBLE">Bug type ICAST_IDIV_CAST_TO_DOUBLE (click for details)</a>
+<br/>In class org.kynosarges.tektosyne.geometry.RegularPolygon<br/>In method org.kynosarges.tektosyne.geometry.RegularPolygon.inscribe(double, double)<br/>At RegularPolygon.java:[line 474]</p>
+</td>
+</tr>
+<tr class="tablerow0" onclick="toggleRow('N66262');">
+<td>
+<span class="priority-2">SF</span>
+</td>
+<td>Switch statement found in org.kynosarges.tektosyne.geometry.MultiLineIntersection.split(LineD[], MultiLinePoint[]) where default case is missing</td>
+</tr>
+<tr class="detailrow0">
+<td/>
+<td>
+<p id="N66262" style="display: none;">
+<a href="#SF_SWITCH_NO_DEFAULT">Bug type SF_SWITCH_NO_DEFAULT (click for details)</a>
+<br/>In class org.kynosarges.tektosyne.geometry.MultiLineIntersection<br/>In method org.kynosarges.tektosyne.geometry.MultiLineIntersection.split(LineD[], MultiLinePoint[])<br/>At MultiLineIntersection.java:[lines 229-243]</p>
+</td>
+</tr>
+<tr class="tablerow1" onclick="toggleRow('N66395');">
+<td>
+<span class="priority-2">SF</span>
+</td>
+<td>Switch statement found in org.kynosarges.tektosyne.geometry.MultiLineIntersection$Status.handle(MultiLineIntersection$EventPoint) where default case is missing</td>
+</tr>
+<tr class="detailrow1">
+<td/>
+<td>
+<p id="N66395" style="display: none;">
+<a href="#SF_SWITCH_NO_DEFAULT">Bug type SF_SWITCH_NO_DEFAULT (click for details)</a>
+<br/>In class org.kynosarges.tektosyne.geometry.MultiLineIntersection$Status<br/>In method org.kynosarges.tektosyne.geometry.MultiLineIntersection$Status.handle(MultiLineIntersection$EventPoint)<br/>At MultiLineIntersection.java:[lines 673-691]</p>
+</td>
+</tr>
+<tr class="tablerow0" onclick="toggleRow('N66518');">
+<td>
+<span class="priority-2">SF</span>
+</td>
+<td>Switch statement found in org.kynosarges.tektosyne.geometry.PolygonGrid.getElementBounds(RectI) where default case is missing</td>
+</tr>
+<tr class="detailrow0">
+<td/>
+<td>
+<p id="N66518" style="display: none;">
+<a href="#SF_SWITCH_NO_DEFAULT">Bug type SF_SWITCH_NO_DEFAULT (click for details)</a>
+<br/>In class org.kynosarges.tektosyne.geometry.PolygonGrid<br/>In method org.kynosarges.tektosyne.geometry.PolygonGrid.getElementBounds(RectI)<br/>At PolygonGrid.java:[lines 433-449]</p>
+</td>
+</tr>
+<tr class="tablerow1" onclick="toggleRow('N66571');">
+<td>
+<span class="priority-2">SF</span>
+</td>
+<td>Switch statement found in org.kynosarges.tektosyne.geometry.PolygonGrid$InstanceData.onSizeChanged() where default case is missing</td>
+</tr>
+<tr class="detailrow1">
+<td/>
+<td>
+<p id="N66571" style="display: none;">
+<a href="#SF_SWITCH_NO_DEFAULT">Bug type SF_SWITCH_NO_DEFAULT (click for details)</a>
+<br/>In class org.kynosarges.tektosyne.geometry.PolygonGrid$InstanceData<br/>In method org.kynosarges.tektosyne.geometry.PolygonGrid$InstanceData.onSizeChanged()<br/>At PolygonGrid.java:[lines 1245-1254]</p>
+</td>
+</tr>
+<tr class="tablerow0" onclick="toggleRow('N66624');">
+<td>
+<span class="priority-2">SF</span>
+</td>
+<td>Switch statement found in org.kynosarges.tektosyne.geometry.RectD.intersect(LineD) where default case is missing</td>
+</tr>
+<tr class="detailrow0">
+<td/>
+<td>
+<p id="N66624" style="display: none;">
+<a href="#SF_SWITCH_NO_DEFAULT">Bug type SF_SWITCH_NO_DEFAULT (click for details)</a>
+<br/>In class org.kynosarges.tektosyne.geometry.RectD<br/>In method org.kynosarges.tektosyne.geometry.RectD.intersect(LineD)<br/>At RectD.java:[lines 288-292]</p>
+</td>
+</tr>
+<tr class="tablerow1" onclick="toggleRow('N66677');">
+<td>
+<span class="priority-2">SF</span>
+</td>
+<td>Switch statement found in org.kynosarges.tektosyne.geometry.RectD.intersect(PointD[]) where default case is missing</td>
+</tr>
+<tr class="detailrow1">
+<td/>
+<td>
+<p id="N66677" style="display: none;">
+<a href="#SF_SWITCH_NO_DEFAULT">Bug type SF_SWITCH_NO_DEFAULT (click for details)</a>
+<br/>In class org.kynosarges.tektosyne.geometry.RectD<br/>In method org.kynosarges.tektosyne.geometry.RectD.intersect(PointD[])<br/>At RectD.java:[lines 349-353]<br/>Another occurrence at RectD.java:[lines 368-372]</p>
+</td>
+</tr>
+<tr class="tablerow0" onclick="toggleRow('N66741');">
+<td>
+<span class="priority-2">SF</span>
+</td>
+<td>Switch statement found in org.kynosarges.tektosyne.geometry.RectD.intersectsWith(LineD) where default case is missing</td>
+</tr>
+<tr class="detailrow0">
+<td/>
+<td>
+<p id="N66741" style="display: none;">
+<a href="#SF_SWITCH_NO_DEFAULT">Bug type SF_SWITCH_NO_DEFAULT (click for details)</a>
+<br/>In class org.kynosarges.tektosyne.geometry.RectD<br/>In method org.kynosarges.tektosyne.geometry.RectD.intersectsWith(LineD)<br/>At RectD.java:[lines 436-440]</p>
+</td>
+</tr>
+</table>
+<h1>
+<a name="Details">Details</a>
+</h1>
+<h2>
+<a name="CO_COMPARETO_INCORRECT_FLOATING">CO_COMPARETO_INCORRECT_FLOATING: compareTo()/compare() incorrectly handles float or double value</a>
+</h2>
+
+  <p>This method compares double or float values using pattern like this: val1 &gt; val2 ? 1 : val1 &lt; val2 ? -1 : 0.
+This pattern works incorrectly for -0.0 and NaN values which may result in incorrect sorting result or broken collection 
+(if compared values are used as keys). Consider using Double.compare or Float.compare static methods which handle all 
+the special cases correctly.</p>
+
+    
+<h2>
+<a name="DLS_DEAD_LOCAL_STORE">DLS_DEAD_LOCAL_STORE: Dead store to local variable</a>
+</h2>
+
+<p>
+This instruction assigns a value to a local variable,
+but the value is not read or used in any subsequent instruction.
+Often, this indicates an error, because the value computed is never
+used.
+</p>
+<p>
+Note that Sun's javac compiler often generates dead stores for
+final local variables.  Because FindBugs is a bytecode-based tool,
+there is no easy way to eliminate these false positives.
+</p>
+
+    
+<h2>
+<a name="EI_EXPOSE_REP">EI_EXPOSE_REP: May expose internal representation by returning reference to mutable object</a>
+</h2>
+
+  <p> Returning a reference to a mutable object value stored in one of the object's fields
+  exposes the internal representation of the object.&nbsp;
+   If instances
+   are accessed by untrusted code, and unchecked changes to
+   the mutable object would compromise security or other
+   important properties, you will need to do something different.
+  Returning a new copy of the object is better approach in many situations.</p>
+
+    
+<h2>
+<a name="FE_FLOATING_POINT_EQUALITY">FE_FLOATING_POINT_EQUALITY: Test for floating point equality</a>
+</h2>
+   
+    <p>
+    This operation compares two floating point values for equality.
+    Because floating point calculations may involve rounding,
+   calculated float and double values may not be accurate.
+    For values that must be precise, such as monetary values,
+   consider using a fixed-precision type such as BigDecimal.
+    For values that need not be precise, consider comparing for equality
+    within some range, for example:
+    <code>if ( Math.abs(x - y) &lt; .0000001 )</code>.
+   See the Java Language Specification, section 4.2.4.
+    </p>
+    
+     
+<h2>
+<a name="VA_FORMAT_STRING_USES_NEWLINE">VA_FORMAT_STRING_USES_NEWLINE: Format string should use %n rather than \n</a>
+</h2>
+
+<p>
+This format string include a newline character (\n). In format strings, it is generally
+ preferable better to use %n, which will produce the platform-specific line separator.
+</p>
+
+     
+<h2>
+<a name="ICAST_IDIV_CAST_TO_DOUBLE">ICAST_IDIV_CAST_TO_DOUBLE: Integral division result cast to double or float</a>
+</h2>
+
+<p>
+This code casts the result of an integral division (e.g., int or long division)
+operation to double or
+float.
+Doing division on integers truncates the result
+to the integer value closest to zero.  The fact that the result
+was cast to double suggests that this precision should have been retained.
+What was probably meant was to cast one or both of the operands to
+double <em>before</em> performing the division.  Here is an example:
+</p>
+<blockquote>
+<pre>
+int x = 2;
+int y = 5;
+// Wrong: yields result 0.0
+double value1 =  x / y;
+
+// Right: yields result 0.4
+double value2 =  x / (double) y;
+</pre>
+</blockquote>
+
+    
+<h2>
+<a name="NP_NULL_ON_SOME_PATH_EXCEPTION">NP_NULL_ON_SOME_PATH_EXCEPTION: Possible null pointer dereference in method on exception path</a>
+</h2>
+
+<p> A reference value which is null on some exception control path is
+dereferenced here.&nbsp; This may lead to a <code>NullPointerException</code>
+when the code is executed.&nbsp;
+Note that because FindBugs currently does not prune infeasible exception paths,
+this may be a false warning.</p>
+
+<p> Also note that FindBugs considers the default case of a switch statement to
+be an exception path, since the default case is often infeasible.</p>
+
+    
+<h2>
+<a name="SE_COMPARATOR_SHOULD_BE_SERIALIZABLE">SE_COMPARATOR_SHOULD_BE_SERIALIZABLE: Comparator doesn't implement Serializable</a>
+</h2>
+
+  <p> This class implements the <code>Comparator</code> interface. You
+should consider whether or not it should also implement the <code>Serializable</code>
+interface. If a comparator is used to construct an ordered collection
+such as a <code>TreeMap</code>, then the <code>TreeMap</code>
+will be serializable only if the comparator is also serializable.
+As most comparators have little or no state, making them serializable
+is generally easy and good defensive programming.
+</p>
+
+    
+<h2>
+<a name="SF_SWITCH_NO_DEFAULT">SF_SWITCH_NO_DEFAULT: Switch statement found where default case is missing</a>
+</h2>
+
+  <p> This method contains a switch statement where default case is missing.
+  Usually you need to provide a default case.</p>
+  <p>Because the analysis only looks at the generated bytecode, this warning can be incorrect triggered if
+the default case is at the end of the switch statement and the switch statement doesn't contain break statements for other
+cases.
+
+    </body>
+</html>
