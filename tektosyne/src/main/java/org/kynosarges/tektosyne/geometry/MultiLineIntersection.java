@@ -242,6 +242,8 @@ public final class MultiLineIntersection {
                         points.add(crossing.shared);
                         ++count;
                         break;
+                    default:
+                        break;
                 }
             }
 
@@ -690,9 +692,11 @@ public final class MultiLineIntersection {
 
                         adding = true;
                         break;
+                    default:
+                        break;
                 }
             }
-            
+
             if (!adding) {
                 // intersect remaining neighbors of removed lines
                 if (prevLine != null && nextLine != null)

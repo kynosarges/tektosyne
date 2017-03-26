@@ -449,6 +449,8 @@ public class PolygonGrid implements Graph<PointI> {
                         left -= width2;
                 }
                 break;
+            case NONE:
+                break;
         }
 
         return new RectD(left, top, width, height);
@@ -1252,6 +1254,8 @@ public class PolygonGrid implements Graph<PointI> {
                 case ROW_LEFT:
                 case ROW_RIGHT:
                     width += elementWidth / 2.0;
+                    break;
+                case NONE:
                     break;
             }
 

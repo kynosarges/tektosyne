@@ -185,6 +185,8 @@ public class GraphDialog extends Stage {
             case HEXAGON_VERTEX:
                 polygon = new RegularPolygon(16, 6, PolygonOrientation.ON_VERTEX);
                 break;
+            default:
+                break;
         }
 
         _output.getChildren().clear();
@@ -239,6 +241,8 @@ public class GraphDialog extends Stage {
             case VISIBILITY:
                 final double threshold = _threshold.getValue();
                 success = _graphManager.runVisibility(random, threshold);
+                break;
+            default:
                 break;
         }
 

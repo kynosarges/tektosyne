@@ -290,6 +290,7 @@ public final class RectD {
                 case 1: p = +dx; q = max.x - x0; break;
                 case 2: p = -dy; q = y0 - min.y; break;
                 case 3: p = +dy; q = max.y - y0; break;
+                default: throw new RuntimeException("Border is only expected to be between 0 and 3");
             }
 
             if (p == 0) {
@@ -351,6 +352,7 @@ public final class RectD {
                 case 1: q = max.x; break;
                 case 2: q = min.y; break;
                 case 3: q = max.y; break;
+                default: throw new RuntimeException("Border is only expected to be between 0 and 3");
             }
 
             // last output is new input for current border
@@ -370,6 +372,7 @@ public final class RectD {
                     case 1: startInside = (start.x <= q); endInside = (end.x <= q); break;
                     case 2: startInside = (start.y >= q); endInside = (end.y >= q); break;
                     case 3: startInside = (start.y <= q); endInside = (end.y <= q); break;
+                    default: throw new RuntimeException("Border is only expected to be between 0 and 3");
                 }
 
                 // store intersection point if border crossed
@@ -438,6 +441,7 @@ public final class RectD {
                 case 1: p = +dx; q = max.x - x0; break;
                 case 2: p = -dy; q = y0 - min.y; break;
                 case 3: p = +dy; q = max.y - y0; break;
+                default: throw new RuntimeException("Border is only expected to be between 0 and 3");
             }
 
             if (p == 0) {
