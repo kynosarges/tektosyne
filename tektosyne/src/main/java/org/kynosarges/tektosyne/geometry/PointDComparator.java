@@ -1,5 +1,6 @@
 package org.kynosarges.tektosyne.geometry;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -13,7 +14,7 @@ import java.util.*;
  * @author Christoph Nahr
  * @version 6.0.0
  */
-public abstract class PointDComparator implements Comparator<PointD> {
+public abstract class PointDComparator implements Comparator<PointD>, Serializable {
     /**
      * The epsilon used for coordinate comparisons.
      * Defines the maximum absolute difference at which coordinates should be considered equal.
