@@ -40,6 +40,9 @@ public final class PointD {
      * @param y the y-coordinate of the {@link PointD} 
      */
     public PointD(double x, double y) {
+        if (Double.isNaN(x) || Double.isInfinite(x) || Double.isNaN(y) || Double.isInfinite(y)){
+            throw new IllegalArgumentException("Coordinates are not allowed to be NaN or Infinite");
+        }
         this.x = x;
         this.y = y;
     }

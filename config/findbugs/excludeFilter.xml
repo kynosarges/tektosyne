@@ -18,4 +18,16 @@
         <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
     </Match>
 
+    <Match>
+        <Class name="org.kynosarges.tektosyne.geometry.GeoUtils$ConvexHullVertexComparator"/>
+        <Method name="compare"/>
+        <Bug pattern="CO_COMPARETO_INCORRECT_FLOATING"/>
+    </Match>
+
+    <Match>
+        <Class name="org.kynosarges.tektosyne.geometry.MultiLineIntersection$SplitComparator"/>
+        <Method name="compare"/>
+        <Bug pattern="CO_COMPARETO_INCORRECT_FLOATING"/>
+    </Match>
+
 </FindBugsFilter>
