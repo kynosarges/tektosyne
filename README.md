@@ -1,6 +1,7 @@
 [![Build Status](https://travis-ci.org/kynosarges/tektosyne.svg?branch=master)](https://travis-ci.org/kynosarges/tektosyne)
 [![codecov](https://codecov.io/gh/kynosarges/tektosyne/branch/master/graph/badge.svg)](https://codecov.io/gh/kynosarges/tektosyne)
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://raw.githubusercontent.com/kynosarges/tektosyne/master/LICENSE.txt)
+[![JCenter artifact](https://img.shields.io/badge/mavenCentral-6.0.0-blue.svg?label=JCenter)](https://bintray.com/pixelbumper/maven/Tektosyne/_latestVersion)
 
 
 
@@ -93,6 +94,11 @@ dependencies {
 ```
 
 ## License
+Tektosyne is © 2002–2017 by [Christoph Nahr](http://kynosarges.org/index.html) but available for free under the MIT license.
 
+## About this Repository
+The maintainer of the repository is not the original author of tektosyne, but liked the library so much that he decided to upload it to GitHub and distribute it via jcenter (and in the near future mavenCentral).
 
-Tektosyne is © 2002–2016 by Christoph Nahr but available for free under the MIT license.
+This repository is a not the official upload site, but was created with the consent of the original author.
+
+The maintainer will try to keep the repository in sync with releases published on the [Kynosarges](http://kynosarges.org/Tektosyne.html) website.
