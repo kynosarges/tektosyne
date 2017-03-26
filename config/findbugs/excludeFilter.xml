@@ -12,4 +12,10 @@
         <Bug pattern="EI_EXPOSE_REP" />
     </Match>
 
+    <Match>
+        <Class name="org.kynosarges.tektosyne.geometry.RegularPolygon"/>
+        <Method name="circumscribe"/>
+        <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+    </Match>
+
 </FindBugsFilter>
