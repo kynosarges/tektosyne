@@ -99,6 +99,6 @@ Tektosyne is © 2002–2017 by [Christoph Nahr](http://kynosarges.org/index.html
 ## About this Repository
 The maintainer of the repository is not the original author of tektosyne, but liked the library so much that he decided to upload it to GitHub and distribute it via jcenter (and in the near future mavenCentral).
 
-This repository is a not the official upload site, but was created with the consent of the original author.
+This repository is not the official upload site, but was created with the consent of the original author.
 
 The maintainer will try to keep the repository in sync with releases published on the [Kynosarges](http://kynosarges.org/Tektosyne.html) website.
