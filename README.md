@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/kynosarges/tektosyne.svg?branch=master)](https://travis-ci.org/kynosarges/tektosyne)
 [![codecov](https://codecov.io/gh/kynosarges/tektosyne/branch/master/graph/badge.svg)](https://codecov.io/gh/kynosarges/tektosyne)
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://raw.githubusercontent.com/kynosarges/tektosyne/master/LICENSE.txt)
-[![Maven Central artifact](https://img.shields.io/badge/mavenCentral-6.0.0-blue.svg?label=maven-central)](https://repo.maven.apache.org/maven2/org/kynosarges/tektosyne/6.0.0/)
+[![Maven Central artifact](https://img.shields.io/badge/mavenCentral-6.0.0-blue.svg?label=maven-central)](http://search.maven.org/#artifactdetails%7Corg.kynosarges%7Ctektosyne%7C6.0.0%7Cjar)
 [![JCenter artifact](https://img.shields.io/badge/mavenCentral-6.0.0-blue.svg?label=JCenter)](https://bintray.com/pixelbumper/maven/Tektosyne/_latestVersion)
 
 
