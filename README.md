@@ -1,8 +1,8 @@
 [![Build Status](https://travis-ci.org/kynosarges/tektosyne.svg?branch=master)](https://travis-ci.org/kynosarges/tektosyne)
 [![codecov](https://codecov.io/gh/kynosarges/tektosyne/branch/master/graph/badge.svg)](https://codecov.io/gh/kynosarges/tektosyne)
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://raw.githubusercontent.com/kynosarges/tektosyne/master/LICENSE.txt)
+[![Maven Central artifact](https://img.shields.io/badge/mavenCentral-6.0.0-blue.svg?label=maven-central)](https://repo.maven.apache.org/maven2/org/kynosarges/tektosyne/6.0.0/)
 [![JCenter artifact](https://img.shields.io/badge/mavenCentral-6.0.0-blue.svg?label=JCenter)](https://bintray.com/pixelbumper/maven/Tektosyne/_latestVersion)
-
 
 
 # Tektosyne
@@ -50,16 +50,13 @@ Screenshots of two demo dialogs appear below.
 The Tektosyne library itself requires only the Java SE 8 Compact 1 profile.
 
 The included GUI demo application requires Oracle JRE 8 Update 66 with JavaFX 8 or later, or an equivalent Java runtime environment.
-Windows users should consult Oracle Java on Windows to avoid Oracle’s unfortunate default Windows JRE. Please see the following for more information:
+Windows users should consult Oracle Java on Windows to avoid Oracle’s unfortunate default Windows JRE.
 
 ## Dependencies
+Tektosyne is available via mavenCentral and JCenter:
 
 ### Gradle
 ```
-repositories {
-    jcenter()
-}
-
 dependencies {
     compile group: 'org.kynosarges', name: 'tektosyne', version: '6.0.0'
 }
@@ -67,22 +64,6 @@ dependencies {
 
 ### Maven
 ```
-  <repositories>
-    <repository>
-      <id>jcenter</id>
-      <url>http://jcenter.bintray.com </url>
-      <snapshots>
-        <enabled>true</enabled>
-        <updatePolicy>never</updatePolicy>
-        <checksumPolicy>warn</checksumPolicy>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-        <checksumPolicy>warn</checksumPolicy>
-      </releases>
-    </repository>
-  </repositories>
-
   <dependencies>
     <dependency>
       <groupId>org.kynosarges</groupId>
@@ -97,7 +78,7 @@ dependencies {
 Tektosyne is © 2002–2017 by [Christoph Nahr](http://kynosarges.org/index.html) but available for free under the MIT license.
 
 ## About this Repository
-The maintainer of the repository is not the original author of tektosyne, but liked the library so much that he decided to upload it to GitHub and distribute it via jcenter (and in the near future mavenCentral).
+The maintainer of the repository is not the original author of tektosyne, but liked the library so much that he decided to upload it to GitHub and distribute it via mavenCentral and jcenter.
 
 This repository is not the official upload site, but was created with the consent of the original author.
 
