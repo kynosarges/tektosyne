@@ -31,7 +31,7 @@ import java.util.*;
  * file gives a detailed description of this comparer.</p>
  * 
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.0.1
  */
 public final class MultiLineIntersection {
     /*
@@ -198,6 +198,9 @@ public final class MultiLineIntersection {
      *         splitting all {@code lines} on the matching {@code crossings}
      * @throws ArrayIndexOutOfBoundsException if {@code crossings} contains any
      *         {@link MultiLinePoint.Line#index} values that are invalid for {@code lines}
+     * @throws IllegalArgumentException if {@code crossings} contains any
+     *         {@link MultiLinePoint.Line#location} other than {@link LineLocation#START},
+     *         {@link LineLocation#BETWEEN}, or {@link LineLocation#END}
      * @throws NullPointerException if {@code lines} or {@code crossings} is {@code null}
      *                              or contains any {@code null} elements
      */
@@ -242,6 +245,9 @@ public final class MultiLineIntersection {
                         points.add(crossing.shared);
                         ++count;
                         break;
+
+                    default:
+                        throw new IllegalArgumentException("crossings contains invalid LineLocation");
                 }
             }
 
@@ -690,6 +696,9 @@ public final class MultiLineIntersection {
 
                         adding = true;
                         break;
+
+                    default:
+                        throw new IllegalStateException("e contains invalid LineLocation");
                 }
             }
             

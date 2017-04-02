@@ -22,7 +22,7 @@ import org.kynosarges.tektosyne.geometry.*;
  * bounding rectangle around the {@link Subdivision}.</p>
  * 
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.0.1
  */
 public class SubdivisionSearch {
 
@@ -628,8 +628,8 @@ public class SubdivisionSearch {
             }
 
             return String.format(
-                    "%d Trapezoid Parents %s \n\tLeft %s \n\tRight %s \n\tTop %s \n\t" +
-                    "Bottom %s \n\tLeft Upper %s, Lower %s \n\tRight Upper %s, Lower %s",
+                    "%d Trapezoid Parents %s %n\tLeft %s %n\tRight %s %n\tTop %s %n\t" +
+                    "Bottom %s %n\tLeft Upper %s, Lower %s %n\tRight Upper %s, Lower %s",
                     hashCode(), parentString, leftVertex, rightVertex,
                     Objects.toString(topEdge), Objects.toString(bottomEdge),
                     showHashCode(upperLeft), showHashCode(lowerLeft),
@@ -809,6 +809,7 @@ public class SubdivisionSearch {
             if (obj instanceof Node)
                 return ((Node) obj).find(q);
 
+            assert(obj instanceof Trapezoid);
             return ((Trapezoid) obj).face();
         }
 
@@ -870,7 +871,7 @@ public class SubdivisionSearch {
          */
         @Override
         public String toString() {
-            return String.format("%d Y-Node %s \n\t%s \n\t%s",
+            return String.format("%d Y-Node %s %n\t%s %n\t%s",
                     hashCode(), edgeLine, edge, super.toString());
         }
     }
@@ -946,7 +947,7 @@ public class SubdivisionSearch {
          */
         @Override
         public String toString() {
-            return String.format("%d X-Node %s \n\t%s",
+            return String.format("%d X-Node %s %n\t%s",
                     hashCode(), vertex, super.toString());
         }
     }

@@ -15,7 +15,7 @@ import org.kynosarges.tektosyne.*;
  * of a given {@link RegularPolygon} return a new instance instead.</p>
  * 
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.0.1
  */
 public class RegularPolygon {
     /**
@@ -471,7 +471,8 @@ public class RegularPolygon {
             final double rightAngle = topAngle + rightIndex * segment;
             final double widthLength = width * radiusFactor / Math.cos(rightAngle);
 
-            final double bottomAngle = topAngle + (sides / 2) * segment;
+            final int halfSide = sides / 2; // intentional truncation!
+            final double bottomAngle = topAngle + halfSide * segment;
             final double heightLength = 2.0 * height * radiusFactor /
                     (Math.sin(bottomAngle) - Math.sin(topAngle));
 

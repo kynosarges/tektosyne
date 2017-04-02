@@ -30,7 +30,7 @@ import org.kynosarges.tektosyne.graph.*;
  * {@link PolygonGrid} always has a fairly moderate size so that overflow cannot occur.</p>
  * 
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.0.1
  */
 public class PolygonGrid implements Graph<PointI> {
 
@@ -430,25 +430,14 @@ public class PolygonGrid implements Graph<PointI> {
         height += (region.height() - 1) * centerDistance().height;
 
         // add overhang for shifted rows or columns
-        switch (gridShift()) {
-
-            case COLUMN_UP:
-            case COLUMN_DOWN:
-                if (region.width() > 1) {
-                    height += height2;
-                    if (gridShift().isDownColumn(region.min.x))
-                        top -= height2;
-                }
-                break;
-
-            case ROW_LEFT:
-            case ROW_RIGHT:
-                if (region.height() > 1) {
-                    width += width2;
-                    if (gridShift().isRightRow(region.min.y))
-                        left -= width2;
-                }
-                break;
+        if (gridShift().anyColumns() && region.width() > 1) {
+            height += height2;
+            if (gridShift().isDownColumn(region.min.x))
+                top -= height2;
+        } else if (gridShift().anyRows() && region.height() > 1) {
+            width += width2;
+            if (gridShift().isRightRow(region.min.y))
+                left -= width2;
         }
 
         return new RectD(left, top, width, height);
@@ -1242,18 +1231,10 @@ public class PolygonGrid implements Graph<PointI> {
             double height = elementHeight + (size.height - 1) * centerDistance.height;
 
             // add overhang for shifted rows or columns
-            switch (gridShift) {
-
-                case COLUMN_UP:
-                case COLUMN_DOWN:
-                    height += elementHeight / 2.0;
-                    break;
-
-                case ROW_LEFT:
-                case ROW_RIGHT:
-                    width += elementWidth / 2.0;
-                    break;
-            }
+            if (gridShift.anyColumns())
+                height += elementHeight / 2.0;
+            else if (gridShift.anyRows())
+                width += elementWidth / 2.0;
 
             worldBounds = new RectD(0, 0, width, height);
         }

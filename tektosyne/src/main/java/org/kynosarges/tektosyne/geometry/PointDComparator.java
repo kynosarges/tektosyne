@@ -1,5 +1,6 @@
 package org.kynosarges.tektosyne.geometry;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -11,9 +12,15 @@ import java.util.*;
  * prefers x- and y-coordinates, respectively.
  * 
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.0.1
  */
-public abstract class PointDComparator implements Comparator<PointD> {
+public abstract class PointDComparator implements Comparator<PointD>, Serializable {
+    /**
+     * The class fingerprint that is set to indicate serialization
+     * compatibility with a previous version of the class.
+     */
+    private static final long serialVersionUID = 0L;
+
     /**
      * The epsilon used for coordinate comparisons.
      * Defines the maximum absolute difference at which coordinates should be considered equal.
@@ -23,9 +30,16 @@ public abstract class PointDComparator implements Comparator<PointD> {
      * {@link PointDComparator} whose {@link #epsilon} overlaps the coordinates of distinct
      * {@link PointD} instances in both dimensions, resulting in the classification of
      * {@link PointD} instances as equal when their {@link PointD#equals} and {@link PointD#hashCode}
-     * results signal inequality. ("Comparison method violates its general contract.")
+     * results signal inequality. ("Comparison method violates its general contract.")</p>
      */
     public final double epsilon;
+
+    /**
+     * Creates a {@link PointDComparator} with an epsilon of zero.
+     */
+    public PointDComparator() {
+        this.epsilon = 0;
+    }
 
     /**
      * Creates a {@link PointDComparator} with the specified epsilon.
@@ -79,7 +93,7 @@ public abstract class PointDComparator implements Comparator<PointD> {
          * or from a simple comparison of the query y-coordinate to the total vertical range.
          * In benchmarks, both work nearly equally well, but binary search has a slight edge.
          * Apparently the closer approximation more than compensates for the additional work.
-         * The code shown below is prefers y-coordinates (PointDComparatorY).
+         * The code shown below prefers y-coordinates (PointDComparatorY).
          */
         /*
         // determine range of y-coordinates

@@ -13,9 +13,22 @@ import org.kynosarges.tektosyne.*;
  * this class only when required by a consumer.</p>
  *
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.0.1
  */
 public final class PointDComparatorY extends PointDComparator {
+    /**
+     * The class fingerprint that is set to indicate serialization
+     * compatibility with a previous version of the class.
+     */
+    private static final long serialVersionUID = 0L;
+
+    /**
+     * Creates a {@link PointDComparatorY} with an epsilon of zero.
+     */
+    public PointDComparatorY() {
+        super();
+    }
+
     /**
      * Creates a {@link PointDComparatorY} with the specified epsilon.
      * @param epsilon the maximum absolute difference at which coordinates should be considered equal

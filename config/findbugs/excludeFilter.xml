@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<!--
+  This file contains some false positive bugs detected by findbugs. Their
+  false positive nature has been analyzed individually and they have been
+  put here to instruct findbugs it must ignore them.
+-->
+<FindBugsFilter>
+
+    <Match>
+        <Class name="org.kynosarges.tektosyne.geometry.RectD"/>
+        <Method name="intersect"/>
+        <Bug pattern="SF_SWITCH_NO_DEFAULT"/>
+    </Match>
+
+    <Match>
+        <Class name="org.kynosarges.tektosyne.geometry.RectD"/>
+        <Method name="intersectsWith"/>
+        <Bug pattern="SF_SWITCH_NO_DEFAULT"/>
+    </Match>
+
+    <Match>
+        <Class name="org.kynosarges.tektosyne.geometry.VoronoiResults"/>
+        <Method name="voronoiRegions"/>
+        <Bug pattern="EI_EXPOSE_REP"/>
+    </Match>
+
+    <Match>
+        <Class name="org.kynosarges.tektosyne.geometry.RegularPolygon"/>
+        <Method name="circumscribe"/>
+        <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+    </Match>
+
+    <Match>
+        <Class name="org.kynosarges.tektosyne.geometry.GeoUtils$ConvexHullVertexComparator"/>
+        <Method name="compare"/>
+        <Bug pattern="CO_COMPARETO_INCORRECT_FLOATING"/>
+    </Match>
+
+    <Match>
+        <Class name="org.kynosarges.tektosyne.geometry.MultiLineIntersection$SplitComparator"/>
+        <Method name="compare"/>
+        <Bug pattern="CO_COMPARETO_INCORRECT_FLOATING"/>
+    </Match>
+
+    <Match>
+        <Class name="org.kynosarges.tektosyne.geometry.LineIntersection"/>
+        <Method name="find"/>
+        <Bug pattern="FE_FLOATING_POINT_EQUALITY"/>
+    </Match>
+
+    <Match>
+        <Class name="org.kynosarges.tektosyne.geometry.Voronoi"/>
+        <Method name="isRightOf"/>
+        <Bug pattern="FE_FLOATING_POINT_EQUALITY"/>
+    </Match>
+
+    <Match>
+        <Class name="org.kynosarges.tektosyne.geometry.Voronoi"/>
+        <Method name="storeVoronoiEdge"/>
+        <Bug pattern="FE_FLOATING_POINT_EQUALITY"/>
+    </Match>
+
+    <Match>
+        <Class name="org.kynosarges.tektosyne.geometry.Voronoi"/>
+        <Method name="priQueueInsert"/>
+        <Bug pattern="FE_FLOATING_POINT_EQUALITY"/>
+    </Match>
+
+</FindBugsFilter>
