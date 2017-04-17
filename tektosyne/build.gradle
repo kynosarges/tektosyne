@@ -7,6 +7,7 @@ apply plugin: 'maven'
 apply plugin: 'maven-publish'
 apply plugin: 'jacoco' // needed for coverall code coverage analysis
 apply plugin: 'java'
+apply plugin: 'findbugs'
 
 sourceCompatibility = source_compatibility
 targetCompatibility = target_compatibility
@@ -101,4 +102,9 @@ dependencies {
     // https://mvnrepository.com/artifact/junit/junit
     testCompile group: 'junit', name: 'junit', version: '4.12'
 
+}
+
+findbugs {
+    sourceSets = [sourceSets.main]
+    excludeFilter = file("$rootProject.projectDir/config/findbugs/excludeFilter.xml")
 }
