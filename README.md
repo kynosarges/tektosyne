@@ -58,7 +58,7 @@ Tektosyne is available via mavenCentral and JCenter:
 ### Gradle
 ```
 dependencies {
-    compile group: 'org.kynosarges', name: 'tektosyne', version: '6.0.0'
+    compile group: 'org.kynosarges', name: 'tektosyne', version: '6.0.1'
 }
 ```
 
@@ -68,7 +68,7 @@ dependencies {
     <dependency>
       <groupId>org.kynosarges</groupId>
       <artifactId>tektosyne</artifactId>
-      <version>6.0.0</version>
+      <version>6.0.1</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>
