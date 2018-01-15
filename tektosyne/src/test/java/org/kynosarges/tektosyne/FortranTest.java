@@ -127,12 +127,12 @@ public class FortranTest {
 
     @Test
     public void testMax() {
-        assertEquals(Double.MIN_VALUE, Fortran.max(new double[] {}), DELTA);
+        assertEquals(Double.NEGATIVE_INFINITY, Fortran.max(new double[] {}), DELTA);
         assertEquals(5d, Fortran.max(new double[] { 5 }), DELTA);
         assertEquals(5d, Fortran.max(new double[] { 2, 5, 1, 3, 4 }), DELTA);
         assertEquals(-1d, Fortran.max(new double[] { -2, -5, -1, -3, -4 }), DELTA);
 
-        assertEquals(Float.MIN_VALUE, Fortran.max(new float[] {}), DELTA);
+        assertEquals(Float.NEGATIVE_INFINITY, Fortran.max(new float[] {}), DELTA);
         assertEquals(5f, Fortran.max(new float[] { 5 }), DELTA);
         assertEquals(5f, Fortran.max(new float[] { 2, 5, 1, 3, 4 }), DELTA);
         assertEquals(-1f, Fortran.max(new float[] { -2, -5, -1, -3, -4 }), DELTA);
