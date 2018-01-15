@@ -17,6 +17,10 @@ repositories {
     mavenCentral()
 }
 
+compileJava.options.encoding = 'UTF-8'
+compileTestJava.options.encoding = 'UTF-8'
+javadoc.options.encoding = 'UTF-8'
+
 sourceCompatibility = source_compatibility
 targetCompatibility = target_compatibility
 

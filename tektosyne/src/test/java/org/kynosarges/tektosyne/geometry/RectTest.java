@@ -50,9 +50,11 @@ public class RectTest {
     public void testCircumscribePoints() {
         assertEquals(rectD, RectD.circumscribe(rectD.min, rectD.max));
         assertEquals(rectD, RectD.circumscribe(rectDminXmaxY, rectDmaxXminY));
+        assertEquals(new RectD(-4, -3, -2, -1), RectD.circumscribe(new PointD(-4, -3), new PointD(-2, -1)));
 
         assertEquals(rectI, RectI.circumscribe(rectI.min, rectI.max));
         assertEquals(rectI, RectI.circumscribe(rectIminXmaxY, rectImaxXminY));
+        assertEquals(new RectI(-4, -3, -2, -1), RectI.circumscribe(new PointI(-4, -3), new PointI(-2, -1)));
     }
 
     @Test
