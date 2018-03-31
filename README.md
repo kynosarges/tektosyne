@@ -47,10 +47,7 @@ Screenshots of two demo dialogs appear below.
 
 ### System Requirements
 
-The Tektosyne library itself requires only the Java SE 8 Compact 1 profile.
-
-The included GUI demo application requires Oracle JRE 8 Update 66 with JavaFX 8 or later, or an equivalent Java runtime environment.
-Windows users should consult Oracle Java on Windows to avoid Oracle’s unfortunate default Windows JRE.
+The Tektosyne library itself requires only the Java SE 8 Compact 1 profile, or the module java.base on Java SE 9 and later. 
 
 ## Dependencies
 Tektosyne is available via mavenCentral and JCenter:
@@ -58,7 +55,7 @@ Tektosyne is available via mavenCentral and JCenter:
 ### Gradle
 ```
 dependencies {
-    compile group: 'org.kynosarges', name: 'tektosyne', version: '6.0.1'
+    compile group: 'org.kynosarges', name: 'tektosyne', version: '6.2.0'
 }
 ```
 
@@ -68,7 +65,7 @@ dependencies {
     <dependency>
       <groupId>org.kynosarges</groupId>
       <artifactId>tektosyne</artifactId>
-      <version>6.0.1</version>
+      <version>6.2.0</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>
@@ -80,6 +77,7 @@ Tektosyne is © 2002–2017 by [Christoph Nahr](http://kynosarges.org/index.html
 ## About this Repository
 The maintainer of the repository is not the original author of tektosyne, but liked the library so much that he decided to upload it to GitHub and distribute it via mavenCentral and jcenter.
 
-This repository is not the official upload site, but was created with the consent of the original author.
+This repository is just a mirror and not the official upload site, but was created with the consent of the original author.
+To report bugs please contact [Christoph Nahr](http://kynosarges.org/index.html)
 
 The maintainer will try to keep the repository in sync with releases published on the [Kynosarges](http://kynosarges.org/Tektosyne.html) website.
