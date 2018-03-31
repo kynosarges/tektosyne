@@ -32,7 +32,7 @@ import org.kynosarges.tektosyne.geometry.*;
  * 
  * @param <T> the type of all nodes in the {@link Graph}
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.1.0
  */
 public class Visibility<T> {
 
@@ -288,7 +288,7 @@ public class Visibility<T> {
                  * If any single recorded node completely obscures the current node, we skip it.
                  * If the current node completely obscures any recorded nodes, we delete those.
                  * 
-                 * We also clear the visiblityFraction for all completely obscured nodes (current
+                 * We also clear the visibleFraction for all completely obscured nodes (current
                  * or recorded) so we won't waste time testing them again in findVisibleNodes.
                  */
                 for (Map.Entry<T, NodeArc> pair: _obscuringNodes.entrySet()) { 

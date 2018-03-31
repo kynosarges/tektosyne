@@ -6,7 +6,7 @@ import static org.junit.Assert.*;
 /**
  * Provides unit tests for class {@link Fortran}.
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.1.0
  */
 public class FortranTest {
     
@@ -127,40 +127,40 @@ public class FortranTest {
 
     @Test
     public void testMax() {
-        assertEquals(Double.MIN_VALUE, Fortran.max(new double[] {}), DELTA);
-        assertEquals(5d, Fortran.max(new double[] { 5 }), DELTA);
-        assertEquals(5d, Fortran.max(new double[] { 2, 5, 1, 3, 4 }), DELTA);
+        assertEquals(Double.NEGATIVE_INFINITY, Fortran.max(new double[] {}), DELTA);
+        assertEquals(-5d, Fortran.max(new double[] { -5 }), DELTA);
+        assertEquals(5d, Fortran.max(new double[] { -2, 5, 1, 3, 4 }), DELTA);
 
-        assertEquals(Float.MIN_VALUE, Fortran.max(new float[] {}), DELTA);
-        assertEquals(5f, Fortran.max(new float[] { 5 }), DELTA);
-        assertEquals(5f, Fortran.max(new float[] { 2, 5, 1, 3, 4 }), DELTA);
+        assertEquals(Float.NEGATIVE_INFINITY, Fortran.max(new float[] {}), DELTA);
+        assertEquals(-5f, Fortran.max(new float[] { -5 }), DELTA);
+        assertEquals(5f, Fortran.max(new float[] { -2, 5, 1, 3, 4 }), DELTA);
 
         assertEquals(Integer.MIN_VALUE, Fortran.max(new int[] {}));
-        assertEquals(5, Fortran.max(new int[] { 5 }));
-        assertEquals(5, Fortran.max(new int[] { 2, 5, 1, 3, 4 }));
+        assertEquals(-5, Fortran.max(new int[] { -5 }));
+        assertEquals(5, Fortran.max(new int[] { -2, 5, 1, 3, 4 }));
 
         assertEquals(Long.MIN_VALUE, Fortran.max(new long[] {}));
-        assertEquals(5L, Fortran.max(new long[] { 5 }));
-        assertEquals(5L, Fortran.max(new long[] { 2, 5, 1, 3, 4 }));
+        assertEquals(-5L, Fortran.max(new long[] { -5 }));
+        assertEquals(5L, Fortran.max(new long[] { -2, 5, 1, 3, 4 }));
     }
 
     @Test
     public void testMin() {
-        assertEquals(Double.MAX_VALUE, Fortran.min(new double[] {}), DELTA);
+        assertEquals(Double.POSITIVE_INFINITY, Fortran.min(new double[] {}), DELTA);
         assertEquals(5d, Fortran.min(new double[] { 5 }), DELTA);
-        assertEquals(1d, Fortran.min(new double[] { 2, 5, 1, 3, 4 }), DELTA);
+        assertEquals(-2d, Fortran.min(new double[] { -2, 5, 1, 3, 4 }), DELTA);
 
-        assertEquals(Float.MAX_VALUE, Fortran.min(new float[] {}), DELTA);
+        assertEquals(Float.POSITIVE_INFINITY, Fortran.min(new float[] {}), DELTA);
         assertEquals(5f, Fortran.min(new float[] { 5 }), DELTA);
-        assertEquals(1f, Fortran.min(new float[] { 2, 5, 1, 3, 4 }), DELTA);
+        assertEquals(-2f, Fortran.min(new float[] { -2, 5, 1, 3, 4 }), DELTA);
 
         assertEquals(Integer.MAX_VALUE, Fortran.min(new int[] {}));
         assertEquals(5, Fortran.min(new int[] { 5 }));
-        assertEquals(1, Fortran.min(new int[] { 2, 5, 1, 3, 4 }));
+        assertEquals(-2, Fortran.min(new int[] { -2, 5, 1, 3, 4 }));
 
         assertEquals(Long.MAX_VALUE, Fortran.min(new long[] {}));
         assertEquals(5L, Fortran.min(new long[] { 5 }));
-        assertEquals(1L, Fortran.min(new long[] { 2, 5, 1, 3, 4 }));
+        assertEquals(-2L, Fortran.min(new long[] { -2, 5, 1, 3, 4 }));
     }
 
     @Test

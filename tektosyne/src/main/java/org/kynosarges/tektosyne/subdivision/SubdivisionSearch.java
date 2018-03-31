@@ -18,11 +18,11 @@ import org.kynosarges.tektosyne.geometry.*;
  * The algorithm to incrementally construct a search structure for the trapezoidal map of a
  * planar subdivision was adapted from Mark de Berg et al., <em>Computational Geometry</em>
  * (3rd ed.), Springer-Verlag 2008, p.122-137. This implementation uses null half-edges and
- * {@link Double#MAX_VALUE} to indicate the unbounded face, rather than placing an actual
- * bounding rectangle around the {@link Subdivision}.</p>
+ * {@link Double#POSITIVE_INFINITY} to indicate the unbounded face, rather than placing an
+ * actual bounding rectangle around the {@link Subdivision}.</p>
  * 
  * @author Christoph Nahr
- * @version 6.0.1
+ * @version 6.1.0
  */
 public class SubdivisionSearch {
 
@@ -155,13 +155,13 @@ public class SubdivisionSearch {
             if (obj instanceof VertexNode) {
                 final VertexNode vertexNode = (VertexNode) obj;
 
-                if (vertexNode.left instanceof VertexNode)
-                    assert(PointDComparatorX.compareEpsilon(vertexNode.vertex,
-                            ((VertexNode) vertexNode.left).vertex, epsilon) > 0);
+                assert !(vertexNode.left instanceof VertexNode) ||
+                        (PointDComparatorX.compareEpsilon(vertexNode.vertex,
+                        ((VertexNode) vertexNode.left).vertex, epsilon) > 0);
 
-                if (vertexNode.right instanceof VertexNode)
-                    assert(PointDComparatorX.compareEpsilon(vertexNode.vertex,
-                            ((VertexNode) vertexNode.right).vertex, epsilon) < 0);
+                assert !(vertexNode.right instanceof VertexNode) ||
+                        (PointDComparatorX.compareEpsilon(vertexNode.vertex,
+                        ((VertexNode) vertexNode.right).vertex, epsilon) < 0);
             }
 
             if (obj instanceof Node) {
@@ -469,17 +469,17 @@ public class SubdivisionSearch {
 
         /**
          * The {@link PointD} vertex that marks the left boundary of the {@link Trapezoid}, if any.
-         * The {@link PointD#x} coordinate is set to {@link Double#MIN_VALUE} if the left side
-         * of the {@link Trapezoid} opens toward to the unbounded {@link SubdivisionFace}.
+         * The {@link PointD#x} coordinate is set to {@link Double#NEGATIVE_INFINITY} if the left
+         * side of the {@link Trapezoid} opens toward to the unbounded {@link SubdivisionFace}.
          */
-        PointD leftVertex = new PointD(Double.MIN_VALUE, 0);
+        PointD leftVertex = new PointD(Double.NEGATIVE_INFINITY, 0);
 
         /**
          * The {@link PointD} vertex that marks the right boundary of the {@link Trapezoid}, if any.
-         * The {@link PointD#x} coordinate is set to {@link Double#MAX_VALUE} if the right side
-         * of the {@link Trapezoid} opens toward to the unbounded {@link SubdivisionFace}.
+         * The {@link PointD#x} coordinate is set to {@link Double#POSITIVE_INFINITY} if the right
+         * side of the {@link Trapezoid} opens toward to the unbounded {@link SubdivisionFace}.
          */
-        PointD rightVertex = new PointD(Double.MAX_VALUE, 0);
+        PointD rightVertex = new PointD(Double.POSITIVE_INFINITY, 0);
 
         /**
          * The {@link Trapezoid} to the left of the current instance that
@@ -572,7 +572,7 @@ public class SubdivisionSearch {
         /**
          * Gets the {@link SubdivisionFace} that contains the {@link Trapezoid}.
          * Returns {@link SubdivisionElement#NULL_FACE} if {@link #topEdge}
-         * and {@link BottomEdge} are both {@code null}.
+         * and {@link #bottomEdge} are both {@code null}.
          * 
          * @return a {@link SubdivisionElement} wrapping the {@link SubdivisionFace}
          *         that contains the {@link Trapezoid}
@@ -758,7 +758,7 @@ public class SubdivisionSearch {
          * @param edgeLine the {@link LineD} representation of {@code edge}
          * @param epsilon the maximum absolute difference at which coordinates should be considered equal
          * @throws AssertionError if {@code epsilon} is equal to or less than zero,
-         *         or {@code edgeLine} is not the {@link LineD} representation of {@link edge},
+         *         or {@code edgeLine} is not the {@link LineD} representation of {@code edge},
          *         or {@code edge} is not oriented as described above
          * @throws NullPointerException if {@code edge} or {@code edgeLine} is {@code null}
          */
@@ -787,11 +787,11 @@ public class SubdivisionSearch {
 
             switch (result) {
                 case START:
-                    // should have been pre-empted by VertexNode
+                    // should have been preempted by VertexNode
                     return new SubdivisionElement(edgeLine.start);
 
                 case END:
-                    // should have been pre-empted by VertexNode
+                    // should have been preempted by VertexNode
                     return new SubdivisionElement(edgeLine.end);
 
                 case BETWEEN:

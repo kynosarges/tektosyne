@@ -1,18 +1,23 @@
 package org.kynosarges.tektosyne.geometry;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
+
 import org.kynosarges.tektosyne.*;
 
 /**
  * Provides standard algorithms and auxiliary methods for computational geometry.
- * All <b>random...</b> methods use the standard {@link Math#random} method for random
- * number generation and are therefore thread-safe, though access of that method by
- * multiple threads may lead to performance degradation.
+ * All <b>random...</b> methods use the {@link ThreadLocalRandom#current}
+ * instance of {@link ThreadLocalRandom} for random number generation,
+ * and are therefore both thread-safe and non-blocking.
  * 
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.2.0
  */
 public final class GeoUtils {
+
+    private final static ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
+
     /**
      * Creates a {@link GeoUtils} instance.
      * Private to prevent instantiation.
@@ -21,7 +26,7 @@ public final class GeoUtils {
 
     /**
      * Connects the specified {@link PointD} coordinates with {@link LineD} instances.
-     * Returns an empty arry if {@code points} contains less than two elements. Otherwise,
+     * Returns an empty array if {@code points} contains less than two elements. Otherwise,
      * returns an array with the same number of elements as {@code points} if {@code isClosed}
      * is {@code true}, else one element less.
      * <p>
@@ -33,7 +38,7 @@ public final class GeoUtils {
      * @param isClosed {@code true} to create a {@link LineD} from the last to the first
      *                 {@code points} element, else {@code false}.
      * @param points the array of {@link PointD} coordinates to connect
-     * @return an array of {@link LineD} instaces connecting all {@code points} in the given order
+     * @return an array of {@link LineD} instances connecting all {@code points} in the given order
      * @throws NullPointerException if {@code points} is {@code null} or contains any {@code null} elements
      */
     public static LineD[] connectPoints(boolean isClosed, PointD... points) {
@@ -59,7 +64,7 @@ public final class GeoUtils {
      * a new array containing the same elements. Any {@code points} elements that are coincident
      * or collinear with other elements are always removed from the returned array, however.
      * <p>
-     * {@link convexHull} performs a Graham scan with an asymptotic runtime of O(n log n).
+     * {@code convexHull} performs a Graham scan with an asymptotic runtime of O(n log n).
      * This Java implementation was adapted from the {@code Graham} algorithm by Joseph O’Rourke,
      * <em>Computational Geometry in C</em> (2nd ed.), Cambridge University Press 1998, p.72ff.</p>
      * 
@@ -264,7 +269,7 @@ public final class GeoUtils {
      * Never returns {@code null}. The specified {@code polygon} is implicitly assumed to be closed,
      * with an edge connecting its first and last vertex. Therefore, all vertices should be different.
      * <p>
-     * {@link pointInPolygon} performs a ray crossings algorithm with an asymptotic runtime of O(n).
+     * {@code pointInPolygon} performs a ray crossings algorithm with an asymptotic runtime of O(n).
      * This Java implementation was adapted from the {@code InPoly1} algorithm by Joseph O’Rourke,
      * <em>Computational Geometry in C</em> (2nd ed.), Cambridge University Press 1998, p.244.</p>
      * 
@@ -470,10 +475,10 @@ public final class GeoUtils {
             throw new IllegalArgumentException("height <= 0");
 
         return new LineD(
-            x + Math.random() * width,
-            y + Math.random() * height,
-            x + Math.random() * width,
-            y + Math.random() * height);
+            x + RANDOM.nextDouble(width),
+            y + RANDOM.nextDouble(height),
+            x + RANDOM.nextDouble(width),
+            y + RANDOM.nextDouble(height));
     }
 
     /**
@@ -493,8 +498,30 @@ public final class GeoUtils {
             throw new IllegalArgumentException("height <= 0");
 
         return new PointD(
-            x + Math.random() * width,
-            y + Math.random() * height);
+            x + RANDOM.nextDouble(width),
+            y + RANDOM.nextDouble(height));
+    }
+
+    /**
+     * Creates a random {@link PointD} within the specified bounding area.
+     * @param bounds a {@link RectD} defining the the bounding area
+     * @return a {@link PointD} with random {@link PointD#x} and {@link PointD#y}
+     *         coordinates within {@code bounds}
+     * @throws IllegalArgumentException if {@link RectD#width} or {@link RectD#height}
+     *                                  of {@code bounds} is zero
+     * @throws NullPointerException if {@code bounds} is {@code null}
+     */
+    public static PointD randomPoint(RectD bounds) {
+
+        final double width = bounds.width(), height = bounds.height();
+        if (width == 0)
+            throw new IllegalArgumentException("bounds.width == 0");
+        if (height == 0)
+            throw new IllegalArgumentException("bounds.height == 0");
+
+        return new PointD(
+                bounds.min.x + RANDOM.nextDouble(width),
+                bounds.min.y + RANDOM.nextDouble(height));
     }
 
     /**
@@ -522,8 +549,8 @@ public final class GeoUtils {
 
         for (int i = 0; i < points.length; i++)
             points[i] = new PointD(
-                bounds.min.x + Math.random() * width,
-                bounds.min.y + Math.random() * height);
+                bounds.min.x + RANDOM.nextDouble(width),
+                bounds.min.y + RANDOM.nextDouble(height));
 
         return points;
     }
@@ -569,8 +596,8 @@ public final class GeoUtils {
         for (int i = 0; i < count; i++) {
             do {
                 point = new PointD(
-                    bounds.min.x + Math.random() * width,
-                    bounds.min.y + Math.random() * height);
+                    bounds.min.x + RANDOM.nextDouble(width),
+                    bounds.min.y + RANDOM.nextDouble(height));
                 
                 if (points.isEmpty()) break;
 
@@ -618,7 +645,7 @@ public final class GeoUtils {
         for (double degrees = 0; degrees < 360; degrees += 6.0) {
 
             // random increment of angle for next vertex
-            degrees += Math.random() * 110;
+            degrees += RANDOM.nextDouble(110);
             if (degrees >= 360) break;
             final double radians = degrees * Angle.DEGREES_TO_RADIANS;
 
@@ -632,11 +659,38 @@ public final class GeoUtils {
             double factor = Math.min(dxLimit, dyLimit);
 
             // additional random shortening to determine vertex
-            factor *= Math.random();
+            factor *= RANDOM.nextDouble();
             polygon.add(new PointD(center.x + dx * factor, center.y + dy * factor));
         }
 
         return polygon.toArray(new PointD[polygon.size()]);
+    }
+    /**
+     * Creates a random {@link RectD} within the specified bounding area.
+     * The {@link RectD#min} coordinates are positively offset from {@code x}
+     * and {@code y} by random values from zero to {@code width/2 - 1} and
+     * {@code height/2 - 1}, respectively. The {@link RectD#max} coordinates are
+     * likewise negatively offset from {@code x + width} and {@code y + height}.
+     *
+     * @param x the smallest x-coordinate of the bounding area
+     * @param y the smallest y-coordinate of the bounding area
+     * @param width the horizontal extension of the bounding area
+     * @param height the vertical extension of the bounding area
+     * @return a {@link RectD} with random {@link RectD#min} and {@link RectD#max} coordinates
+     *         ranging from ({@code x}, {@code y}) to ({@code x + width}, {@code y + height})
+     * @throws IllegalArgumentException if {@code width} or {@code height} is equal to or less than zero
+     */
+    public static RectD randomRect(double x, double y, double width, double height) {
+        if (width <= 0)
+            throw new IllegalArgumentException("width <= 0");
+        if (height <= 0)
+            throw new IllegalArgumentException("height <= 0");
+
+        return new RectD(
+                x + RANDOM.nextDouble(width / 2),
+                y + RANDOM.nextDouble(height / 2),
+                x + width - RANDOM.nextDouble(width / 2),
+                y + height - RANDOM.nextDouble(height / 2));
     }
 
     /**

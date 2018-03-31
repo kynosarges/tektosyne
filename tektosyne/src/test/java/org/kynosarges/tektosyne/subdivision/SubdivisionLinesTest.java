@@ -11,7 +11,7 @@ import org.kynosarges.tektosyne.geometry.*;
  * Also provides factory methods to create {@link Subdivision} instances from line collections.
  * 
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.2.0
  */
 public class SubdivisionLinesTest {
     /*
@@ -133,18 +133,24 @@ public class SubdivisionLinesTest {
 
     @Test
     public void fromLinesSquare() {
+        createSquare(true);
+    }
+
+    public static Subdivision createSquare(boolean test) {
         final PointD[] points = {
-            new PointD(-1, -2), new PointD(-1, 2), new PointD(1, 2), new PointD(1, -2)
+                new PointD(-1, -2), new PointD(-1, 2), new PointD(1, 2), new PointD(1, -2)
         };
         final LineD[] lines = {
-            new LineD(points[0], points[1]), new LineD(points[1], points[2]),
-            new LineD(points[3], points[2]), new LineD(points[0], points[3])
+                new LineD(points[0], points[1]), new LineD(points[1], points[2]),
+                new LineD(points[3], points[2]), new LineD(points[0], points[3])
         };
         final Subdivision division = Subdivision.fromLines(lines, 0);
         division.validate();
+        if (!test) return division;
 
         assertArrayEquals(lines, division.toLines());
         checkLinesSquare(points, division);
+        return division;
     }
 
     @Test
@@ -188,7 +194,7 @@ public class SubdivisionLinesTest {
         }, edges);
 
         assertArrayEquals(new SubdivisionFace[] {
-            new SubdivisionFace(division, 0, null, Arrays.asList(edges[0])),
+            new SubdivisionFace(division, 0, null, Collections.singletonList(edges[0])),
             new SubdivisionFace(division, 1, edges[1], null),
         }, faces);
 
@@ -216,19 +222,25 @@ public class SubdivisionLinesTest {
 
     @Test
     public void fromLinesStar() {
+        createStar(true);
+    }
+
+    public static Subdivision createStar(boolean test) {
         final PointD[] points = {
-            new PointD(-1, -2), new PointD(0, 0),
-            new PointD(-1, 2), new PointD(1, 2), new PointD(1, -2)
+                new PointD(-1, -2), new PointD(0, 0),
+                new PointD(-1, 2), new PointD(1, 2), new PointD(1, -2)
         };
         final LineD[] lines = {
-            new LineD(points[0], points[1]), new LineD(points[1], points[2]),
-            new LineD(points[1], points[3]), new LineD(points[4], points[1])
+                new LineD(points[0], points[1]), new LineD(points[1], points[2]),
+                new LineD(points[1], points[3]), new LineD(points[4], points[1])
         };
         final Subdivision division = Subdivision.fromLines(lines, 0);
         division.validate();
+        if (!test) return division;
 
         assertArrayEquals(lines, division.toLines());
         checkLinesStar(points, division);
+        return division;
     }
 
     @Test
@@ -274,7 +286,7 @@ public class SubdivisionLinesTest {
         }, edges);
 
         assertArrayEquals(new SubdivisionFace[] {
-            new SubdivisionFace(division, 0, null, Arrays.asList(edges[0])),
+            new SubdivisionFace(division, 0, null, Collections.singletonList(edges[0])),
         }, faces);
 
         checkFace(edges[0], new PointD[] {
@@ -420,8 +432,8 @@ public class SubdivisionLinesTest {
         }, edges);
 
         assertArrayEquals(new SubdivisionFace[] {
-            new SubdivisionFace(division, 0, null, Arrays.asList(edges[0])),
-            new SubdivisionFace(division, 1, edges[1], Arrays.asList(edges[6])),
+            new SubdivisionFace(division, 0, null, Collections.singletonList(edges[0])),
+            new SubdivisionFace(division, 1, edges[1], Collections.singletonList(edges[6])),
             new SubdivisionFace(division, 2, edges[7], null),
         }, faces);
 
@@ -460,18 +472,23 @@ public class SubdivisionLinesTest {
 
     @Test
     public void fromLinesDiamond() {
+        createLinesDiamond(true);
+    }
+
+    public static Subdivision createLinesDiamond(boolean test) {
         final PointD[] points = {
-            new PointD(0, -4), new PointD(-6, 0), new PointD(-3, 0),
-            new PointD(3, 0), new PointD(6, 0), new PointD(0, 4)
+                new PointD(0, -4), new PointD(-6, 0), new PointD(-3, 0),
+                new PointD(3, 0), new PointD(6, 0), new PointD(0, 4)
         };
         final LineD[] lines = {
-            new LineD(points[0], points[1]), new LineD(points[1], points[5]),
-            new LineD(points[0], points[2]), new LineD(points[2], points[5]),
-            new LineD(points[0], points[3]), new LineD(points[3], points[5]),
-            new LineD(points[0], points[4]), new LineD(points[4], points[5])
+                new LineD(points[0], points[1]), new LineD(points[1], points[5]),
+                new LineD(points[0], points[2]), new LineD(points[2], points[5]),
+                new LineD(points[0], points[3]), new LineD(points[3], points[5]),
+                new LineD(points[0], points[4]), new LineD(points[4], points[5])
         };
         final Subdivision division = Subdivision.fromLines(lines, 0);
         division.validate();
+        if (!test) return division;
 
         assertArrayEquals(lines, division.toLines());
         final SubdivisionEdge[] edges = division.edges().values().toArray(new SubdivisionEdge[16]);
@@ -487,29 +504,29 @@ public class SubdivisionLinesTest {
         assertEquals(vertices, division.vertices());
 
         assertArrayEquals(new SubdivisionEdge[] {
-            new SubdivisionEdge(0, points[0], edges[1], faces[0], edges[2], edges[13]),
-            new SubdivisionEdge(1, points[1], edges[0], faces[1], edges[4], edges[3]),
-            new SubdivisionEdge(2, points[1], edges[3], faces[0], edges[15], edges[0]),
-            new SubdivisionEdge(3, points[5], edges[2], faces[1], edges[1], edges[6]),
-            new SubdivisionEdge(4, points[0], edges[5], faces[1], edges[6], edges[1]),
-            new SubdivisionEdge(5, points[2], edges[4], faces[2], edges[8], edges[7]),
-            new SubdivisionEdge(6, points[2], edges[7], faces[1], edges[3], edges[4]),
-            new SubdivisionEdge(7, points[5], edges[6], faces[2], edges[5], edges[10]),
-            new SubdivisionEdge(8, points[0], edges[9], faces[2], edges[10], edges[5]),
-            new SubdivisionEdge(9, points[3], edges[8], faces[3], edges[12], edges[11]),
-            new SubdivisionEdge(10, points[3], edges[11], faces[2], edges[7], edges[8]),
-            new SubdivisionEdge(11, points[5], edges[10], faces[3], edges[9], edges[14]),
-            new SubdivisionEdge(12, points[0], edges[13], faces[3], edges[14], edges[9]),
-            new SubdivisionEdge(13, points[4], edges[12], faces[0], edges[0], edges[15]),
-            new SubdivisionEdge(14, points[4], edges[15], faces[3], edges[11], edges[12]),
-            new SubdivisionEdge(15, points[5], edges[14], faces[0], edges[13], edges[2]),
+                new SubdivisionEdge(0, points[0], edges[1], faces[0], edges[2], edges[13]),
+                new SubdivisionEdge(1, points[1], edges[0], faces[1], edges[4], edges[3]),
+                new SubdivisionEdge(2, points[1], edges[3], faces[0], edges[15], edges[0]),
+                new SubdivisionEdge(3, points[5], edges[2], faces[1], edges[1], edges[6]),
+                new SubdivisionEdge(4, points[0], edges[5], faces[1], edges[6], edges[1]),
+                new SubdivisionEdge(5, points[2], edges[4], faces[2], edges[8], edges[7]),
+                new SubdivisionEdge(6, points[2], edges[7], faces[1], edges[3], edges[4]),
+                new SubdivisionEdge(7, points[5], edges[6], faces[2], edges[5], edges[10]),
+                new SubdivisionEdge(8, points[0], edges[9], faces[2], edges[10], edges[5]),
+                new SubdivisionEdge(9, points[3], edges[8], faces[3], edges[12], edges[11]),
+                new SubdivisionEdge(10, points[3], edges[11], faces[2], edges[7], edges[8]),
+                new SubdivisionEdge(11, points[5], edges[10], faces[3], edges[9], edges[14]),
+                new SubdivisionEdge(12, points[0], edges[13], faces[3], edges[14], edges[9]),
+                new SubdivisionEdge(13, points[4], edges[12], faces[0], edges[0], edges[15]),
+                new SubdivisionEdge(14, points[4], edges[15], faces[3], edges[11], edges[12]),
+                new SubdivisionEdge(15, points[5], edges[14], faces[0], edges[13], edges[2]),
         }, edges);
 
         assertArrayEquals(new SubdivisionFace[] {
-            new SubdivisionFace(division, 0, null, Arrays.asList(edges[0])),
-            new SubdivisionFace(division, 1, edges[1], null),
-            new SubdivisionFace(division, 2, edges[5], null),
-            new SubdivisionFace(division, 3, edges[9], null),
+                new SubdivisionFace(division, 0, null, Collections.singletonList(edges[0])),
+                new SubdivisionFace(division, 1, edges[1], null),
+                new SubdivisionFace(division, 2, edges[5], null),
+                new SubdivisionFace(division, 3, edges[9], null),
         }, faces);
 
         checkFace(edges[0], new PointD[] { points[0], points[1], points[5], points[4] }, -48, PointD.EMPTY);
@@ -519,6 +536,7 @@ public class SubdivisionLinesTest {
 
         final List<SubdivisionEdge> cycles = division.getZeroAreaCycles();
         assertEquals(0, cycles.size());
+        return division;
     }
 
     private static void checkFace(

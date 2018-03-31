@@ -15,7 +15,7 @@ import org.kynosarges.tektosyne.*;
  * of a given {@link RegularPolygon} return a new instance instead.</p>
  * 
  * @author Christoph Nahr
- * @version 6.0.1
+ * @version 6.1.0
  */
 public class RegularPolygon {
     /**
@@ -143,7 +143,7 @@ public class RegularPolygon {
         if (orientation == null)
             throw new NullPointerException("orientation");
         if (vertexNeighbors && sides > 4)
-            throw new IllegalArgumentException("vertexNeightbors && sides > 4");
+            throw new IllegalArgumentException("vertexNeighbors && sides > 4");
 
         this.length = length;
         this.sides = sides;

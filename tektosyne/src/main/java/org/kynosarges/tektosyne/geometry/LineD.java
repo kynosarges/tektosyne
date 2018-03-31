@@ -7,7 +7,7 @@ package org.kynosarges.tektosyne.geometry;
  * are calculated on demand. Use {@link LineI} to represent lines with {@link Integer} coordinates.
  *
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.1.0
  */
 public final class LineD {
 
@@ -242,7 +242,7 @@ public final class LineD {
      * 
      * @param line the {@link LineD} to intersect with this instance
      * @param epsilon the maximum absolute difference at which coordinates and intermediate results
-     *                should be considered equal. Always raised to a minium of 1e-10.
+     *                should be considered equal. Always raised to a minimum of 1e-10.
      * @return a {@link LineIntersection} that describes if and how this instance
      *         intersects the specified {@code line}
      * @throws NullPointerException if {@code line} is {@code null}

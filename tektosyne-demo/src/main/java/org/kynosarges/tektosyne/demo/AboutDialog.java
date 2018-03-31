@@ -15,7 +15,7 @@ import javafx.stage.*;
 /**
  * Shows a modal dialog with information about the application.
  * @author Christoph Nahr
- * @version 2.0.0
+ * @version 6.1.0
  */
 public class AboutDialog extends Stage {
 

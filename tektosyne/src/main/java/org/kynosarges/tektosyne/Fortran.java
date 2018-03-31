@@ -6,7 +6,7 @@ package org.kynosarges.tektosyne;
  * Fortran 90 functions. Overloads for various numeric types are provided to avoid type casting.
  * 
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.1.0
  */
 public final class Fortran {
     /**
@@ -161,14 +161,14 @@ public final class Fortran {
 
     /**
      * Returns the largest of the specified {@link Double} numbers.
-     * Returns {@link Double#MIN_VALUE} if no arguments are supplied.
+     * Returns {@link Double#NEGATIVE_INFINITY} if no arguments are supplied.
      * 
      * @param args the {@link Double} numbers to compare with each other.
      * @return the largest {@link Double} number found among {@code args}
      * @throws NullPointerException if {@code args} is {@code null}
      */
     public static double max(double... args) {
-        double max = Double.MIN_VALUE;
+        double max = Double.NEGATIVE_INFINITY;
         for (double n: args)
             if (n > max) max = n;
 
@@ -177,14 +177,14 @@ public final class Fortran {
 
     /**
      * Returns the largest of the specified {@link Float} numbers.
-     * Returns {@link Float#MIN_VALUE} if no arguments are supplied.
+     * Returns {@link Float#NEGATIVE_INFINITY} if no arguments are supplied.
      * 
      * @param args the {@link Float} numbers to compare with each other.
      * @return the largest {@link Float} number found among {@code args}
      * @throws NullPointerException if {@code args} is {@code null}
      */
     public static float max(float... args) {
-        float max = Float.MIN_VALUE;
+        float max = Float.NEGATIVE_INFINITY;
         for (float n: args)
             if (n > max) max = n;
 
@@ -225,14 +225,14 @@ public final class Fortran {
 
     /**
      * Returns the smallest of the specified {@link Double} numbers.
-     * Returns {@link Double#MAX_VALUE} if no arguments are supplied.
+     * Returns {@link Double#POSITIVE_INFINITY} if no arguments are supplied.
      * 
      * @param args the {@link Double} numbers to compare with each other.
      * @return the smallest {@link Double} number found among {@code args}
      * @throws NullPointerException if {@code args} is {@code null}
      */
     public static double min(double... args) {
-        double min = Double.MAX_VALUE;
+        double min = Double.POSITIVE_INFINITY;
         for (double n: args)
             if (n < min) min = n;
 
@@ -241,14 +241,14 @@ public final class Fortran {
 
     /**
      * Returns the smallest of the specified {@link Float} numbers.
-     * Returns {@link Float#MAX_VALUE} if no arguments are supplied.
+     * Returns {@link Float#POSITIVE_INFINITY} if no arguments are supplied.
      * 
      * @param args the {@link Float} numbers to compare with each other.
      * @return the smallest {@link Float} number found among {@code args}
      * @throws NullPointerException if {@code args} is {@code null}
      */
     public static float min(float... args) {
-        float min = Float.MAX_VALUE;
+        float min = Float.POSITIVE_INFINITY;
         for (float n: args)
             if (n < min) min = n;
 
@@ -325,7 +325,8 @@ public final class Fortran {
 
     /**
      * Returns the first {@link Integer} number modulo the second number.
-     * Returns the result of the standard {@link Math#floorMod} method. See there for details.
+     * Returns the result of the standard {@link Math#floorMod(int, int)} method.
+     * See there for details.
      * 
      * @param a the {@link Integer} number indicating the dividend
      * @param p the {@link Integer} number indicating the divisor
@@ -338,7 +339,8 @@ public final class Fortran {
 
     /**
      * Returns the first {@link Long} number modulo the second number.
-     * Returns the result of the standard {@link Math#floorMod} method. See there for details.
+     * Returns the result of the standard {@link Math#floorMod(long, long)} method.
+     * See there for details.
      * 
      * @param a the {@link Long} number indicating the dividend
      * @param p the {@link Long} number indicating the divisor

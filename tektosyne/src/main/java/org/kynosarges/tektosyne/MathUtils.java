@@ -1,13 +1,21 @@
 package org.kynosarges.tektosyne;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Provides general mathematical utility methods.
+ * All <b>getAny...</b> methods use the {@link ThreadLocalRandom#current}
+ * instance of {@link ThreadLocalRandom} for random number generation,
+ * and are therefore both thread-safe and non-blocking.
+ *
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.2.0
  */
 public final class MathUtils {
+
+    private final static ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
+
     /**
      * Creates a {@link MathUtils} instance.
      * Private to prevent instantiation.
@@ -101,7 +109,7 @@ public final class MathUtils {
      */
     public static <T> T getAny(T[] array) {
         try {
-            return array[(int) (Math.random() * array.length)];
+            return array[RANDOM.nextInt(array.length)];
         }
         catch (ArrayIndexOutOfBoundsException e) {
             throw new IllegalArgumentException("empty array", e);
@@ -120,7 +128,7 @@ public final class MathUtils {
      * @throws NullPointerException if {@code collection} is {@code null}
      */
     public static <T> T getAny(Collection<T> collection) {
-        int index = (int) (Math.random() * collection.size());
+        int index = RANDOM.nextInt(collection.size());
 
         for(T t: collection)
             if (--index < 0) return t;
@@ -141,7 +149,7 @@ public final class MathUtils {
      */
     public static <T> T getAny(List<T> list) {
         try {
-            return list.get((int) (Math.random() * list.size()));
+            return list.get(RANDOM.nextInt(list.size()));
         }
         catch (IndexOutOfBoundsException e) {
             throw new IllegalArgumentException("empty list", e);

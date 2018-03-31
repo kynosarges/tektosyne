@@ -23,7 +23,7 @@ import org.kynosarges.tektosyne.subdivision.*;
  * appends any new results to a scrollable {@link TextArea}.
  * 
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.1.0
  */
 public class BenchmarkDialog extends Stage {
 
@@ -231,9 +231,7 @@ public class BenchmarkDialog extends Stage {
         if (Thread.interrupted())
             throw new CancellationException();
 
-        Platform.runLater(() -> {
-            _output.appendText(text);
-        });
+        Platform.runLater(() -> _output.appendText(text));
     }
 
     // ----- Test Suites -----
@@ -448,7 +446,7 @@ public class BenchmarkDialog extends Stage {
 
     private final static TestCase[] NEAREST_POINT_TESTS = {
         new TestCase("Unsorted", 1, (NearestPointConsumer) (c, p, q) -> GeoUtils.nearestPoint(p, q)),
-        new TestCase("Sorted",   1, (NearestPointConsumer) (c, p, q) -> c.findNearest(p, q))
+        new TestCase("Sorted",   1, (NearestPointConsumer) PointDComparator::findNearest)
     };
 
     private void nearestPointTest() {
@@ -720,8 +718,8 @@ public class BenchmarkDialog extends Stage {
             // test cases: BruteForce, Ordered, Randomized
             SUBDIVISION_SEARCH_TESTS[0].value = (Function<PointD, SubdivisionElement>)
                     (q -> division.find(q, division.epsilon));
-            SUBDIVISION_SEARCH_TESTS[1].value = (Function<PointD, SubdivisionElement>) (q -> ordered.find(q));
-            SUBDIVISION_SEARCH_TESTS[2].value = (Function<PointD, SubdivisionElement>) (q -> randomized.find(q));
+            SUBDIVISION_SEARCH_TESTS[1].value = (Function<PointD, SubdivisionElement>) ordered::find;
+            SUBDIVISION_SEARCH_TESTS[2].value = (Function<PointD, SubdivisionElement>) randomized::find;
 
             // preload code and clear results
             for (TestCase test: SUBDIVISION_SEARCH_TESTS) {

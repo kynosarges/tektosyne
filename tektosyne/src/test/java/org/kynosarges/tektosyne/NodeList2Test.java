@@ -18,7 +18,7 @@ import java.util.*;
  * http://gee.cs.oswego.edu/cgi-bin/viewcvs.cgi/jsr166/src/test/tck/LinkedListTest.java?view=co
  * </p>
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.1.0
  */
 @SuppressWarnings({ "rawtypes", "unchecked"})
 public class NodeList2Test {
@@ -27,20 +27,20 @@ public class NodeList2Test {
      */
     private static final int SIZE = 20;
 
-    private static final Integer ONE   = new Integer(1);
-    private static final Integer TWO   = new Integer(2);
-    private static final Integer THREE = new Integer(3);
-    private static final Integer FOUR  = new Integer(4);
+    private static final Integer ONE   = Integer.valueOf(1);
+    private static final Integer TWO   = Integer.valueOf(2);
+    private static final Integer THREE = Integer.valueOf(3);
+    private static final Integer FOUR  = Integer.valueOf(4);
 
     /**
      * Returns a new queue of given size containing consecutive
      * Integers 0 ... n.
      */
     private NodeList<Integer> populatedQueue(int n) {
-        NodeList<Integer> q = new NodeList<Integer>();
+        NodeList<Integer> q = new NodeList<>();
         assertTrue(q.isEmpty());
         for (int i = 0; i < n; ++i)
-            assertTrue(q.offer(new Integer(i)));
+            assertTrue(q.offer(Integer.valueOf(i)));
         assertFalse(q.isEmpty());
         assertEquals(n, q.size());
         return q;
@@ -85,9 +85,9 @@ public class NodeList2Test {
     public void testEmpty() {
         NodeList q = new NodeList();
         assertTrue(q.isEmpty());
-        q.add(new Integer(1));
+        q.add(Integer.valueOf(1));
         assertFalse(q.isEmpty());
-        q.add(new Integer(2));
+        q.add(Integer.valueOf(2));
         q.remove();
         q.remove();
         assertTrue(q.isEmpty());
@@ -105,7 +105,7 @@ public class NodeList2Test {
         }
         for (int i = 0; i < SIZE; ++i) {
             assertEquals(i, q.size());
-            q.add(new Integer(i));
+            q.add(Integer.valueOf(i));
         }
     }
 
@@ -115,8 +115,8 @@ public class NodeList2Test {
     @Test
     public void testOffer() {
         NodeList q = new NodeList();
-        assertTrue(q.offer(new Integer(0)));
-        assertTrue(q.offer(new Integer(1)));
+        assertTrue(q.offer(Integer.valueOf(0)));
+        assertTrue(q.offer(Integer.valueOf(1)));
     }
 
     /**
@@ -127,7 +127,7 @@ public class NodeList2Test {
         NodeList q = new NodeList();
         for (int i = 0; i < SIZE; ++i) {
             assertEquals(i, q.size());
-            assertTrue(q.add(new Integer(i)));
+            assertTrue(q.add(Integer.valueOf(i)));
         }
     }
 
@@ -276,9 +276,9 @@ public class NodeList2Test {
     public void testContains() {
         NodeList q = populatedQueue(SIZE);
         for (int i = 0; i < SIZE; ++i) {
-            assertTrue(q.contains(new Integer(i)));
+            assertTrue(q.contains(Integer.valueOf(i)));
             q.poll();
-            assertFalse(q.contains(new Integer(i)));
+            assertFalse(q.contains(Integer.valueOf(i)));
         }
     }
 
@@ -291,7 +291,7 @@ public class NodeList2Test {
         q.clear();
         assertTrue(q.isEmpty());
         assertEquals(0, q.size());
-        assertTrue(q.add(new Integer(1)));
+        assertTrue(q.add(Integer.valueOf(1)));
         assertFalse(q.isEmpty());
         q.clear();
         assertTrue(q.isEmpty());
@@ -307,7 +307,7 @@ public class NodeList2Test {
         for (int i = 0; i < SIZE; ++i) {
             assertTrue(q.containsAll(p));
             assertFalse(p.containsAll(q));
-            assertTrue(p.add(new Integer(i)));
+            assertTrue(p.add(Integer.valueOf(i)));
         }
         assertTrue(p.containsAll(q));
     }
@@ -356,8 +356,8 @@ public class NodeList2Test {
     public void testToArray() {
         NodeList q = populatedQueue(SIZE);
         Object[] o = q.toArray();
-        for (int i = 0; i < o.length; i++)
-            assertSame(o[i], q.poll());
+        for (Object anO: o)
+            assertSame(anO, q.poll());
     }
 
     /**
@@ -369,8 +369,8 @@ public class NodeList2Test {
         Integer[] ints = new Integer[SIZE];
         Integer[] array = q.toArray(ints);
         assertSame(ints, array);
-        for (int i = 0; i < ints.length; i++)
-            assertSame(ints[i], q.poll());
+        for (Integer anInt: ints)
+            assertSame(anInt, q.poll());
     }
 
     /**
@@ -392,7 +392,7 @@ public class NodeList2Test {
     @Test
     public void testToArray1_BadArg() {
         NodeList l = new NodeList();
-        l.add(new Integer(5));
+        l.add(Integer.valueOf(5));
         try {
             l.toArray(new String[10]);
             fail("ArrayStoreException expected");
@@ -427,13 +427,12 @@ public class NodeList2Test {
     @Test
     public void testIteratorOrdering() {
         final NodeList q = new NodeList();
-        q.add(new Integer(1));
-        q.add(new Integer(2));
-        q.add(new Integer(3));
+        q.add(Integer.valueOf(1));
+        q.add(Integer.valueOf(2));
+        q.add(Integer.valueOf(3));
         int k = 0;
-        for (Iterator it = q.iterator(); it.hasNext();) {
+        for (Iterator it = q.iterator(); it.hasNext(); )
             assertEquals(++k, it.next());
-        }
 
         assertEquals(3, k);
     }
@@ -444,9 +443,9 @@ public class NodeList2Test {
     @Test
     public void testIteratorRemove() {
         final NodeList q = new NodeList();
-        q.add(new Integer(1));
-        q.add(new Integer(2));
-        q.add(new Integer(3));
+        q.add(Integer.valueOf(1));
+        q.add(Integer.valueOf(2));
+        q.add(Integer.valueOf(3));
         Iterator it = q.iterator();
         assertEquals(1, it.next());
         it.remove();
@@ -482,9 +481,9 @@ public class NodeList2Test {
     @Test
     public void testDescendingIteratorOrdering() {
         final NodeList q = new NodeList();
-        q.add(new Integer(3));
-        q.add(new Integer(2));
-        q.add(new Integer(1));
+        q.add(Integer.valueOf(3));
+        q.add(Integer.valueOf(2));
+        q.add(Integer.valueOf(1));
         int k = 0;
         for (Iterator it = q.descendingIterator(); it.hasNext();) {
             assertEquals(++k, it.next());
@@ -564,8 +563,8 @@ public class NodeList2Test {
     @Test
     public void testOfferFirst() {
         NodeList q = new NodeList();
-        assertTrue(q.offerFirst(new Integer(0)));
-        assertTrue(q.offerFirst(new Integer(1)));
+        assertTrue(q.offerFirst(Integer.valueOf(0)));
+        assertTrue(q.offerFirst(Integer.valueOf(1)));
     }
 
     /**
@@ -574,8 +573,8 @@ public class NodeList2Test {
     @Test
     public void testOfferLast() {
         NodeList q = new NodeList();
-        assertTrue(q.offerLast(new Integer(0)));
-        assertTrue(q.offerLast(new Integer(1)));
+        assertTrue(q.offerLast(Integer.valueOf(0)));
+        assertTrue(q.offerLast(Integer.valueOf(1)));
     }
 
     /**
@@ -657,11 +656,11 @@ public class NodeList2Test {
     public void testRemoveFirstOccurrence() {
         NodeList q = populatedQueue(SIZE);
         for (int i = 1; i < SIZE; i += 2) {
-            assertTrue(q.removeFirstOccurrence(new Integer(i)));
+            assertTrue(q.removeFirstOccurrence(Integer.valueOf(i)));
         }
         for (int i = 0; i < SIZE; i += 2) {
-            assertTrue(q.removeFirstOccurrence(new Integer(i)));
-            assertFalse(q.removeFirstOccurrence(new Integer(i + 1)));
+            assertTrue(q.removeFirstOccurrence(Integer.valueOf(i)));
+            assertFalse(q.removeFirstOccurrence(Integer.valueOf(i + 1)));
         }
         assertTrue(q.isEmpty());
     }
@@ -673,11 +672,11 @@ public class NodeList2Test {
     public void testRemoveLastOccurrence() {
         NodeList q = populatedQueue(SIZE);
         for (int i = 1; i < SIZE; i += 2) {
-            assertTrue(q.removeLastOccurrence(new Integer(i)));
+            assertTrue(q.removeLastOccurrence(Integer.valueOf(i)));
         }
         for (int i = 0; i < SIZE; i += 2) {
-            assertTrue(q.removeLastOccurrence(new Integer(i)));
-            assertFalse(q.removeLastOccurrence(new Integer(i + 1)));
+            assertTrue(q.removeLastOccurrence(Integer.valueOf(i)));
+            assertFalse(q.removeLastOccurrence(Integer.valueOf(i + 1)));
         }
         assertTrue(q.isEmpty());
     }

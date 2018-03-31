@@ -21,7 +21,7 @@ import org.kynosarges.tektosyne.geometry.*;
  * neighbors within a given distance, and show all distances from the current element.</p>
  * 
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.1.0
  */
 public class PolygonGridDialog extends Stage {
 
@@ -410,7 +410,7 @@ public class PolygonGridDialog extends Stage {
         final int sides = (_elementSquare.isSelected() ? 4 : 6);
         final PolygonOrientation orientation = (_elementOnEdge.isSelected() ?
             PolygonOrientation.ON_EDGE : PolygonOrientation.ON_VERTEX);
-        final boolean vertexNeighbors = (sides <= 4 ? _vertexNeighbors.isSelected() : false);
+        final boolean vertexNeighbors = (sides <= 4 && _vertexNeighbors.isSelected());
 
         // adjust side length based on side count
         final double length = 160.0 / sides;

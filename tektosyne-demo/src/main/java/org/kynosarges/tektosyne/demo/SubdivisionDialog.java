@@ -23,7 +23,7 @@ import org.kynosarges.tektosyne.subdivision.*;
  * All half-edges and faces are labeled with their keys.
  * 
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.1.0
  */
 public class SubdivisionDialog extends Stage {
 
@@ -97,7 +97,7 @@ public class SubdivisionDialog extends Stage {
         _moveVertex = createActionButton("_Move Vertex",
                 "Move highlighted vertex to cursor (Alt+M)", actionGroup, actionPane);
         _removeVertex = createActionButton("_Remove Vertex",
-                "Remove higlighted vertex, joining two edges (Alt+R)", actionGroup, actionPane);
+                "Remove highlighted vertex, joining two edges (Alt+R)", actionGroup, actionPane);
 
         final Button renumberEdges = new Button("Renumber _Edges");
         renumberEdges.setOnAction(t -> {

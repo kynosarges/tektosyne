@@ -18,7 +18,7 @@ import org.kynosarges.tektosyne.subdivision.*;
  * All half-edges and faces are labeled with their keys.
  * 
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.1.0
  */
 public class SubdivisionInterDialog extends Stage {
 
@@ -165,7 +165,7 @@ public class SubdivisionInterDialog extends Stage {
         spinner.setEditable(true);
         spinner.setPrefWidth(60);
         IntegerStringConverter.createFor(spinner);
-        spinner.setTooltip(new Tooltip(tip));
+        Global.addTooltip(spinner, tip);
 
         final Label spinnerLabel = new Label(label);
         spinnerLabel.setLabelFor(spinner);

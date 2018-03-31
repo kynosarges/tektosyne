@@ -30,7 +30,7 @@ import org.kynosarges.tektosyne.graph.*;
  * {@link PolygonGrid} always has a fairly moderate size so that overflow cannot occur.</p>
  * 
  * @author Christoph Nahr
- * @version 6.0.1
+ * @version 6.1.0
  */
 public class PolygonGrid implements Graph<PointI> {
 
@@ -285,7 +285,7 @@ public class PolygonGrid implements Graph<PointI> {
 
             case ROW_LEFT:
             case ROW_RIGHT:
-                return (onVertex && (isSquare || isHexagon));
+                return onVertex;
 
             default:
                 throw new IllegalArgumentException("gridShift");
@@ -1135,7 +1135,7 @@ public class PolygonGrid implements Graph<PointI> {
 
             final boolean isDownColumn = gridShift.isDownColumn(column);
             final boolean isRightRow = gridShift.isRightRow(row);
-            PointI factor; // to be multipled by (width/4, height/4)
+            PointI factor; // to be multiplied by (width/4, height/4)
 
             if (element.sides == 4) {
                 if (element.orientation == PolygonOrientation.ON_EDGE)

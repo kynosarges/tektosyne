@@ -34,7 +34,7 @@ import org.kynosarges.tektosyne.geometry.*;
  * 
  * @param <V> the type of all values in the {@link QuadTree}
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.1.0
  */
 public class QuadTree<V> extends AbstractMap<PointD, V> {
     /**
@@ -1028,7 +1028,7 @@ public class QuadTree<V> extends AbstractMap<PointD, V> {
                 return _entryIter.next();
 
             // search next node with attached entries
-            Node<V> node = null;
+            Node<V> node;
             do {
                 node = _nodeIter.next();
             } while (!checkLeaf(node) || node._entries.isEmpty());

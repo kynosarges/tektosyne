@@ -17,7 +17,7 @@ import javafx.util.StringConverter;
  * The default implementation always shows one decimal digit which hinders typing.</p>
  * 
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.1.0
  */
 public class DoubleStringConverter extends StringConverter<Double> {
 
@@ -59,8 +59,11 @@ public class DoubleStringConverter extends StringConverter<Double> {
 
         final double resetValue = Math.min(Math.max(0, min), max);
         _reset = () -> input.setText(_format.format(resetValue));
-        input.setTooltip(new Tooltip(String.format(
-                "Enter value between %.2f and %.2f", min, max)));
+
+        // bound JavaFX properties cannot be explicitly set
+        if (!input.tooltipProperty().isBound())
+            input.setTooltip(new Tooltip(String.format(
+                    "Enter a value between %.2f and %.2f", min, max)));
 
         // restrict direct input to valid numerical characters
         input.textProperty().addListener((ov, oldValue, newValue) -> {
@@ -118,7 +121,8 @@ public class DoubleStringConverter extends StringConverter<Double> {
         
         factory.setConverter(converter);
         spinner.setTooltip(new Tooltip(String.format(
-                "Enter value between %.2f and %.2f", factory.getMin(), factory.getMax())));
+                "Enter a value between %.2f and %.2f",
+                factory.getMin(), factory.getMax())));
 
         return converter;
     }
@@ -149,8 +153,10 @@ public class DoubleStringConverter extends StringConverter<Double> {
      */
     @Override
     public Double fromString(String s) {
-        if (s == null || s.isEmpty())
+        if (s == null || s.isEmpty()) {
+            if (_reset != null) _reset.run();
             return 0.0;
+        }
 
         try {
             return Double.valueOf(s);

@@ -9,7 +9,7 @@ import org.kynosarges.tektosyne.*;
  * Use {@link PointI} to represent points with {@link Integer} dimensions.
  * 
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.1.0
  */
 public final class PointD {
 
@@ -262,7 +262,7 @@ public final class PointD {
     }
 
     /**
-     * Moves the {@link PointD} by the specfied distance in the specified direction.
+     * Moves the {@link PointD} by the specified distance in the specified direction.
      * Moves toward {@code target} if {@code distance} is positive, and away from {@code target}
      * if {@code distance} is negative. Returns the current instance if it equals {@code target}
      * or if {@code distance} is zero.

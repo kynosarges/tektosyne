@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Class-Path: Tektosyne.jar
+Main-Class: org.kynosarges.tektosyne.demo.TektosyneDemo
+Specification-Title: Tektosyne Demo
+Specification-Version: 6.2.0
+Specification-Vendor: Christoph Nahr
+Implementation-Version: 2018-03-25

@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Specification-Title: Tektosyne
+Specification-Version: 6.2.0
+Specification-Vendor: Christoph Nahr
+Implementation-Version: 2018-03-25

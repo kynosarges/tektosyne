@@ -16,7 +16,7 @@ import org.kynosarges.tektosyne.geometry.*;
  * of the mouse cursor relative to that polygon.
  * 
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.1.0
  */
 public class PointInPolygonDialog extends Stage {
 
@@ -50,7 +50,7 @@ public class PointInPolygonDialog extends Stage {
         _tolerance.setEditable(true);
         _tolerance.setPrefWidth(70);
         DoubleStringConverter.createFor(_tolerance);
-        _tolerance.setTooltip(new Tooltip("Set tolerance for proximity matching (Alt+T)"));
+        Global.addTooltip(_tolerance, "Set tolerance for proximity matching (Alt+T)");
         _tolerance.getValueFactory().valueProperty().addListener((ov, oldValue, newValue) -> showLocation());
 
         final Label toleranceLabel = new Label("_Tolerance");

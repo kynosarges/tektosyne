@@ -16,7 +16,7 @@ import java.util.*;
  * 
  * @param <T> the type of all elements in the {@link NodeList}
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.1.0
  */
 public class NodeList<T> extends AbstractSequentialList<T> implements Deque<T> {
 
@@ -414,7 +414,7 @@ public class NodeList<T> extends AbstractSequentialList<T> implements Deque<T> {
     }
 
     /**
-     * Removes the first occurence of the specified element from the {@link NodeList}.
+     * Removes the first occurrence of the specified element from the {@link NodeList}.
      * Returns {@link #removeFirstOccurrence}. This is an O(n) operation.
      * 
      * @param obj the element to remove
@@ -782,7 +782,7 @@ public class NodeList<T> extends AbstractSequentialList<T> implements Deque<T> {
     }
 
     /**
-     * Removes the first occurence of the specified element from the {@link NodeList}.
+     * Removes the first occurrence of the specified element from the {@link NodeList}.
      * Attempts to cast {@code obj} to <b>T</b>, then calls {@link #findFirstNode}
      * and finally {@link #remove} on success. This is an O(n) operation.
      * 
@@ -833,7 +833,7 @@ public class NodeList<T> extends AbstractSequentialList<T> implements Deque<T> {
     }
 
     /**
-     * Removes the last occurence of the specified element from the {@link NodeList}.
+     * Removes the last occurrence of the specified element from the {@link NodeList}.
      * Attempts to cast {@code obj} to <b>T</b>, then calls {@link #findLastNode}
      * and finally {@link #remove} on success. This is an O(n) operation.
      * 

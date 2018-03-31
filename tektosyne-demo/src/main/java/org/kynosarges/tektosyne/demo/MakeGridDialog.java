@@ -25,7 +25,7 @@ import org.kynosarges.tektosyne.subdivision.PolygonGridMap;
  * based on a user-defined {@link RegularPolygon}.
  * 
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.1.0
  */
 public class MakeGridDialog extends Stage {
 
@@ -207,7 +207,7 @@ public class MakeGridDialog extends Stage {
         spinner.setEditable(true);
         spinner.setPrefWidth(60);
         IntegerStringConverter.createFor(spinner);
-        spinner.setTooltip(new Tooltip(tip));
+        Global.addTooltip(spinner, tip);
 
         final Label label = new Label(text);
         label.setLabelFor(spinner);

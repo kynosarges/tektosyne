@@ -2,18 +2,18 @@ package org.kynosarges.tektosyne.subdivision;
 
 /**
  * Maps the faces of a planar {@link Subdivision} to arbitrary objects.
- * Provides an application-specific mapping of all {@link Subdivision#faces} of a planar
- * {@link Subdivision} to arbitrary objects. The use of an interface allows clients to
- * implement the most efficient mapping for their concrete {@link Subdivision} structure
- * and object type.
+ * Provides an application-specific mapping of all {@link Subdivision#faces}
+ * of a planar {@link Subdivision} to arbitrary objects. The use of an interface
+ * allows clients to implement the most efficient mapping for their concrete
+ * {@link Subdivision} structure and object type.
  * <p>
- * Since the {@link Subdivision} has no knowledge of any {@link SubdivisionMap} instances
- * that reference it, clients must manually update any such instances whenever the underlying
- * {@link Subdivision} changes.</p>
+ * Since the {@link Subdivision} has no knowledge of any {@link SubdivisionMap}
+ * instances that reference it, clients must manually update any such instances
+ * whenever the underlying {@link Subdivision} changes.</p>
  * 
- * @param <T> the type of all objects to map to {@link Subdivision} faces
+ * @param <T> the type of all objects mapped to {@link Subdivision#faces}
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.2.0
  */
 public interface SubdivisionMap<T> {
     /**
@@ -41,9 +41,12 @@ public interface SubdivisionMap<T> {
      * @param face the {@link SubdivisionFace} to convert
      * @return the <b>T</b> instance associated with {@code face}
      * @throws IllegalArgumentException if {@link #source} does not contain {@code face}
+     * @throws UnsupportedOperationException if not overridden by an implementing class
      * @throws NullPointerException if {@code face} is {@code null}
      */
-    T fromFace(SubdivisionFace face);
+    default T fromFace(SubdivisionFace face) {
+        throw new UnsupportedOperationException("fromFace not implemented");
+    }
 
     /**
      * Converts the specified <b>T</b> instance into the associated {@link SubdivisionFace}.
@@ -51,6 +54,9 @@ public interface SubdivisionMap<T> {
      * @return the {@link SubdivisionFace} associated with {@code value}
      * @throws IllegalArgumentException if {@code value} does not map to any
      *                                  {@link SubdivisionFace} within {@link #source}
+     * @throws UnsupportedOperationException if not overridden by an implementing class
      */
-    SubdivisionFace toFace(T value);
+    default SubdivisionFace toFace(T value) {
+        throw new UnsupportedOperationException("toFace not implemented");
+    }
 }

@@ -9,7 +9,7 @@ import org.kynosarges.tektosyne.*;
  * of a rectangle. Use {@link RectI} to represent rectangles with {@link Integer} coordinates.
  * 
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.1.0
  */
 public final class RectD {
     /**
@@ -117,8 +117,8 @@ public final class RectD {
         if (points == null || points.length == 0)
             throw new NullPointerException("points");
 
-        double x0 = Double.MAX_VALUE, y0 = Double.MAX_VALUE;
-        double x1 = Double.MIN_VALUE, y1 = Double.MIN_VALUE;
+        double x0 = Double.POSITIVE_INFINITY, y0 = Double.POSITIVE_INFINITY;
+        double x1 = Double.NEGATIVE_INFINITY, y1 = Double.NEGATIVE_INFINITY;
 
         for (PointD point: points) {
             if (x0 > point.x) x0 = point.x;

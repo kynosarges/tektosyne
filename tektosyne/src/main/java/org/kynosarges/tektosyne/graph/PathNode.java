@@ -9,7 +9,7 @@ import java.util.*;
  * 
  * @param <T> the type of all nodes in the {@link Graph}
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.1.0
  */
 public final class PathNode<T> {
     /**
@@ -82,7 +82,7 @@ public final class PathNode<T> {
      * Gets the total cost of the search path up to the current {@link #node}.
      * Known quantity that represents the total cost to move from the source node
      * to the current {@link #node}, along the path defined by the chain of
-     * {@link parent} links. Zero if the current {@link #node} is the source node.
+     * {@link #parent} links. Zero if the current {@link #node} is the source node.
      * 
      * @return the total cost of the search path from source to current {@link #node}
      */

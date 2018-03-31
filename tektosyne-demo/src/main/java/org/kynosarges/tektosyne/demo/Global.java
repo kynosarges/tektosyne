@@ -7,6 +7,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
+
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
@@ -16,20 +18,20 @@ import javafx.stage.*;
 import org.kynosarges.tektosyne.geometry.*;
 
 /**
- * Provides global resources for the application.
+ * Provides global resources and helpers for the application.
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.1.0
  */
 public final class Global {
 
     private static double _fontSize;
     private static Stage _primaryStage;
-    
+
     /**
      * The random number generator for the application.
      * Shared instance for use by various test dialogs.
      */
-    public final static Random RANDOM = new Random();
+    public final static ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
 
     /**
      * Creates a {@link Global} instance.
@@ -47,24 +49,46 @@ public final class Global {
 
     /**
      * Sets the primary {@link Stage} of the application.
-     * @param stage the primary {@link Stage} of the application
+     * @param primaryStage the primary {@link Stage} of the application
      * @throws IllegalStateException if the method has already been called
      * @throws NullPointerException if {@code primaryStage} is {@code null}
      */
-    static void setPrimaryStage(Stage stage) {
+    static void setPrimaryStage(Stage primaryStage) {
         if (_primaryStage != null)
             throw new IllegalStateException("primaryStage != null");
-        if (stage == null)
-            throw new NullPointerException("stage");
+        if (primaryStage == null)
+            throw new NullPointerException("primaryStage");
 
-        _primaryStage = stage;
+        _primaryStage = primaryStage;
+    }
+
+    /**
+     * Adds the specified {@link String} to the existing {@link Tooltip}
+     * of the specified {@link Control}, if any.
+     * @param control the {@link Control} whose {@link Tooltip} to set
+     * @param text the {@link String} to show in the {@link Tooltip}
+     * @throws NullPointerException if {@code control} if {@code null}
+     */
+    public static void addTooltip(Control control, String text) {
+        if (text == null || text.isEmpty())
+            return;
+
+        if (control.getTooltip() == null)
+            control.setTooltip(new Tooltip(text));
+        else {
+            final String oldText = control.getTooltip().getText();
+            if (oldText == null || oldText.isEmpty())
+                control.getTooltip().setText(text);
+            else
+                control.getTooltip().setText(text + System.lineSeparator() + oldText);
+        }
     }
 
     /**
      * Clips the children of the specified {@link Region} to its current size.
      * This requires attaching a change listener to the region’s layout bounds,
      * as JavaFX does not currently provide any built-in way to clip children.
-     * 
+     *
      * @param region the {@link Region} whose children to clip
      * @throws NullPointerException if {@code region} is {@code null}
      */
@@ -76,7 +100,7 @@ public final class Global {
         region.layoutBoundsProperty().addListener((ov, oldValue, newValue) -> {
             outputClip.setWidth(newValue.getWidth());
             outputClip.setHeight(newValue.getHeight());
-        });        
+        });
     }
 
     /**
@@ -87,14 +111,14 @@ public final class Global {
     public static Font boldFont(double size) {
         return Font.font(Font.getDefault().getFamily(), FontWeight.BOLD, size);
     }
-    
+
     /**
      * Copies the specified array of geometric objects to the system clipboard.
      * Copies {@code items} as a sequence of {@link Double} values that represent the
      * coordinates of all specified geometric objects. Does nothing if {@code items} is
      * {@code null} or empty. Shows an {@link Alert} for any other error or exception.
      * Never throws exceptions.
-     * 
+     *
      * @param <T> the geometric type to convert from, which must be either
      *            {@link LineD}, {@link PointD}, {@link RectD}, or {@link SizeD}
      * @param owner the {@link Window} that owns any {@link Alert} that appears
@@ -127,22 +151,13 @@ public final class Global {
 
         return _fontSize;
     }
-    
-    /**
-     * Determines whether the specified {@link String} has any content.
-     * @param s the {@link String} to examine
-     * @return {@code true} if {@code s} is neither {@code null} nor empty
-     */
-    public static boolean hasContent(String s) {
-        return (s != null && !s.isEmpty());
-    }
 
     /**
      * Attempts to paste an array of geometric objects from the system clipboard.
      * Expects a {@link String} on the clipboard that contains a sequence of {@link Double}
      * values which represent coordinates for instances of the specified geometric type.
      * Shows an {@link Alert} for any other error or exception. Never throws exceptions.
-     * 
+     *
      * @param <T> the geometric type to convert to, which must be either
      *            {@link LineD}, {@link PointD}, {@link RectD}, or {@link SizeD}
      * @param owner the {@link Window} that owns any {@link Alert} that appears
@@ -151,7 +166,7 @@ public final class Global {
      *         if none was available or an error occurred
      */
     public static <T> T[] paste(Window owner, Class<T> type) {
-        String input = null;
+        String input;
         try {
             final Transferable data = java.awt.Toolkit.
                     getDefaultToolkit().getSystemClipboard().getContents(owner);
@@ -189,21 +204,19 @@ public final class Global {
 
         final Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.initOwner(owner == null ? primaryStage() : owner);
+        alert.setTitle("Operation Failed");
         alert.setHeaderText(header);
         alert.setContentText(content);
-
-        alert.setResizable(true);
-        alert.setTitle("Operation Failed");
         alert.showAndWait();
     }
 
     /**
-     * Shows a modal {@link Alert} with the specified {@link Exception}.
+     * Shows a modal {@link Alert} with the specified {@link Throwable}.
      * @param owner the {@link Window} that owns the {@link Alert}
      * @param header the header text of the {@link Alert}
-     * @param e the {@link Exception} providing content for the {@link Alert}
+     * @param e the {@link Throwable} providing content for the {@link Alert}
      */
-    public static void showError(Window owner, String header, Exception e) {
+    public static void showError(Window owner, String header, Throwable e) {
 
         String content = "Unspecified error.";
         String stackTrace = "No stack trace available.";

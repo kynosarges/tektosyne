@@ -12,7 +12,7 @@ import javafx.stage.Stage;
 /**
  * Defines the Tektosyne Demo application for JavaFX.
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.1.0
  */
 public class TektosyneDemo extends Application {
     /**
@@ -44,7 +44,6 @@ public class TektosyneDemo extends Application {
 
     private static MenuBar createMenuBar() {
         final MenuBar menu = new MenuBar();
-        final EventHandler<ActionEvent> nothing = t -> {};
 
         final Menu fileMenu = createMenu("_File",
             createMenuItem("_About", t -> new AboutDialog().showAndWait(), null),

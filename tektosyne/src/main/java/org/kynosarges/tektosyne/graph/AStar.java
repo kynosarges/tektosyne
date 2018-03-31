@@ -24,7 +24,7 @@ import org.kynosarges.tektosyne.geometry.*;
  * 
  * @param <T> the type of all nodes in the {@link Graph}
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.1.0
  */
 public class AStar<T> implements GraphPath<T> {
 
@@ -211,7 +211,7 @@ public class AStar<T> implements GraphPath<T> {
      * Gets the last {@link #graph} node in the best path whose
      * total path cost does not exceed the specified maximum cost.
      * Returns the {@link PathNode#node} associated with the {@link PathNode}
-     * found by {@link getLastPathNode} for {@code maxCost}. See there for details.
+     * found by {@link #getLastPathNode} for {@code maxCost}. See there for details.
      * 
      * @param maxCost the maximum total path cost of the {@link #graph} node
      * @return the {@link PathNode#node} of the last {@link #nodes} element
@@ -323,7 +323,7 @@ public class AStar<T> implements GraphPath<T> {
      * for further details.</p>
      * 
      * @return the factor to multiply with the distance between source and target node, according to
-     *         {@link Graph#getDistance}, to obtain the {@link absoluteLimit} on the search radius
+     *         {@link Graph#getDistance}, to obtain the {@link #absoluteLimit} on the search radius
      */
     public double relativeLimit() {
         return _relativeLimit;
@@ -338,7 +338,7 @@ public class AStar<T> implements GraphPath<T> {
      * See {@link #absoluteLimit} and {@link #findBestPath} for further details.</p>
      * 
      * @param value the factor to multiply with the distance between source and target node, according to
-     *              {@link Graph#getDistance}, to obtain the {@link absoluteLimit} on the search radius
+     *              {@link Graph#getDistance}, to obtain the {@link #absoluteLimit} on the search radius
      * @throws IllegalArgumentException if {@code value} is less than zero,
      *                                  or greater than zero but smaller than one
      */    
@@ -555,15 +555,14 @@ public class AStar<T> implements GraphPath<T> {
 
             // check total costs of all children
             final List<PathNode<T>> children = parent._children;
-            for (int i = 0; i < children.size(); i++) {
-                final PathNode<T> child = children.get(i);
+            for (final PathNode<T> child: children) {
 
                 // skip children with better costs
                 if (child._g <= parent._g) continue;
 
                 // total cost to reach child via parent
                 double g = parent._g + _agent.getStepCost(parent.node, child.node);
-                assert(g > parent._g);
+                assert (g > parent._g);
 
                 // switch to better route
                 if (child._g > g) {

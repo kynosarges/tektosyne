@@ -6,14 +6,14 @@ import static org.junit.Assert.*;
 /**
  * Provides unit tests for class {@link Compass}.
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.1.0
  */
 public class CompassTest {
 
     @Test
     public void testFromDegrees() {
         for (int i = 0; i < 45; i += 5) {
-            assertEquals(Compass.NORTH, Compass.fromDegrees(0 + i));
+            assertEquals(Compass.NORTH, Compass.fromDegrees(i));
             assertEquals(Compass.NORTH_EAST, Compass.fromDegrees(45 + i));
             assertEquals(Compass.EAST, Compass.fromDegrees(90 + i));
             assertEquals(Compass.SOUTH_EAST, Compass.fromDegrees(135 + i));

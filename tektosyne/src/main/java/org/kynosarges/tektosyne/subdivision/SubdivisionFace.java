@@ -17,7 +17,7 @@ import org.kynosarges.tektosyne.geometry.*;
  * element. Use the <b>cycle…</b> properties of these half-edges to obtain face boundaries etc.</p>
  * 
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.1.0
  */
 public final class SubdivisionFace {
     /**
@@ -303,7 +303,7 @@ public final class SubdivisionFace {
      * is set to {@code newEdge}.
      * <p>
      * Unlike the other {@link #moveEdge} overload, this method does not check the
-     * {@link SubdivisionEdge#twin} of {@code oldEdge}, nor remove single-edge cylces.</p>
+     * {@link SubdivisionEdge#twin} of {@code oldEdge}, nor remove single-edge cycles.</p>
      * 
      * @param oldEdge the incident {@link SubdivisionEdge} to replace with {@code newEdge}
      * @param newEdge the incident {@link SubdivisionEdge} that replaces {@code oldEdge}
@@ -335,7 +335,7 @@ public final class SubdivisionFace {
     /**
      * Sets the {@link SubdivisionEdge#face} of each {@link SubdivisionEdge} in the
      * {@link #outerEdge} cycle and all {@link #innerEdges} cycles to the specified instance.
-     * @param face the new {@link Subdivision#face} for each {@link SubdivisionEdge}
+     * @param face the new {@link SubdivisionFace} for each {@link SubdivisionEdge}
      * @throws NullPointerException if {@code face} is {@code null}
      */
     void setAllEdgeFaces(SubdivisionFace face) {
@@ -346,8 +346,8 @@ public final class SubdivisionFace {
             _outerEdge.setAllFaces(face);
 
         if (_innerEdges != null)
-            for (int i = 0; i < _innerEdges.size(); i++)
-                _innerEdges.get(i).setAllFaces(face);
+            for (SubdivisionEdge _innerEdge: _innerEdges)
+                _innerEdge.setAllFaces(face);
     }
 
     /**

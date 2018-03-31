@@ -35,7 +35,7 @@ import org.kynosarges.tektosyne.subdivision.Subdivision;
  * CONCERNING THE MERCHANTABILITY OF THIS SOFTWARE OR ITS FITNESS FOR ANY PARTICULAR PURPOSE.</p>
  * 
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.2.0
  */
 public final class Voronoi {
     /**
@@ -46,7 +46,7 @@ public final class Voronoi {
      *               Voronoi diagram and Delaunay triangulation to find
      * @return a {@link VoronoiResults} instance containing the Voronoi diagram
      *         and Delaunay triangulation for the specified {@code points}
-     * @throws IllegalArgumentException if {@code points} contains less than three elements
+     * @throws IllegalArgumentException if {@code points} contains less than two elements
      * @throws NullPointerException if {@code points} or any of its elements is {@code null}
      */
     public static VoronoiResults findAll(PointD[] points) {
@@ -65,7 +65,7 @@ public final class Voronoi {
      * @param clip a {@link RectD} indicating the clipping bounds for pseudo-vertices
      * @return a {@link VoronoiResults} instance containing the Voronoi diagram
      *         and Delaunay triangulation for the specified {@code points}
-     * @throws IllegalArgumentException if {@code points} contains less than three elements
+     * @throws IllegalArgumentException if {@code points} contains less than two elements
      * @throws NullPointerException if {@code points} or {@code clip} is {@code null},
      *                              or any {@code points} element is {@code null}
      */
@@ -95,7 +95,7 @@ public final class Voronoi {
      * @param points an array containing the {@link PointD} coordinates whose Delaunay triangulation to find
      * @return an array containing all edges of the Delaunay triangulation,
      *         stored as index pairs relative to the specified {@code points}
-     * @throws IllegalArgumentException if {@code points} contains less than three elements
+     * @throws IllegalArgumentException if {@code points} contains less than two elements
      * @throws NullPointerException if {@code points} or any of its elements is {@code null}
      */
     public static PointI[] findDelaunay(PointD[] points) {
@@ -122,7 +122,7 @@ public final class Voronoi {
      * @param points an array containing the {@link PointD} coordinates whose Delaunay triangulation to find
      * @return a {@link Subdivision} whose {@link Subdivision#edges} correspond
      *         to the  edges of the Delaunay triangulation for {@code points}
-     * @throws IllegalArgumentException if {@code points} contains less than three elements
+     * @throws IllegalArgumentException if {@code points} contains less than two elements
      * @throws NullPointerException if {@code points} or any of its elements is {@code null}
      */
     public static Subdivision findDelaunaySubdivision(PointD[] points) {
@@ -148,7 +148,7 @@ public final class Voronoi {
      *             contains the actual clipping bounds for the Voronoi diagram
      * @param findDelaunay {@code true} to find only the Delaunay triangulation for
      *             {@code points}, {@code false} to also find the Voronoi diagram
-     * @throws IllegalArgumentException if {@code points} contains less than three elements,
+     * @throws IllegalArgumentException if {@code points} contains less than two elements,
      *                                  or {@code clip} does not contain exactly one element
      * @throws NullPointerException if {@code points} or {@code clip} is {@code null},
      *                              or any of their elements are {@code null}
@@ -156,8 +156,8 @@ public final class Voronoi {
     private Voronoi(PointD[] points, RectD[] clip, boolean findDelaunay) {
         if (points == null)
             throw new NullPointerException("points");
-        if (points.length < 3)
-            throw new IllegalArgumentException("points.length < 3");
+        if (points.length < 2)
+            throw new IllegalArgumentException("points.length < 2");
         if (clip == null)
             throw new NullPointerException("clip");
         if (clip.length != 1)
@@ -201,13 +201,14 @@ public final class Voronoi {
         /*
          * Voronoi diagrams and Delaunay triangulations contain at most 3n-6 edges,
          * and Voronoi diagrams contain at most 2n-5 vertices for n >= 3 input points.
+         * The special case of two sites has no natural vertices and exactly one edge.
          * 
          * We allocate space for 2n vertices to allow for additional pseudo-vertices.
          * This extra space is not required for the vertex index mapping array since
          * pseudo-vertices don’t use SiteVertex objects with index remapping.
          */
-        final int maxVertexCount = 2 * _sites.length - 5;
-        final int maxEdgeCount = 3 * _sites.length - 6;
+        final int maxVertexCount = Math.max(0, 2 * _sites.length - 5);
+        final int maxEdgeCount = Math.max(1, 3 * _sites.length - 6);
 
         if (findDelaunay) {
             // only allocate Delaunay edge output storage
@@ -372,11 +373,22 @@ public final class Voronoi {
                 break;
         }
 
-        // output remaining Voronoi edges (those with only one vertex)
-        if (_voronoiEdges != null)
-            for (HalfEdge he = _edgeListLeft.right;
-                he != _edgeListRight; he = he.right)
-                storeVoronoiEdge(he.edge);
+        /*
+         * Output remaining Voronoi edges (those with only one or no natural vertex).
+         *
+         * A hash set to check against already output edges is required for diagrams
+         * without natural vertices. In that case no edges are retired during the sweep
+         * line loop, resulting in duplicate edges remaining in the collection.
+         */
+        if (_voronoiEdges != null) {
+            final HashSet<FullEdge> fullEdges = new HashSet<>();
+            for (HalfEdge he = _edgeListLeft.right; he != _edgeListRight; he = he.right) {
+                if (!fullEdges.contains(he.edge)) {
+                    storeVoronoiEdge(he.edge);
+                    fullEdges.add(he.edge);
+                }
+            }
+        }
     }
 
     /**
@@ -559,7 +571,7 @@ public final class Voronoi {
             isAbove = (t1 * t1 > t2 * t2 + t3 * t3);
         }
 
-        return (he.isRight ? !isAbove : isAbove);
+        return (he.isRight != isAbove);
     }
 
     /**
@@ -961,7 +973,7 @@ public final class Voronoi {
 
         /**
          * Sets the Voronoi vertex on the specified side of the {@link FullEdge}
-         * to the specified {@link VoronoiVertex}.
+         * to the specified {@link SiteVertex}.
          * 
          * @param isRight {@code true} to set {@link #rightVertex}, {@code false} to set {@link #leftVertex}
          * @param vertex the new value for {@link #rightVertex} if {@code isRight} is {@code true},

@@ -7,7 +7,7 @@ package org.kynosarges.tektosyne.geometry;
  * intersection point and the spatial relationship between the intersected line segments.
  * 
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.1.0
  */
 public final class LineIntersection {
 
@@ -274,7 +274,7 @@ public final class LineIntersection {
      * @param startB the {@link LineD#start} point of the second line segment
      * @param endB the {@link LineD#end} point of the second line segment
      * @param epsilon the maximum absolute difference at which coordinates and intermediate results
-     *                should be considered equal. Always raised to a minium of 1e-10.
+     *                should be considered equal. Always raised to a minimum of 1e-10.
      * @return a {@link LineIntersection} instance that describes if and how the line segments
      *         from {@code startA} to {@code endA} and from {@code startB} to {@code endB} intersect
      * @throws NullPointerException if any {@link PointD} argument is {@code null}

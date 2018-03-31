@@ -9,7 +9,7 @@ import java.util.*;
  * is valid then {@link SplitEdgeResult#isEdgeDeleted} is {@code false}, and vice versa.
  * 
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.2.0
  */
 final class SplitEdgeResult {
     /**
@@ -64,15 +64,15 @@ final class SplitEdgeResult {
     /**
      * Updates the {@link SubdivisionFace} keys in the specified maps after the
      * specified {@link SubdivisionEdge} has been split.
-     * Ensures that the mapping between original and intersected faces established by
-     * {@link Subdivision#intersection} is kept up-to-date when edge splitting results in
+     * Ensures that the partial mapping between original and intersected faces established
+     * by {@link Subdivision#intersection} is kept up-to-date when edge splitting results in
      * a valid {@link #createdEdge}. Does nothing if {@link #createdEdge} is {@code null}.
      * 
      * @param edge the {@link SubdivisionEdge} whose splitting resulted in the {@link SplitEdgeResult}
      * @param edgeToFace1 maps the key of any existing {@link SubdivisionEdge} to the key of each
-     *             incident bounded {@link SubdivisionFace} in a first {@link Subdivision}
+     *             incident {@link SubdivisionFace} in a first {@link Subdivision}
      * @param edgeToFace2 maps the key of any existing {@link SubdivisionEdge} to the key of each
-     *             incident bounded {@link SubdivisionFace} in a second {@link Subdivision}
+     *             incident {@link SubdivisionFace} in a second {@link Subdivision}
      * @throws NullPointerException if {@code edgeToFace1} or {@code edgeToFace2} is {@code null}
      */
     void updateFaces(SubdivisionEdge edge,
@@ -81,15 +81,24 @@ final class SplitEdgeResult {
         if (createdEdge == null) return;
 
         Integer face = edgeToFace1.get(edge._key);
-        if (face != null) {
-            assert(face != 0);
+        if (face != null)
             edgeToFace1.put(createdEdge._key, face);
-        }
 
         face = edgeToFace2.get(edge._key);
-        if (face != null) {
-            assert(face != 0);
+        if (face != null)
             edgeToFace2.put(createdEdge._key, face);
-        }
+
+        /*
+         * As per Subdivision.splitEdgeAtVertex, the existing twin of the existing edge
+         * was relinked to createdEdge whereas the existing edge receives the new twin.
+         * So we must reverse existing and created edge for the twin mapping updates.
+         */
+        face = edgeToFace1.get(createdEdge._twin._key);
+        if (face != null)
+            edgeToFace1.put(edge._twin._key, face);
+
+        face = edgeToFace2.get(createdEdge._twin._key);
+        if (face != null)
+            edgeToFace2.put(edge._twin._key, face);
     }
 }

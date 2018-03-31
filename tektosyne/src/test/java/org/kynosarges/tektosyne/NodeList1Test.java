@@ -4,6 +4,7 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Provides unit tests for class {@link NodeList}, part one.
@@ -17,7 +18,7 @@ import java.util.*;
  * http://gee.cs.oswego.edu/cgi-bin/viewcvs.cgi/jsr166/src/test/tck/ArrayDequeTest.java?view=co
  * </p>
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.1.0
  */
 @SuppressWarnings({ "rawtypes", "unchecked"})
 public class NodeList1Test {
@@ -26,21 +27,21 @@ public class NodeList1Test {
      */
     private static final int SIZE = 20;
 
-    private static final Integer ZERO  = new Integer(0);
-    private static final Integer ONE   = new Integer(1);
-    private static final Integer TWO   = new Integer(2);
-    private static final Integer THREE = new Integer(3);
-    private static final Integer FOUR  = new Integer(4);
+    private static final Integer ZERO  = Integer.valueOf(0);
+    private static final Integer ONE   = Integer.valueOf(1);
+    private static final Integer TWO   = Integer.valueOf(2);
+    private static final Integer THREE = Integer.valueOf(3);
+    private static final Integer FOUR  = Integer.valueOf(4);
 
     /**
      * Returns a new deque of given size containing consecutive
      * Integers 0 ... n.
      */
     private NodeList<Integer> populatedDeque(int n) {
-        NodeList<Integer> q = new NodeList<Integer>();
+        NodeList<Integer> q = new NodeList<>();
         assertTrue(q.isEmpty());
         for (int i = 0; i < n; ++i)
-            assertTrue(q.offerLast(new Integer(i)));
+            assertTrue(q.offerLast(Integer.valueOf(i)));
         assertFalse(q.isEmpty());
         assertEquals(n, q.size());
         return q;
@@ -83,7 +84,7 @@ public class NodeList1Test {
     public void testConstructor5() {
         Integer[] ints = new Integer[SIZE];
         for (int i = 0; i < SIZE - 1; ++i)
-            ints[i] = new Integer(i);
+            ints[i] = Integer.valueOf(i);
         try {
             new NodeList(Arrays.asList(ints));
             fail("NullPointerException expected");
@@ -97,7 +98,7 @@ public class NodeList1Test {
     public void testConstructor6() {
         Integer[] ints = new Integer[SIZE];
         for (int i = 0; i < SIZE; ++i)
-            ints[i] = new Integer(i);
+            ints[i] = Integer.valueOf(i);
         NodeList q = new NodeList(Arrays.asList(ints));
         for (int i = 0; i < SIZE; ++i)
             assertEquals(ints[i], q.pollFirst());
@@ -110,9 +111,9 @@ public class NodeList1Test {
     public void testEmpty() {
         NodeList q = new NodeList();
         assertTrue(q.isEmpty());
-        q.add(new Integer(1));
+        q.add(Integer.valueOf(1));
         assertFalse(q.isEmpty());
-        q.add(new Integer(2));
+        q.add(Integer.valueOf(2));
         q.removeFirst();
         q.removeFirst();
         assertTrue(q.isEmpty());
@@ -136,7 +137,7 @@ public class NodeList1Test {
         for (int i = 0; i < SIZE; ++i) {
             assertEquals(i, q.size());
             assertEquals(q.countNodes(), q.size());
-            q.add(new Integer(i));
+            q.add(Integer.valueOf(i));
         }
     }
 
@@ -355,7 +356,7 @@ public class NodeList1Test {
         NodeList q = new NodeList();
         Integer[] ints = new Integer[SIZE];
         for (int i = 0; i < SIZE - 1; ++i)
-            ints[i] = new Integer(i);
+            ints[i] = Integer.valueOf(i);
         try {
             q.addAll(Arrays.asList(ints));
             fail("NullPointerException expected");
@@ -370,7 +371,7 @@ public class NodeList1Test {
         Integer[] empty = new Integer[0];
         Integer[] ints = new Integer[SIZE];
         for (int i = 0; i < SIZE; ++i)
-            ints[i] = new Integer(i);
+            ints[i] = Integer.valueOf(i);
         NodeList q = new NodeList();
         assertFalse(q.addAll(Arrays.asList(empty)));
         assertTrue(q.addAll(Arrays.asList(ints)));
@@ -584,11 +585,11 @@ public class NodeList1Test {
     public void testRemoveFirstOccurrence() {
         NodeList q = populatedDeque(SIZE);
         for (int i = 1; i < SIZE; i += 2) {
-            assertTrue(q.removeFirstOccurrence(new Integer(i)));
+            assertTrue(q.removeFirstOccurrence(Integer.valueOf(i)));
         }
         for (int i = 0; i < SIZE; i += 2) {
-            assertTrue(q.removeFirstOccurrence(new Integer(i)));
-            assertFalse(q.removeFirstOccurrence(new Integer(i + 1)));
+            assertTrue(q.removeFirstOccurrence(Integer.valueOf(i)));
+            assertFalse(q.removeFirstOccurrence(Integer.valueOf(i + 1)));
         }
         assertTrue(q.isEmpty());
     }
@@ -600,11 +601,11 @@ public class NodeList1Test {
     public void testRemoveLastOccurrence() {
         NodeList q = populatedDeque(SIZE);
         for (int i = 1; i < SIZE; i += 2) {
-            assertTrue(q.removeLastOccurrence(new Integer(i)));
+            assertTrue(q.removeLastOccurrence(Integer.valueOf(i)));
         }
         for (int i = 0; i < SIZE; i += 2) {
-            assertTrue(q.removeLastOccurrence(new Integer(i)));
-            assertFalse(q.removeLastOccurrence(new Integer(i + 1)));
+            assertTrue(q.removeLastOccurrence(Integer.valueOf(i)));
+            assertFalse(q.removeLastOccurrence(Integer.valueOf(i + 1)));
         }
         assertTrue(q.isEmpty());
     }
@@ -616,9 +617,9 @@ public class NodeList1Test {
     public void testContains() {
         NodeList q = populatedDeque(SIZE);
         for (int i = 0; i < SIZE; ++i) {
-            assertTrue(q.contains(new Integer(i)));
+            assertTrue(q.contains(Integer.valueOf(i)));
             assertEquals(i, q.pollFirst());
-            assertFalse(q.contains(new Integer(i)));
+            assertFalse(q.contains(Integer.valueOf(i)));
         }
     }
 
@@ -631,7 +632,7 @@ public class NodeList1Test {
         q.clear();
         assertTrue(q.isEmpty());
         assertEquals(0, q.size());
-        assertTrue(q.add(new Integer(1)));
+        assertTrue(q.add(Integer.valueOf(1)));
         assertFalse(q.isEmpty());
         q.clear();
         assertTrue(q.isEmpty());
@@ -647,7 +648,7 @@ public class NodeList1Test {
         for (int i = 0; i < SIZE; ++i) {
             assertTrue(q.containsAll(p));
             assertFalse(p.containsAll(q));
-            assertTrue(p.add(new Integer(i)));
+            assertTrue(p.add(Integer.valueOf(i)));
         }
         assertTrue(p.containsAll(q));
     }
@@ -744,9 +745,8 @@ public class NodeList1Test {
         if (size > 0) {
             assertNotSame(a1, b1);
             assertEquals(size, b1.length);
-            for (int i = 0; i < a1.length; i++) {
-                assertEquals(42, (int) a1[i]);
-            }
+            for (Integer anA1: a1)
+                assertEquals(42, (int) anA1);
         }
     }
 
@@ -791,7 +791,7 @@ public class NodeList1Test {
     @Test
     public void testToArray1_BadArg() {
         NodeList l = new NodeList();
-        l.add(new Integer(5));
+        l.add(Integer.valueOf(5));
         try {
             l.toArray(new String[10]);
             fail("ArrayStoreException expected");
@@ -850,22 +850,22 @@ public class NodeList1Test {
     @Test
     public void testIteratorRemove() {
         final NodeList q = new NodeList();
-        final Random rng = new Random();
-        for (int iters = 0; iters < 100; ++iters) {
+        final ThreadLocalRandom rng = ThreadLocalRandom.current();
+        for (int iterations = 0; iterations < 100; ++iterations) {
             int max = rng.nextInt(5) + 2;
             int split = rng.nextInt(max - 1) + 1;
             for (int j = 1; j <= max; ++j)
-                q.add(new Integer(j));
+                q.add(Integer.valueOf(j));
             Iterator it = q.iterator();
             for (int j = 1; j <= split; ++j)
-                assertEquals(it.next(), new Integer(j));
+                assertEquals(it.next(), Integer.valueOf(j));
             it.remove();
-            assertEquals(it.next(), new Integer(split + 1));
+            assertEquals(it.next(), Integer.valueOf(split + 1));
             for (int j = 1; j <= split; ++j)
-                q.remove(new Integer(j));
+                q.remove(Integer.valueOf(j));
             it = q.iterator();
             for (int j = split + 1; j <= max; ++j) {
-                assertEquals(it.next(), new Integer(j));
+                assertEquals(it.next(), Integer.valueOf(j));
                 it.remove();
             }
             assertFalse(it.hasNext());
@@ -899,10 +899,10 @@ public class NodeList1Test {
     @Test
     public void testDescendingIteratorOrdering() {
         final NodeList q = new NodeList();
-        for (int iters = 0; iters < 100; ++iters) {
-            q.add(new Integer(3));
-            q.add(new Integer(2));
-            q.add(new Integer(1));
+        for (int iterations = 0; iterations < 100; ++iterations) {
+            q.add(Integer.valueOf(3));
+            q.add(Integer.valueOf(2));
+            q.add(Integer.valueOf(1));
             int k = 0;
             for (Iterator it = q.descendingIterator(); it.hasNext();) {
                 assertEquals(++k, it.next());
@@ -921,22 +921,22 @@ public class NodeList1Test {
     @Test
     public void testDescendingIteratorRemove() {
         final NodeList q = new NodeList();
-        final Random rng = new Random();
-        for (int iters = 0; iters < 100; ++iters) {
+        final ThreadLocalRandom rng = ThreadLocalRandom.current();
+        for (int iterations = 0; iterations < 100; ++iterations) {
             int max = rng.nextInt(5) + 2;
             int split = rng.nextInt(max - 1) + 1;
             for (int j = max; j >= 1; --j)
-                q.add(new Integer(j));
+                q.add(Integer.valueOf(j));
             Iterator it = q.descendingIterator();
             for (int j = 1; j <= split; ++j)
-                assertEquals(it.next(), new Integer(j));
+                assertEquals(it.next(), Integer.valueOf(j));
             it.remove();
-            assertEquals(it.next(), new Integer(split + 1));
+            assertEquals(it.next(), Integer.valueOf(split + 1));
             for (int j = 1; j <= split; ++j)
-                q.remove(new Integer(j));
+                q.remove(Integer.valueOf(j));
             it = q.descendingIterator();
             for (int j = split + 1; j <= max; ++j) {
-                assertEquals(it.next(), new Integer(j));
+                assertEquals(it.next(), Integer.valueOf(j));
                 it.remove();
             }
             assertFalse(it.hasNext());

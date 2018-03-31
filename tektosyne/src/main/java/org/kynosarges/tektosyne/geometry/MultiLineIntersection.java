@@ -31,7 +31,7 @@ import java.util.*;
  * file gives a detailed description of this comparer.</p>
  * 
  * @author Christoph Nahr
- * @version 6.0.1
+ * @version 6.1.0
  */
 public final class MultiLineIntersection {
     /*
@@ -191,7 +191,7 @@ public final class MultiLineIntersection {
      * to the {@link MultiLinePoint#shared} point of that intersection, so as to preserve
      * coordinate identities that were established by a positive comparison epsilon.</p>
      * 
-     * @param lines a {@link LineD} array containing the line segements to split
+     * @param lines a {@link LineD} array containing the line segments to split
      * @param crossings a {@link MultiLinePoint} array describing all points
      *                  of intersection between {@code lines}
      * @return a {@link LineD} array containing the line segments resulting from
@@ -491,7 +491,7 @@ public final class MultiLineIntersection {
         private final List<EventPoint> crossings;
 
         /**
-         * All input {@ink LineD} segments whose intersections are to be found.
+         * All input {@link LineD} segments whose intersections are to be found.
          */
         private LineD[] lines;
 
@@ -543,7 +543,7 @@ public final class MultiLineIntersection {
          * @return a lexicographically sorted {@link List} containing the final {@link EventPoint}
          *         for every point of intersection between two or more {@code lines}.
          * @throws IllegalArgumentException if {@code lines} contains a {@link LineD} whose
-         *                                  {@link LineD#start} and {@link Lined#end} points are equal
+         *                                  {@link LineD#start} and {@link LineD#end} points are equal
          * @throws IllegalStateException if the search structure was corrupted
          * @throws NullPointerException if {@code lines} or any of its elements is {@code null}
          */
@@ -602,7 +602,7 @@ public final class MultiLineIntersection {
          * Builds the {@link #schedule} and precomputes all {@link #slopes}.
          * @param lines an array containing all input {@link LineD} segments to intersect
          * @throws IllegalArgumentException if {@code lines} contains a {@link LineD} whose
-         *                                  {@link LineD#start} and {@link Lined#end} points are equal
+         *                                  {@link LineD#start} and {@link LineD#end} points are equal
          * @throws NullPointerException if {@code lines} or any of its elements is {@code null}
          */
         private void buildSchedule(LineD[] lines) {

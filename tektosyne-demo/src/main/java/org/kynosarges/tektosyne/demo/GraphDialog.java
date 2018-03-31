@@ -29,7 +29,7 @@ import org.kynosarges.tektosyne.subdivision.*;
  * algorithm succeeds, all result nodes are marked as well.</p>
  * 
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.1.0
  */
 public class GraphDialog extends Stage {
 
@@ -107,7 +107,7 @@ public class GraphDialog extends Stage {
         _threshold.setEditable(true);
         _threshold.setPrefWidth(70);
         DoubleStringConverter.createFor(_threshold);
-        _threshold.setTooltip(new Tooltip("Set threshold for visibility algorithm (Alt+T)"));
+        Global.addTooltip(_threshold, "Set threshold for visibility algorithm (Alt+T)");
         _threshold.getValueFactory().valueProperty().addListener(
                 (ov, oldValue, newValue) -> drawAlgorithm(false));
 
@@ -512,14 +512,14 @@ public class GraphDialog extends Stage {
             return (distance == 0);
         }
 
-        private static enum NodeLocation {
+        private enum NodeLocation {
             TOP_LEFT,
             BOTTOM_RIGHT,
-            RANDOM;
+            RANDOM
         }
     }
     
-    private static enum Choice {
+    private enum Choice {
 
         SQUARE_EDGE("Square on Edge", null, null),
         SQUARE_VERTEX("Square on Vertex", null, null),

@@ -12,7 +12,7 @@ import javafx.util.StringConverter;
  * input during typing, and restricts valid input to a specified range when committed.
  * 
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.1.0
  */
 public class IntegerStringConverter extends StringConverter<Integer> {
 
@@ -53,8 +53,11 @@ public class IntegerStringConverter extends StringConverter<Integer> {
 
         final int resetValue = Math.min(Math.max(0, min), max);
         _reset = () -> input.setText(Integer.toString(resetValue));
-        input.setTooltip(new Tooltip(String.format(
-                "Enter value between %d and %d", min, max)));
+
+        // bound JavaFX properties cannot be explicitly set
+        if (!input.tooltipProperty().isBound())
+            input.setTooltip(new Tooltip(String.format(
+                    "Enter a value between %d and %d", min, max)));
 
         // restrict direct input to valid numerical characters
         input.textProperty().addListener((ov, oldValue, newValue) -> {
@@ -112,7 +115,8 @@ public class IntegerStringConverter extends StringConverter<Integer> {
 
         factory.setConverter(converter);
         spinner.setTooltip(new Tooltip(String.format(
-                "Enter value between %d and %d", factory.getMin(), factory.getMax())));
+                "Enter a value between %d and %d",
+                factory.getMin(), factory.getMax())));
 
         return converter;
     }
@@ -143,8 +147,10 @@ public class IntegerStringConverter extends StringConverter<Integer> {
      */
     @Override
     public Integer fromString(String s) {
-        if (s == null || s.isEmpty())
+        if (s == null || s.isEmpty()) {
+            if (_reset != null) _reset.run();
             return 0;
+        }
 
         try {
             return Integer.valueOf(s);

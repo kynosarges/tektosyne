@@ -9,13 +9,13 @@ import org.kynosarges.tektosyne.geometry.*;
 /**
  * Provides unit tests for class {@link QuadTree}.
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.1.0
  */
 @SuppressWarnings({ "rawtypes", "unchecked"})
 public class QuadTreeTest {
 
     QuadTree<String> _tree;
-    PointD firstKey = new PointD(0, 0),
+    final PointD firstKey = new PointD(0, 0),
         secondKey = new PointD(50, 0),
         thirdKey = new PointD(0, 50),
         fourthKey = new PointD(50, 50),
@@ -23,7 +23,7 @@ public class QuadTreeTest {
 
     @Before
     public void create() {
-        _tree = new QuadTree<String>(new RectD(-100, -100, 100, 100));
+        _tree = new QuadTree<>(new RectD(-100, -100, 100, 100));
         assertEquals(0, _tree.size());
         assertEquals(1, _tree.nodes().size());
 
@@ -48,7 +48,7 @@ public class QuadTreeTest {
         tree.put(new PointD(20, 20), "bar value");
         assertEquals(2, tree.size());
 
-        final QuadTree<String> clone = new QuadTree<String>(new RectD(0, 0, 100, 100), tree);
+        final QuadTree<String> clone = new QuadTree<>(new RectD(0, 0, 100, 100), tree);
         assertEquals(2, clone.size());
     }
 
@@ -103,7 +103,7 @@ public class QuadTreeTest {
 
     @Test
     public void testAddRange() {
-        final QuadTree<String> tree = new QuadTree<String>(_tree.bounds);
+        final QuadTree<String> tree = new QuadTree<>(_tree.bounds);
         tree.put(fourthKey, "fourth value");
         tree.put(new PointD(-50, -50), "fifth value");
         _tree.putAll(tree);
@@ -215,7 +215,7 @@ public class QuadTreeTest {
 
     @Test
     public void testEquals() {
-        final QuadTree<String> tree = new QuadTree<String>(_tree.bounds);
+        final QuadTree<String> tree = new QuadTree<>(_tree.bounds);
         tree.put(firstKey, "first value");
         tree.put(secondKey, "second value");
         tree.put(thirdKey, "third value");
@@ -324,11 +324,11 @@ public class QuadTreeTest {
         final Map.Entry<PointD, String>[] array = new Map.Entry[2 * radius];
         for (int i = 0; i < array.length; i++)
             array[i] = createEntry(
-                new PointD(i - radius, radius - i),
-                new String(String.format("bar%3d value", i)));
+                    new PointD(i - radius, radius - i),
+                    String.format("bar%3d value", i));
 
-        final QuadTree<String> tree = new QuadTree<String>(
-            new RectD(-2 * radius, -2 * radius, 2 * radius, 2 * radius));
+        final QuadTree<String> tree = new QuadTree<>(
+                new RectD(-2 * radius, -2 * radius, 2 * radius, 2 * radius));
         assertEquals(tree, tree.rootNode.owner());
         assertEquals(1, tree.nodes().size());
 
@@ -403,6 +403,6 @@ public class QuadTreeTest {
     }
     
     private static Map.Entry<PointD, String> createEntry(PointD key, String value) {
-        return new AbstractMap.SimpleEntry<PointD, String>(key, value);
+        return new AbstractMap.SimpleEntry<>(key, value);
     }
 }

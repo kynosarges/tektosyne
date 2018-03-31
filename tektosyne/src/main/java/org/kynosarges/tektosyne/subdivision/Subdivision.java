@@ -27,7 +27,7 @@ import org.kynosarges.tektosyne.graph.*;
  * This implementation represents edges as “twin” pairs of half-edges.</p>
  * 
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.2.0
  */
 public class Subdivision implements Graph<PointD> {
     /**
@@ -109,7 +109,7 @@ public class Subdivision implements Graph<PointD> {
      * <p>
      * This collection is provided for convenience, unit testing, and faster edge scanning.
      * It is not strictly needed since a list of all {@link SubdivisionEdge} instances can be
-     * obtained by iterating over all {@link vertices}, e.g. using {@link #getEdgesByOrigin}.</p>
+     * obtained by iterating over all {@link #vertices}, e.g. using {@link #getEdgesByOrigin}.</p>
      * <p>
      * Maintaining the {@link #edges} collection consumes little extra runtime but a significant
      * amount of memory, so an alternative {@link Subdivision} implementation might choose to
@@ -884,21 +884,18 @@ public class Subdivision implements Graph<PointD> {
          * Prepare dictionaries that map half-edge keys of the combined subdivision to the
          * corresponding incident face keys in each intersected subdivisions.
          * 
-         * The first Map can be initialized directly since CloneEdges also copies the
+         * The first HashMap can be initialized directly since copyEdges also copies the
          * keys of all copied half-edges. IntersectEdges may later add new elements if the
          * first-division edges are split, and will also store all second-division face keys
-         * while computing their intersections.
-         * 
-         * We never store edges whose incident face key is zero, as the final face mapping array
-         * is initialized to all zeroes anyway. Initial capacities equal input edge counts,
-         * gambling that this optimization leaves enough vacant slots for any new elements.
+         * for newly inserted second-division edges and their possible split-offs.
          */
-        final Map<Integer, Integer> edgeToFace1 = new HashMap<>(division1._edges.size());
-        final Map<Integer, Integer> edgeToFace2 = new HashMap<>(division2._edges.size());
+        final int capacity = division1._edges.size() + division2._edges.size();
+        final Map<Integer, Integer> edgeToFace1 = new HashMap<>(capacity);
+        final Map<Integer, Integer> edgeToFace2 = new HashMap<>(capacity);
 
+        // store known face mapping for first division
         for (SubdivisionEdge edge: division1._edges.values())
-            if (edge._face._key != 0)
-                edgeToFace1.put(edge._key, edge._face._key);
+            edgeToFace1.put(edge._key, edge._face._key);
 
         // combine all edges from both subdivisions
         final Subdivision division = division1.copyEdges();
@@ -912,23 +909,43 @@ public class Subdivision implements Graph<PointD> {
         final int[] faceKeys1 = new int[division._faces.size()];
         final int[] faceKeys2 = new int[division._faces.size()];
 
+        // initialize all bounded faces to -1 for processing
+        Arrays.fill(faceKeys1, 1, faceKeys1.length, -1);
+        Arrays.fill(faceKeys2, 1, faceKeys2.length, -1);
+
+        /*
+         * Mapping from division1 edges to division1 faces was stored above,
+         * and intersectEdges mapped division2 edges to division2 faces.
+         *
+         * To finalize face mapping, we need to check for cycles that consist
+         * of either division1 or division2 edges exclusively, and thus know
+         * nothing about faces in the other intersecting division.
+         */
         for (SubdivisionEdge edge: division._edges.values()) {
             final int newFace = edge._face._key;
 
-            if (faceKeys1[newFace] == 0) {
-                final Integer oldFace = edgeToFace1.get(edge._key);
-                if (oldFace != null) {
-                    assert(oldFace != 0);
-                    faceKeys1[newFace] = oldFace;
-                }
+            // unbounded face always maps to original unbounded faces
+            if (newFace == 0) {
+                assert (faceKeys1[newFace] == 0);
+                assert (faceKeys2[newFace] == 0);
+                continue;
             }
 
-            if (faceKeys2[newFace] == 0) {
-                final Integer oldFace = edgeToFace2.get(edge._key);
-                if (oldFace != null) {
-                    assert(oldFace != 0);
-                    faceKeys2[newFace] = oldFace;
-                }
+            // determine mappings of new bounded faces
+            if (faceKeys1[newFace] < 0) {
+                final int oldFace = division1.findInputFace(edge, edgeToFace1);
+                faceKeys1[newFace] = oldFace;
+
+                assert (oldFace >= 0 && oldFace < division1.faces().size());
+                assert checkCycleFaces(edge, oldFace, edgeToFace1);
+            }
+
+            if (faceKeys2[newFace] < 0) {
+                final int oldFace = division2.findInputFace(edge, edgeToFace2);
+                faceKeys2[newFace] = oldFace;
+
+                assert (oldFace >= 0 && oldFace < division2.faces().size());
+                assert checkCycleFaces(edge, oldFace, edgeToFace2);
             }
         }
 
@@ -1188,7 +1205,7 @@ public class Subdivision implements Graph<PointD> {
     }
 
     /**
-     * Removes the specified {@link PointD} vertex by joning both incident edges.
+     * Removes the specified {@link PointD} vertex by joining both incident edges.
      * First checks whether {@link #vertices} does not contain {@code vertex}, or whether
      * {@code vertex} has not exactly two distinct incident full edges, or whether joining
      * them would disturb vertex chains or create an intersection with any non-incident
@@ -1708,6 +1725,30 @@ public class Subdivision implements Graph<PointD> {
     // ----- Private Methods -----
 
     /**
+     * Checks that all {@link #edges} within the cycle of the specified {@link SubdivisionEdge}
+     * are mapped either to {@code null} or to the specified {@link SubdivisionFace} key.
+     *
+     * @param edge the {@link SubdivisionEdge} whose cycle to traverse
+     * @param face the expected key of the {@link SubdivisionFace} in {@code edgeToFace}
+     * @param edgeToFace the {@link Map} mapping {@link SubdivisionEdge} keys to {@link SubdivisionFace} keys
+     * @return {@code true} if all {@link SubdivisionEdge} keys in the cycle containing {@code edge}
+     *         map to either {@code null} or {@code face}, else {@code false}
+     * @throws NullPointerException if {@code edge} or {@code edgeToFace} is {@code null}
+     */
+    private static boolean checkCycleFaces(SubdivisionEdge edge, int face, Map<Integer, Integer> edgeToFace) {
+        SubdivisionEdge cycle = edge;
+        do {
+            final Integer mapFace = edgeToFace.get(cycle._key);
+            if (mapFace != null && mapFace != face)
+                return false;
+
+            cycle = cycle._next;
+        } while (cycle != edge);
+
+        return true;
+    }
+
+    /**
      * Creates a deep copy of the {@link Subdivision}, except for the {@link #faces} collection.
      * Identical to {@link #copy} but creates no {@link #faces}, so the returned {@link Subdivision}
      * only contains the unbounded face. Used internally by {@link #intersection}.
@@ -2172,6 +2213,86 @@ public class Subdivision implements Graph<PointD> {
     }
 
     /**
+     * Finds any existing {@link SubdivisionFace} mapping within the cycle
+     * containing the specified {@link SubdivisionEdge}.
+     *
+     * @param edge the {@link SubdivisionEdge} whose cycle to examine
+     * @param edgeToFace a partially filled {@link Map} mapping the keys of all output {@link #edges}
+     *                   to the keys of the containing {@link #faces} in an input {@link Subdivision}
+     * @return an existing valid mapping (including zero for the unbounded face) within {@code edgeToFace}
+     *         for any {@link #edges} within the cycle containing {@code edge}, or {@code null} if none found
+     * @throws NullPointerException if any argument is {@code null}
+     */
+    private static Integer findCycleFace(SubdivisionEdge edge, Map<Integer, Integer> edgeToFace) {
+
+        SubdivisionEdge cycle = edge;
+        do {
+            final Integer face = edgeToFace.get(cycle._key);
+            if (face != null) return face;
+
+            cycle = cycle._next;
+        } while (cycle != edge);
+
+        return null;
+    }
+
+    /**
+     * Finds the {@link SubdivisionFace} in the current input {@link Subdivision}
+     * that is incident on or contains the specified output {@link SubdivisionEdge}.
+     *
+     * @param edge the {@link SubdivisionEdge} in the output {@link Subdivision}
+     *             whose incident or containing input {@link SubdivisionFace} to find
+     * @param edgeToFace a {@link Map} mapping {@link SubdivisionEdge} keys in the
+     *                   output {@link Subdivision} to {@link SubdivisionFace} keys
+     *                   in the current input {@link Subdivision}
+     * @return the non-negative {@link SubdivisionFace} key in the current input
+     *         {@link Subdivision} that is incident on or contains {@code edge}
+     * @throws NullPointerException if any argument is {@code null}
+     */
+    private int findInputFace(SubdivisionEdge edge, Map<Integer, Integer> edgeToFace) {
+        /*
+         * Check four possible sources of face mappings for the current
+         * subdivision, which is one of the two intersecting divisions.
+         *
+         * 1. The specified edge already has an edgeToFace mapping,
+         *    established either during initialization or intersection.
+         */
+        Integer oldFace = edgeToFace.get(edge._key);
+        if (oldFace != null) return oldFace;
+
+        /*
+         * 2. The edge is in a cycle that includes one or more mapped edges.
+         *    Any non-null mappings in the same cycle must be equal. Method
+         *    intersection() calls checkCycleFaces to ensure this condition.
+         */
+        oldFace = findCycleFace(edge, edgeToFace);
+        if (oldFace != null) return oldFace;
+
+        /*
+         * 3. All cycle edges are wholly contained within one face of the
+         *    current input division, but there might be a connection to
+         *    an input edge through the origin vertex. Process all cycles
+         *    around the same origin as above until a mapping is found.
+         */
+        SubdivisionEdge nextCycle = edge._twin._next;
+        while (nextCycle != edge._previous._twin) {
+
+            oldFace = findCycleFace(nextCycle, edgeToFace);
+            if (oldFace != null) return oldFace;
+
+            nextCycle = nextCycle._twin._next;
+        }
+
+        /*
+         * 4. All cycle edges are wholly contained within one face of the
+         *    current division, with no contact through the origin vertex
+         *    either. Perform brute-force search for the containing face.
+         */
+        final SubdivisionFace face2 = findFace(edge._origin);
+        return face2._key;
+    }
+
+    /**
      * Inserts the specified {@link SubdivisionEdge} into the vertex chain
      * that contains another specified instance.
      * @param edge the {@link SubdivisionEdge} to insert into the vertex chain containing {@code oldEdge}
@@ -2252,19 +2373,18 @@ public class Subdivision implements Graph<PointD> {
      * @param edgeToFace1 a filled {@link Map} mapping the keys of any existing {@link #edges} to the keys
      *                    of the incident bounded {@link #faces} of the corresponding {@link #edges} in the
      *                    {@link Subdivision} that was the first {@link #intersection} argument
-     * @param edgeToFace2 an empty {@link Map}, on return mapping the keys of any existing or created
+     * @param edgeToFace2 an empty {@link Map}, on return mapping the keys of any newly inserted
      *                    {@link #edges} to the keys of the incident bounded {@link #faces} of the
      *                    corresponding {@link #edges} in the intersecting {@code division2}
      * @throws IllegalArgumentException if {@code division2} contains invalid {@link #edges}
      * @throws IllegalStateException if the current {@link Subdivision} contains invalid {@link #edges}
-     * @throws NullPointerException if {@code division2}, {@code edgeToFace1},
-     *                              or {@code edgeToFace2} is {@code null}
+     * @throws NullPointerException if any argument is {@code null}
      */
     private void intersectEdges(Subdivision division2, 
         Map<Integer, Integer> edgeToFace1, Map<Integer, Integer> edgeToFace2) {
 
-        assert(epsilon <= division2.epsilon);
-        assert(edgeToFace2.isEmpty());
+        assert (epsilon <= division2.epsilon);
+        assert edgeToFace2.isEmpty();
 
         // minimum epsilon for edge intersection algorithm
         final double minEpsilon = Math.max(epsilon, 1e-10);
@@ -2276,23 +2396,16 @@ public class Subdivision implements Graph<PointD> {
                 edge1List.add(edge1);
 
         /*
-         * Intersect all firstEdges with all secondEdges, testing one half-edge per pair.
+         * Intersect all division1 edges with all division2 edges, testing one half-edge per pair.
          * 
          * If any edge is split, we add one new half-edge to the corresponding collection for
          * future comparisons, some of which are redundant.
          * 
-         * New first-instance edges are added to the first-instance list. New second-instance
-         * edges are added to a temporary stack which is emptied before we move on to the next
-         * original second-instance edge.
+         * New division1 edges go into edge1List. New division2 edges go into a temporary
+         * stack which is emptied before we move on to the next original division2 edge.
          * 
-         * Any duplicate (congruent) edges are skipped in the second instance only. We never
-         * completely delete any pre-existing first-instance edges, although they may be
-         * shortened.
-         * 
-         * The current second-instance edge is immediately added to the first instance’s Edges
-         * collection. If it turns out to be redundant during an edge split or origin move, it
-         * is automatically removed again. Any newly created edges during a split are added
-         * automatically to the Edges collection as well.
+         * Any duplicate (congruent) edges are skipped in for division2 only. We never completely
+         * delete any pre-existing division1 edges, although they may be shortened.
          */
         final Stack<SubdivisionEdge> edge2Stack = new Stack<>();
         final Iterator<SubdivisionEdge> edge2Iterator = division2._edges.values().iterator();
@@ -2317,11 +2430,9 @@ public class Subdivision implements Graph<PointD> {
                 final CreateEdgeResult result = createTwinEdges(edge._origin, edge._twin._origin);
                 edge2 = result.startEdge;
 
-                // store non-zero incident faces for face mapping
-                int face = edge._face._key;
-                if (face != 0) edgeToFace2.put(edge2._key, face);
-                face = edge._twin._face._key;
-                if (face != 0) edgeToFace2.put(edge2._twin._key, face);
+                // store all incident division2 faces for face mapping
+                edgeToFace2.put(edge2._key, edge._face._key);
+                edgeToFace2.put(edge2._twin._key, edge._twin._face._key);
 
                 // skip edge if duplicated by existing first-instance edge
                 if (!result.isEdgeCreated) continue;
@@ -2333,7 +2444,7 @@ public class Subdivision implements Graph<PointD> {
                 SubdivisionEdge edge1 = edge1List.get(edge1Index);
 
                 // intersect first-instance and second-instance edge
-                final LineIntersection crossing =  LineIntersection.find(
+                final LineIntersection crossing = LineIntersection.find(
                     edge1._origin, edge1._twin._origin,
                     edge2._origin, edge2._twin._origin, minEpsilon);
 
@@ -2517,7 +2628,7 @@ public class Subdivision implements Graph<PointD> {
                      * Both collinear edges point in opposite directions, which is impossible
                      * since they are sorted by lexicographically smaller origins; or else they
                      * are exactly congruent, which is also impossible since they were created
-                     * by CreateTwinEdges which never creates duplicate edges.
+                     * by createTwinEdges which never creates duplicate edges.
                      */
                     throw new IllegalStateException("locateCollinear");
                 } else {
@@ -2526,7 +2637,7 @@ public class Subdivision implements Graph<PointD> {
                      * Divergent intersecting edges: We need only consider the case where either
                      * or both edges cross between their origin and destination, as the case
                      * with two edges touching at a common existing vertex is already covered by
-                     * the vertex chain insertion performed by CreateTwinEdges.
+                     * the vertex chain insertion performed by createTwinEdges.
                      */
                     if (crossing.first == LineLocation.BETWEEN) {
                         switch (crossing.second) {
@@ -2568,8 +2679,8 @@ public class Subdivision implements Graph<PointD> {
                             else if (split.isEdgeDeleted)
                                 continue skipCurrentEdge2;
                         }
-
-                    } else if (crossing.second == LineLocation.BETWEEN) {
+                    }
+                    else if (crossing.second == LineLocation.BETWEEN) {
                         switch (crossing.first) {
 
                         case START:
@@ -2731,8 +2842,8 @@ public class Subdivision implements Graph<PointD> {
     private SplitEdgeResult trySplitEdge(SubdivisionEdge edge, PointD vertex) {
 
         SubdivisionEdge twin = edge._twin;
-        assert(vertex != edge._origin);
-        assert(vertex != twin._origin);
+        assert (vertex != edge._origin);
+        assert (vertex != twin._origin);
         SubdivisionEdge originEdge = null, destinationEdge = null;
 
         // check for existing edges between vertex and end points

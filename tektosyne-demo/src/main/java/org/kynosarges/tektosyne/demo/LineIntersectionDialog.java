@@ -15,7 +15,7 @@ import org.kynosarges.tektosyne.geometry.*;
  * Draws a random set of lines and marks any points of intersection that were found.
  * 
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.1.0
  */
 public class LineIntersectionDialog extends Stage {
 
@@ -49,7 +49,7 @@ public class LineIntersectionDialog extends Stage {
         _tolerance.setEditable(true);
         _tolerance.setPrefWidth(70);
         DoubleStringConverter.createFor(_tolerance);
-        _tolerance.setTooltip(new Tooltip("Set tolerance for proximity matching (Alt+T)"));
+        Global.addTooltip(_tolerance, "Set tolerance for proximity matching (Alt+T)");
         _tolerance.getValueFactory().valueProperty().addListener((ov, oldValue, newValue) -> draw(_lines));
 
         final Label toleranceLabel = new Label("_Tolerance");
@@ -141,7 +141,7 @@ public class LineIntersectionDialog extends Stage {
         }
 
         _lines = lines;
-        final double epsilon = (double) _tolerance.getValue();
+        final double epsilon = _tolerance.getValue();
         _crossings = (epsilon > 0 ?
             MultiLineIntersection.findSimple(lines, epsilon) :
             MultiLineIntersection.findSimple(lines));

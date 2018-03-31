@@ -21,7 +21,7 @@ import org.kynosarges.tektosyne.geometry.*;
  * or deflated circumcircle radius.</p>
  * 
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.1.0
  */
 public class RegularPolygonDialog extends Stage {
 
@@ -50,7 +50,7 @@ public class RegularPolygonDialog extends Stage {
         _sides.setEditable(true);
         _sides.setPrefWidth(60);
         IntegerStringConverter.createFor(_sides);
-        _sides.setTooltip(new Tooltip("Set number of sides for the polygon (Alt+S)"));
+        Global.addTooltip(_sides, "Set number of sides for the polygon (Alt+S)");
         _sides.getValueFactory().valueProperty().addListener((ov, oldValue, newValue) -> draw());
 
         final Label sidesLabel = new Label("_Sides ");
@@ -64,7 +64,7 @@ public class RegularPolygonDialog extends Stage {
         _delta.setEditable(true);
         _delta.setPrefWidth(80);
         IntegerStringConverter.createFor(_delta);
-        _delta.setTooltip(new Tooltip("Set inflation or deflation for cloned polygon (Alt+D)"));
+        Global.addTooltip(_delta, "Set inflation or deflation for cloned polygon (Alt+D)");
         _delta.getValueFactory().valueProperty().addListener((ov, oldValue, newValue) -> draw());
 
         final Label deltaLabel = new Label("_Delta ");

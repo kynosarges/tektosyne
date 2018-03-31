@@ -9,7 +9,7 @@ import org.kynosarges.tektosyne.*;
  * Use {@link PointD} to represent points with {@link Double} dimensions.
  * 
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.1.0
  */
 public final class PointI {
 
@@ -338,6 +338,6 @@ public final class PointI {
      */
     @Override
     public String toString() {
-        return String.format("PointI[width=%d, height=%d]", x, y);
+        return String.format("PointI[x=%d, y=%d]", x, y);
     }
 }

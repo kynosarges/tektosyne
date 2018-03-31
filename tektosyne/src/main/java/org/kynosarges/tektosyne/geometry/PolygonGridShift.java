@@ -2,13 +2,13 @@ package org.kynosarges.tektosyne.geometry;
 
 /**
  * Specifies the shifting of rows or columns in a {@link PolygonGrid}.
- * Valid choices dependon on the underlying {@link RegularPolygon}. Specifies how
+ * Valid choices depend on the underlying {@link RegularPolygon}. Specifies how
  * even-numbered rows or columns are shifted, relative to odd-numbered ones. For
  * this purpose, counting starts at one for the {@link PolygonGrid} row or column
  * at index position zero, so the first row or column is considered odd-numbered.
  * 
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.1.0
  */
 public enum PolygonGridShift {
     /**

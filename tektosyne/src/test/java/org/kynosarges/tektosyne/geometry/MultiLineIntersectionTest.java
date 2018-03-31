@@ -8,7 +8,7 @@ import java.util.*;
 /**
  * Provides unit tests for class {@link MultiLineIntersection}.
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.1.0
  */
 public class MultiLineIntersectionTest {
 
@@ -176,8 +176,8 @@ public class MultiLineIntersectionTest {
 
         MultiLinePoint[] results = findBoth(lines);
         assertEquals(4, results.length);
-        for (int i = 0; i < results.length; i++)
-            assertEquals(2, results[i].lines.length);
+        for (MultiLinePoint result: results)
+            assertEquals(2, result.lines.length);
 
         MultiLinePoint result = results[0];
         assertEquals(new PointD(0, 0), result.shared);
@@ -217,8 +217,8 @@ public class MultiLineIntersectionTest {
 
         MultiLinePoint[] results = findBoth(lines);
         assertEquals(4, results.length);
-        for (int i = 0; i < results.length; i++)
-            assertEquals(2, results[i].lines.length);
+        for (MultiLinePoint result: results)
+            assertEquals(2, result.lines.length);
 
         MultiLinePoint result = results[0];
         assertEquals(new PointD(0, 0), result.shared);
@@ -258,8 +258,8 @@ public class MultiLineIntersectionTest {
 
         MultiLinePoint[] results = findBoth(lines);
         assertEquals(4, results.length);
-        for (int i = 0; i < results.length; i++)
-            assertEquals(2, results[i].lines.length);
+        for (MultiLinePoint result: results)
+            assertEquals(2, result.lines.length);
 
         MultiLinePoint result = results[0];
         assertEquals(new PointD(0, 0), result.shared);
@@ -349,8 +349,8 @@ public class MultiLineIntersectionTest {
 
     private void compareResultPoints(MultiLinePoint brute, MultiLinePoint sweep) {
         assertTrue(PointD.equals(brute.shared, sweep.shared, 1e-6));
-        Arrays.sort(brute.lines, (a, b) -> Integer.compare(a.index, b.index));
-        Arrays.sort(sweep.lines, (a, b) -> Integer.compare(a.index, b.index));
+        Arrays.sort(brute.lines, Comparator.comparingInt(p -> p.index));
+        Arrays.sort(sweep.lines, Comparator.comparingInt(p -> p.index));
         assertArrayEquals(brute.lines, sweep.lines);
     }
 }
