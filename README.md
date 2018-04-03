@@ -72,7 +72,7 @@ dependencies {
 ```
 
 ## License
-Tektosyne is © 2002–2017 by [Christoph Nahr](http://kynosarges.org/index.html) but available for free under the MIT license.
+Tektosyne is © 2002–2018 by [Christoph Nahr](http://kynosarges.org/index.html) but available for free under the MIT license.
 
 ## About this Repository
 The maintainer of the repository is not the original author of tektosyne, but liked the library so much that he decided to upload it to GitHub and distribute it via mavenCentral and jcenter.
