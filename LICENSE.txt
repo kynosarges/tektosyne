@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2002–2016 by Christoph Nahr
+Copyright (c) 2002–2018 by Christoph Nahr
 
 All files (individual files, multi-file packages and individual files
 contained in multi-file packages) that constitute the original distribution
