@@ -9,8 +9,15 @@ buildscript {
     }
 }
 
+plugins {
+    id "com.github.johnrengelman.shadow" version "2.0.3"
+}
 
 apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+mainClassName = 'org.kynosarges.tektosyne.demo.TektosyneDemo'
 
 repositories {
     mavenLocal()
@@ -23,16 +30,4 @@ targetCompatibility = target_compatibility
 
 dependencies {
     compile project(':tektosyne')
-}
-
-apply plugin: 'javafx-gradle-plugin'
-
-jfx {
-    // minimal requirement for jfxJar-task
-    mainClass = 'org.kynosarges.tektosyne.demo.TektosyneDemo'
-
-    jfxMainAppJarName = 'tektosyne-demo.jar'
-
-    // minimal requirement for jfxNative-task
-    vendor = 'tektosyne'
 }
