@@ -8,14 +8,18 @@ buildscript {
     ext.project_license_tag = 'MIT' // the license tag name
     ext.project_license_url = 'https://raw.githubusercontent.com/kynosarges/tektosyne/master/LICENSE.txt' // link to the license
 
-    ext.your_github_name = 'PixelBumper'
+    ext.your_github_name = 'toteto'
 
     ext.source_compatibility = '1.8'
     ext.target_compatibility = '1.8'
 
     repositories{
+        google()
         mavenCentral()
         jcenter()
     }
 
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.2.1'
+    }
 }

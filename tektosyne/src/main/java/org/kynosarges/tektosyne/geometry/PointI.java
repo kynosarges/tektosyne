@@ -54,8 +54,8 @@ public final class PointI {
      */
     public PointI add(PointI point) {
         return new PointI(
-                Math.addExact(x, point.x),
-                Math.addExact(y, point.y));
+                MathCompat.addExact(x, point.x),
+                MathCompat.addExact(y, point.y));
     }
 
     /**
@@ -273,8 +273,8 @@ public final class PointI {
      */
     public PointI subtract(PointI point) {
         return new PointI(
-                Math.subtractExact(x, point.x),
-                Math.subtractExact(y, point.y));
+                MathCompat.subtractExact(x, point.x),
+                MathCompat.subtractExact(y, point.y));
     }
 
     /**

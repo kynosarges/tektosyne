@@ -1,5 +1,7 @@
 package org.kynosarges.tektosyne.geometry;
 
+import org.kynosarges.tektosyne.MathCompat;
+
 /**
  * Represents a rectangular region in two-dimensional space, using {@link Integer} coordinates.
  * {@link RectI} contains two immutable {@link PointI} locations, defining the opposite corners
@@ -178,11 +180,11 @@ public final class RectI {
      */
     public PointI distanceVector(PointI q) {
 
-        final int x = (q.x < min.x ? Math.subtractExact(q.x, min.x) :
-                       q.x > max.x ? Math.subtractExact(q.x, max.x) : 0);
+        final int x = (q.x < min.x ? MathCompat.subtractExact(q.x, min.x) :
+                       q.x > max.x ? MathCompat.subtractExact(q.x, max.x) : 0);
 
-        final int y = (q.y < min.y ? Math.subtractExact(q.y, min.y) :
-                       q.y > max.y ? Math.subtractExact(q.y, max.y) : 0);
+        final int y = (q.y < min.y ? MathCompat.subtractExact(q.y, min.y) :
+                       q.y > max.y ? MathCompat.subtractExact(q.y, max.y) : 0);
 
         return new PointI(x, y);
     }
@@ -290,8 +292,8 @@ public final class RectI {
      */
     public RectI offset(int x, int y) {
         return new RectI(
-                Math.addExact(min.x, x), Math.addExact(min.y, y),
-                Math.addExact(max.x, x), Math.addExact(max.y, y));
+          MathCompat.addExact(min.x, x), MathCompat.addExact(min.y, y),
+          MathCompat.addExact(max.x, x), MathCompat.addExact(max.y, y));
     }
 
     /**

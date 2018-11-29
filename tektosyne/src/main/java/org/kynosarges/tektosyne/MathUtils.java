@@ -14,7 +14,7 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public final class MathUtils {
 
-    private final static ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
+    private final static Random RANDOM = ThreadLocalRandomCompat.current();
 
     /**
      * Creates a {@link MathUtils} instance.

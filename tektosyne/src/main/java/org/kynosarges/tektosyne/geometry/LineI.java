@@ -1,5 +1,7 @@
 package org.kynosarges.tektosyne.geometry;
 
+import org.kynosarges.tektosyne.MathCompat;
+
 /**
  * Represents a directed line segment in two-dimensional space, using {@link Integer} coordinates.
  * {@link LineI} contains two immutable {@link PointI} locations, indicating the {@link LineI#start}
@@ -385,8 +387,8 @@ public final class LineI {
      */
     public PointI vector() {
         return new PointI(
-                Math.subtractExact(end.x, start.x),
-                Math.subtractExact(end.y, start.y));
+                MathCompat.subtractExact(end.x, start.x),
+          MathCompat.subtractExact(end.y, start.y));
     }
 
     /**

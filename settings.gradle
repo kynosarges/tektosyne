@@ -1,3 +1,4 @@
 rootProject.name = 'tektosyne'
 include 'tektosyne'
 include 'tektosyne-demo'
+include ':app'
