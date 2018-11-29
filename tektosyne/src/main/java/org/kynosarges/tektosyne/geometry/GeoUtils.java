@@ -16,7 +16,7 @@ import org.kynosarges.tektosyne.*;
  */
 public final class GeoUtils {
 
-    private final static ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
+    private final static Random RANDOM = ThreadLocalRandomCompat.current();
 
     /**
      * Creates a {@link GeoUtils} instance.
@@ -475,10 +475,10 @@ public final class GeoUtils {
             throw new IllegalArgumentException("height <= 0");
 
         return new LineD(
-            x + RANDOM.nextDouble(width),
-            y + RANDOM.nextDouble(height),
-            x + RANDOM.nextDouble(width),
-            y + RANDOM.nextDouble(height));
+            x + RANDOM.nextDouble() * width,
+            y + RANDOM.nextDouble() * height,
+            x + RANDOM.nextDouble() * width,
+            y + RANDOM.nextDouble() * height);
     }
 
     /**
@@ -498,8 +498,8 @@ public final class GeoUtils {
             throw new IllegalArgumentException("height <= 0");
 
         return new PointD(
-            x + RANDOM.nextDouble(width),
-            y + RANDOM.nextDouble(height));
+            x + RANDOM.nextDouble() * width,
+            y + RANDOM.nextDouble() * height);
     }
 
     /**
@@ -520,8 +520,8 @@ public final class GeoUtils {
             throw new IllegalArgumentException("bounds.height == 0");
 
         return new PointD(
-                bounds.min.x + RANDOM.nextDouble(width),
-                bounds.min.y + RANDOM.nextDouble(height));
+                bounds.min.x + RANDOM.nextDouble() * width,
+                bounds.min.y + RANDOM.nextDouble() * height);
     }
 
     /**
@@ -549,8 +549,8 @@ public final class GeoUtils {
 
         for (int i = 0; i < points.length; i++)
             points[i] = new PointD(
-                bounds.min.x + RANDOM.nextDouble(width),
-                bounds.min.y + RANDOM.nextDouble(height));
+                bounds.min.x + RANDOM.nextDouble() * width,
+                bounds.min.y + RANDOM.nextDouble() * height);
 
         return points;
     }
@@ -596,8 +596,8 @@ public final class GeoUtils {
         for (int i = 0; i < count; i++) {
             do {
                 point = new PointD(
-                    bounds.min.x + RANDOM.nextDouble(width),
-                    bounds.min.y + RANDOM.nextDouble(height));
+                    bounds.min.x + RANDOM.nextDouble() * width,
+                    bounds.min.y + RANDOM.nextDouble() * height);
                 
                 if (points.isEmpty()) break;
 
@@ -606,7 +606,7 @@ public final class GeoUtils {
             } while (length2 < distance);
 
             points.add(point);
-            points.sort(comparer);
+            Collections.sort(points, comparer);
         }
 
         return points.toArray(new PointD[count]);
@@ -645,7 +645,7 @@ public final class GeoUtils {
         for (double degrees = 0; degrees < 360; degrees += 6.0) {
 
             // random increment of angle for next vertex
-            degrees += RANDOM.nextDouble(110);
+            degrees += RANDOM.nextDouble() * 110;
             if (degrees >= 360) break;
             final double radians = degrees * Angle.DEGREES_TO_RADIANS;
 
@@ -687,10 +687,10 @@ public final class GeoUtils {
             throw new IllegalArgumentException("height <= 0");
 
         return new RectD(
-                x + RANDOM.nextDouble(width / 2),
-                y + RANDOM.nextDouble(height / 2),
-                x + width - RANDOM.nextDouble(width / 2),
-                y + height - RANDOM.nextDouble(height / 2));
+                x + RANDOM.nextDouble() * width / 2,
+                y + RANDOM.nextDouble() * height / 2,
+                x + width - RANDOM.nextDouble() * width / 2,
+                y + height - RANDOM.nextDouble() * height /2);
     }
 
     /**

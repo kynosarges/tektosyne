@@ -334,7 +334,7 @@ public final class Fortran {
      * @throws ArithmeticException if {@code p} is zero
      */
     public static int modulo(int a, int p) {
-        return Math.floorMod(a, p);
+        return MathCompat.floorMod(a, p);
     }
 
     /**
@@ -348,7 +348,7 @@ public final class Fortran {
      * @throws ArithmeticException if {@code p} is zero
      */
     public static long modulo(long a, long p) {
-        return Math.floorMod(a, p);
+        return MathCompat.floorMod(a, p);
     }
 
     /**
@@ -429,7 +429,7 @@ public final class Fortran {
     public static int sum(int... args) {
         int sum = 0;
         for (int n: args)
-            sum = Math.addExact(sum, n);
+            sum = MathCompat.addExact(sum, n);
 
         return sum;
     }
@@ -446,7 +446,7 @@ public final class Fortran {
     public static long sum(long... args) {
         long sum = 0;
         for (long n: args)
-            sum = Math.addExact(sum, n);
+            sum = MathCompat.addExact(sum, n);
 
         return sum;
     }

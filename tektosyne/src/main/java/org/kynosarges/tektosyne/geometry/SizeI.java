@@ -1,5 +1,7 @@
 package org.kynosarges.tektosyne.geometry;
 
+import org.kynosarges.tektosyne.MathCompat;
+
 /**
  * Represents an extension in two-dimensional space, using {@link Integer} coordinates.
  * {@link SizeI} contains two immutable non-negative {@link Integer} dimensions.
@@ -60,8 +62,8 @@ public final class SizeI {
      */
     public SizeI add(SizeI size) {
         return new SizeI(
-                Math.addExact(width, size.width),
-                Math.addExact(height, size.height));
+              MathCompat.addExact(width, size.width),
+              MathCompat.addExact(height, size.height));
     }
 
     /**

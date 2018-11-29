@@ -240,8 +240,8 @@ public class QuadTree<V> extends AbstractMap<PointD, V> {
      *         {@code arrayIndex} plus {@link #size} is greater than the length of {@code array}
      * @throws NullPointerException if {@code array} is {@code null}
      */
-    public void copyTo(Map.Entry<PointD, V>[] array, int arrayIndex) {
-        for (Map.Entry<PointD, V> entry: entrySet())
+    public void copyTo(Entry<PointD, V>[] array, int arrayIndex) {
+        for (Entry<PointD, V> entry: entrySet())
             array[arrayIndex++] = entry;
     }
 
@@ -701,7 +701,7 @@ public class QuadTree<V> extends AbstractMap<PointD, V> {
      */
     @Override
     public void putAll(Map<? extends PointD, ? extends V> map) {
-        for (Map.Entry<? extends PointD, ? extends V> entry: map.entrySet())
+        for (Entry<? extends PointD, ? extends V> entry: map.entrySet())
             put(entry.getKey(), entry.getValue());
     }
 
@@ -874,7 +874,7 @@ public class QuadTree<V> extends AbstractMap<PointD, V> {
             final int oldSize = _size;
             boolean changed = false;
 
-            for (Map.Entry<PointD, V> entry: collection) {
+            for (Entry<PointD, V> entry: collection) {
                 final V value = entry.getValue();
                 if (!Objects.equals(value, put(entry.getKey(), value)))
                     changed = true;
@@ -912,7 +912,7 @@ public class QuadTree<V> extends AbstractMap<PointD, V> {
          * 
          * @param obj the element to examine
          * @return {@code true} if {@code obj} was found, else {@code false}
-         * @throws ClassCastException if {@code obj} cannot be cast to {@link Map.Entry}
+         * @throws ClassCastException if {@code obj} cannot be cast to {@link Entry}
          *                            with a {@link PointD} key and a <b>V</b> value
          * @throws NullPointerException if {@code obj} or its key is {@code null}
          */
@@ -970,7 +970,7 @@ public class QuadTree<V> extends AbstractMap<PointD, V> {
          * 
          * @param obj the element to remove
          * @return {@code true} if {@code obj} was found and removed, else {@code false}
-         * @throws ClassCastException if {@code obj} cannot be cast to {@link Map.Entry}
+         * @throws ClassCastException if {@code obj} cannot be cast to {@link Entry}
          *                            with a {@link PointD} key and a <b>V</b> value
          * @throws NullPointerException if {@code obj} or its key is {@code null}
          */
@@ -1396,7 +1396,7 @@ public class QuadTree<V> extends AbstractMap<PointD, V> {
                     final double x = range.min.x + radius;
                     final double y = range.min.y + radius;
 
-                    for (Map.Entry<PointD, V> pair: _entries.entrySet()) {
+                    for (Entry<PointD, V> pair: _entries.entrySet()) {
                         final PointD key = pair.getKey();
                         if (range.contains(key)) {
                             final double dx = key.x - x, dy = key.y - y;
@@ -1405,7 +1405,7 @@ public class QuadTree<V> extends AbstractMap<PointD, V> {
                         }
                     }
                 } else {
-                    for (Map.Entry<PointD, V> pair: _entries.entrySet())
+                    for (Entry<PointD, V> pair: _entries.entrySet())
                         if (range.contains(pair.getKey()))
                             output.put(pair.getKey(), pair.getValue());
                 }
@@ -1483,7 +1483,7 @@ public class QuadTree<V> extends AbstractMap<PointD, V> {
          */
         private void split() {
 
-            for (Map.Entry<PointD, V> pair: _entries.entrySet()) {
+            for (Entry<PointD, V> pair: _entries.entrySet()) {
                 final PointD key = pair.getKey();
                 final Node<V> child = findOrCreateChild(key);
                 child._entries.put(key, pair.getValue());
