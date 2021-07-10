@@ -261,7 +261,7 @@ public final class MultiLineIntersection {
                 // no intersections, store original line
                 segments[index++] = lines[i];
             } else {
-                assert(points.size() > 2);
+                assert(points.size() >= 2);
 
                 // sort points by distance from start point
                 comparer.setStart(points.get(0));
