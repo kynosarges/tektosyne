@@ -1,14 +1,8 @@
 package org.kynosarges.tektosyne.demo;
 
-import java.util.*;
-
-import javafx.geometry.*;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.scene.paint.*;
-import javafx.scene.shape.*;
-import javafx.stage.*;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
 
 import org.kynosarges.tektosyne.geometry.*;
 
@@ -18,105 +12,148 @@ import org.kynosarges.tektosyne.geometry.*;
  * that constitutes its convex hull.
  * 
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.3.0
  */
-public class ConvexHullDialog extends Stage {
+public class ConvexHullDialog extends JDialog {
+    private static final long serialVersionUID = 0L;
 
-    private final Pane _output = new Pane();
-    private PointD[] _points;
+    private PointD[] _points, _polygon;
 
     /**
      * Creates a {@link ConvexHullDialog}.
+     * @param owner the {@link Window} that owns the dialog
      */    
-    public ConvexHullDialog() {
-        initOwner(Global.primaryStage());
-        initModality(Modality.APPLICATION_MODAL);
-        initStyle(StageStyle.DECORATED);
+    public ConvexHullDialog(Window owner) {
+        super(owner);
+        setModal(true);
 
-        final Label message = new Label(
-                "Convex hull vertices appear as filled circles, interior points appear hollow.");
-        message.setWrapText(true);
+        final JPanel panel = new JPanel();
+        setContentPane(panel);
 
-        Global.clipChildren(_output);
-        _output.setPrefSize(400, 300);
-        _output.setBorder(new Border(new BorderStroke(Color.BLACK,
-                BorderStrokeStyle.SOLID, new CornerRadii(4), BorderWidths.DEFAULT)));
+        final GroupLayout layout = new GroupLayout(panel);
+        layout.setAutoCreateGaps(true);
+        layout.setAutoCreateContainerGaps(true);
+        panel.setLayout(layout);
 
-        final Button newTest = new Button("_New");
-        newTest.setDefaultButton(true);
-        newTest.setOnAction(t -> draw(null));
-        newTest.setTooltip(new Tooltip("Generate new random point set (Alt+N)"));
+        final JLabel message = new JLabel(
+                "<html>Convex hull vertices appear as filled circles, interior points appear hollow.</html>");
 
-        final Button copy = new Button("_Copy");
-        copy.setOnAction(t -> Global.copy(this, PointD.class, _points));
-        copy.setTooltip(new Tooltip("Copy current point set to clipboard (Alt+C)"));
+        final DrawPanel output = new DrawPanel();
+        output.setBackground(Color.WHITE);
+        output.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1, true));
 
-        final Button paste = new Button("_Paste");
-        paste.setOnAction(t -> {
+        final JButton newTest = new JButton("New");
+        newTest.requestFocus();
+        newTest.addActionListener(t -> output.draw(null));
+        newTest.setMnemonic(KeyEvent.VK_N);
+        newTest.setToolTipText("Generate new random point set (Alt+N)");
+
+        final JButton copy = new JButton("Copy");
+        copy.addActionListener(t -> Global.copy(this, PointD.class, _points));
+        copy.setMnemonic(KeyEvent.VK_C);
+        copy.setToolTipText("Copy current point set to clipboard (Alt+C)");
+
+        final JButton paste = new JButton("Paste");
+        paste.addActionListener(t -> {
             final PointD[] points = Global.paste(this, PointD.class);
-            if (points != null) draw(points);
+            if (points != null) output.draw(points);
         });
-        paste.setTooltip(new Tooltip("Paste existing point set from clipboard (Alt+P)"));
+        paste.setMnemonic(KeyEvent.VK_P);
+        paste.setToolTipText("Paste existing point set from clipboard (Alt+P)");
 
-        final Button close = new Button("Close");
-        close.setCancelButton(true);
-        close.setOnAction(t -> close());
-        close.setTooltip(new Tooltip("Close dialog (Escape, Alt+F4)"));
+        final JButton close = CloseAction.createButton(this, panel);
 
-        final HBox controls = new HBox(newTest, copy, paste, close);
-        controls.setAlignment(Pos.CENTER);
-        controls.setSpacing(8);
+        final GroupLayout.Group controlsH = layout.createSequentialGroup().
+                addContainerGap(0, Short.MAX_VALUE).
+                addComponent(newTest).
+                addComponent(copy).
+                addComponent(paste).
+                addComponent(close).
+                addContainerGap(0, Short.MAX_VALUE);
 
-        final VBox root = new VBox(message, _output, controls);
-        root.setPadding(new Insets(8));
-        root.setSpacing(8);
-        VBox.setVgrow(_output, Priority.ALWAYS);
-        
+        final GroupLayout.Group controlsV = layout.createParallelGroup(GroupLayout.Alignment.CENTER, false).
+                addComponent(newTest).
+                addComponent(copy).
+                addComponent(paste).
+                addComponent(close);
+
+        layout.setHorizontalGroup(layout.createParallelGroup().
+                addComponent(message).
+                addComponent(output).
+                addGroup(controlsH));
+
+        layout.setVerticalGroup(layout.createSequentialGroup().
+                addComponent(message).
+                addComponent(output, 250, 250, Short.MAX_VALUE).
+                addGroup(controlsV));
+
+        setLocationByPlatform(true);
         setResizable(true);
-        setScene(new Scene(root));
+        pack();
         setTitle("Convex Hull Test");
-        sizeToScene();
-        
-        setOnShown(t -> draw(null));
+        SwingUtilities.invokeLater(() -> output.draw(null));
+
+        // HACK: Window.setMinimumSize ignores high DPI scaling
+        addComponentListener(new ResizeListener(this));
+        setVisible(true);
     }
 
     /**
-     * Draws a convex hull for the specified {@link PointD} array.
-     * Creates a new {@link PointD} array if {@code points} is {@code null}.
-     * 
-     * @param points the {@link PointD} array whose convex hull to draw
+     * Provides the custom drawing {@link JPanel} for the {@link ConvexHullDialog}.
      */
-    private void draw(PointD[] points) {
-        final double diameter = 8;
+    private class DrawPanel extends JPanel {
+        private static final long serialVersionUID = 0L;
 
-        // generate new random point set if desired
-        if (points == null) {
-            final double width = _output.getWidth() - 2 * diameter;
-            final double height = _output.getHeight() - 2 * diameter;
-            final RectD bounds = new RectD(0, 0, width, height).offset(diameter, diameter);
+        // diameter of circles marking random points
+        private final static double DIAMETER = 8;
 
-            final int count = 4 + Global.RANDOM.nextInt(37);
-            points = GeoUtils.randomPoints(count, bounds, new PointDComparatorY(0), diameter);
+        /**
+         * Draws a convex hull for the specified {@link PointD} array.
+         * Creates a new {@link PointD} array if {@code points} is {@code null}.
+         *
+         * @param points the {@link PointD} array whose convex hull to draw
+         */
+        void draw(PointD[] points) {
+
+            // generate new random point set if desired
+            if (points == null) {
+                final double width = getWidth() - 2 * DIAMETER;
+                final double height = getHeight() - 2 * DIAMETER;
+                final RectD bounds = new RectD(0, 0, width, height).offset(DIAMETER, DIAMETER);
+
+                final int count = 4 + Global.RANDOM.nextInt(37);
+                points = GeoUtils.randomPoints(count, bounds, new PointDComparatorY(0), DIAMETER);
+            }
+
+            _points = points;
+            _polygon = GeoUtils.convexHull(points);
+            repaint();
         }
 
-        _points = points;
-        final PointD[] polygon = GeoUtils.convexHull(points);
-        final List<PointD> polygonList = Arrays.asList(polygon);
-        _output.getChildren().clear();
+        /**
+         * Invoked by Swing to draw the {@link DrawPanel}.
+         * @param g the {@link Graphics2D} context in which to paint
+         */
+        @Override
+        public void paint(Graphics g) {
+            super.paint(g);
+            if (_points == null || _polygon == null)
+                return;
 
-        // draw hull vertices filled, other points hollow
-        for (PointD point: points) {
-            final boolean isVertex = polygonList.contains(point);
-            final Circle vertex = new Circle(point.x, point.y, diameter / 2);
-            vertex.setFill(isVertex ? Color.BLACK : null);
-            vertex.setStroke(Color.BLACK);
-            _output.getChildren().add(vertex);
+            final Graphics2D g2 = (Graphics2D) g;
+
+            // draw hull vertices filled, other points hollow
+            g2.setColor(Color.BLACK);
+            for (PointD point: _points) {
+                final Shape circle = Global.drawCircle(point, DIAMETER);
+                g2.draw(circle);
+                if (Global.contains(_polygon, point))
+                    g2.fill(circle);
+            }
+
+            // draw edges of convex hull
+            g2.setColor(Color.RED);
+            g2.draw(Global.drawPolygon(_polygon));
         }
-
-        // draw edges of convex hull
-        final Polygon hull = new Polygon(PointD.toDoubles(polygon));
-        hull.setFill(null);
-        hull.setStroke(Color.RED);
-        _output.getChildren().add(hull);
     }
 }

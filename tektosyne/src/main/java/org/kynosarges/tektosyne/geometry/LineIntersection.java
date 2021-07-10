@@ -7,7 +7,7 @@ package org.kynosarges.tektosyne.geometry;
  * intersection point and the spatial relationship between the intersected line segments.
  * 
  * @author Christoph Nahr
- * @version 6.1.0
+ * @version 6.3.0
  */
 public final class LineIntersection {
 
@@ -502,7 +502,7 @@ public final class LineIntersection {
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
-        if (obj == null || !(obj instanceof LineIntersection))
+        if (!(obj instanceof LineIntersection))
             return false;
 
         final LineIntersection other = (LineIntersection) obj;

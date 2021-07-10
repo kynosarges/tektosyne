@@ -8,7 +8,7 @@ import org.kynosarges.tektosyne.*;
  * Use {@link SizeI} to represent sizes with {@link Integer} extensions.
  * 
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.3.0
  */
 public final class SizeD {
     /**
@@ -208,7 +208,7 @@ public final class SizeD {
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
-        if (obj == null || !(obj instanceof SizeD))
+        if (!(obj instanceof SizeD))
             return false;
 
         final SizeD size = (SizeD) obj;

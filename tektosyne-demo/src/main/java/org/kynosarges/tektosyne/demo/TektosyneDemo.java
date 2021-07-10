@@ -1,112 +1,198 @@
 package org.kynosarges.tektosyne.demo;
 
-import javafx.application.Application;
-import javafx.event.*;
-import javafx.geometry.Insets;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.input.*;
-import javafx.scene.layout.*;
-import javafx.stage.Stage;
+import java.util.function.Consumer;
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
 
 /**
- * Defines the Tektosyne Demo application for JavaFX.
+ * Defines the Tektosyne Demo application.
+ *
  * @author Christoph Nahr
- * @version 6.1.0
+ * @version 6.3.0
  */
-public class TektosyneDemo extends Application {
+public class TektosyneDemo extends JFrame {
+    private static final long serialVersionUID = 0L;
+
     /**
-     * Starts the {@link TektosyneDemo} application.
-     * @param primaryStage the primary {@link Stage} for the application
+     * The single instance of the {@link TektosyneDemo} class.
      */
-    @Override
-    public void start(Stage primaryStage) {
-        Global.setPrimaryStage(primaryStage);
+    public static TektosyneDemo INSTANCE;
 
-        final Label caption = new Label("Tektosyne Demo Application");
-        caption.setFont(Global.boldFont(16));
-        caption.setPadding(new Insets(8));
-        final Label message = new Label("Select a menu item to demonstrate Tektosyne features.");
-        message.setPadding(new Insets(8));
+    /**
+     * Creates a {@link TektosyneDemo} frame.
+     * @param args the command line arguments
+     */
+    private TektosyneDemo(String[] args) {
+        INSTANCE = this;
+        setJMenuBar(createMenuBar());
 
-        final VBox root = new VBox(createMenuBar(), caption, message);
-        final Scene scene = new Scene(root, 400, 300);
+        final JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+        getContentPane().add(panel);
 
-        // background thread executor must be shut down manually
-        primaryStage.setOnCloseRequest(t -> BenchmarkDialog.EXECUTOR.shutdownNow());
+        final JLabel caption = new JLabel("Tektosyne Demo Application");
+        caption.setFont(caption.getFont().deriveFont(Font.BOLD, 16));
+        caption.setBorder(BorderFactory.createEmptyBorder(8, 8, 4, 8));
+        panel.add(caption);
 
-        primaryStage.setTitle("Tektosyne Demo");
-        primaryStage.setResizable(false);
-        primaryStage.setScene(scene);
-        primaryStage.centerOnScreen();
-        primaryStage.show();
+        final JLabel message = new JLabel("Select a menu item to demonstrate Tektosyne features.");
+        message.setBorder(BorderFactory.createEmptyBorder(4, 8, 8, 8));
+        panel.add(message);
+
+        setTitle("Tektosyne Demo");
+        setSize(400, 300);
+        setResizable(false);
+        addWindowListener(new WindowCloser());
+        getToolkit().setDynamicLayout(true);
     }
 
-    private static MenuBar createMenuBar() {
-        final MenuBar menu = new MenuBar();
+    /**
+     * Starts the Tektosyne Demo application.
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
 
-        final Menu fileMenu = createMenu("_File",
-            createMenuItem("_About", t -> new AboutDialog().showAndWait(), null),
-            createMenuItem("_Benchmarks", t -> new BenchmarkDialog().showAndWait(),
-                new KeyCodeCombination(KeyCode.B, KeyCombination.SHORTCUT_DOWN)),
-            new SeparatorMenuItem(),
-            createMenuItem("E_xit", t -> Global.primaryStage().close(), null)
+        // default to cross-platform Nimbus L&F if present
+        final String name = getLookAndFeelClassName("NimbusLookAndFeel");
+
+        if (name != null) try {
+            UIManager.setLookAndFeel(name);
+            /*
+             * HACK: Nimbus surrounds focusable controls with an empty border that fills in
+             * only when focused. This has the effect of making labels appear left-shifted.
+             * We add some right-shift to visually align labels with non-focused controls.
+             */
+            if (name.contains("Nimbus"))
+                UIManager.getDefaults().put("Label.contentMargins", new Insets(0, 4, 0, 0));
+        } catch (Exception e) {
+        }
+
+        EventQueue.invokeLater(() -> {
+            final TektosyneDemo frame = new TektosyneDemo(args);
+            frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+            frame.setLocationByPlatform(true);
+            frame.setVisible(true);
+        });
+    }
+
+    /**
+     * Gets the full Look &amp; Feel class name for the specified name.
+     * Finds first installed {@link UIManager.LookAndFeelInfo} whose name
+     * either matches the specified {@code name} or whose class name contains
+     * the specified {@code name}. The second option allows disambiguation.
+     *
+     * @param name a Look &amp; Feel name or (partial) class name
+     * @return the first Look &amp; Feel class name matching {@code name},
+     * as described above, or {@code null} for no match
+     * @throws NullPointerException if {@code name} is {@code null}
+     */
+    private static String getLookAndFeelClassName(String name) {
+        for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels())
+            if (info.getName().equals(name) || info.getClassName().contains(name))
+                return info.getClassName();
+
+        return null;
+    }
+
+    /**
+     * Creates the {@link JMenuBar} for the Tektosyne Demo application.
+     * @return the {@link JMenuBar} for the Tektosyne Demo application
+     */
+    private static JMenuBar createMenuBar() {
+        final JMenuBar menu = new JMenuBar();
+
+        final JMenu fileMenu = createMenu("File", KeyEvent.VK_F,
+                createMenuItem("About", KeyEvent.VK_A, null, e -> AboutDialog.show()),
+                createMenuItem("Benchmarks", KeyEvent.VK_B,
+                        KeyStroke.getKeyStroke(KeyEvent.VK_B, InputEvent.CTRL_DOWN_MASK),
+                        e -> new BenchmarkDialog(INSTANCE)),
+                null, // separator
+                createMenuItem("Exit", KeyEvent.VK_X, null,
+                        e -> INSTANCE.dispatchEvent(new WindowEvent(INSTANCE, WindowEvent.WINDOW_CLOSING)))
         );
 
-        final Menu geoMenu = createMenu("_Geometry", 
-            createMenuItem("Convex _Hull", t -> new ConvexHullDialog().showAndWait(),
-                new KeyCodeCombination(KeyCode.H, KeyCombination.SHORTCUT_DOWN)),
-            createMenuItem("Line _Intersection", t -> new LineIntersectionDialog().showAndWait(),
-                new KeyCodeCombination(KeyCode.I, KeyCombination.SHORTCUT_DOWN)),
-            createMenuItem("_Point in Polygon", t -> new PointInPolygonDialog().showAndWait(),
-                new KeyCodeCombination(KeyCode.P, KeyCombination.SHORTCUT_DOWN)),
-            new SeparatorMenuItem(),
-            createMenuItem("_Subdivision", t -> new SubdivisionDialog().showAndWait(),
-                new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN)),
-            createMenuItem("Subdivision In_tersection", t -> new SubdivisionInterDialog().showAndWait(),
-                new KeyCodeCombination(KeyCode.T, KeyCombination.SHORTCUT_DOWN)),
-            createMenuItem("_Voronoi & Delaunay", t -> new VoronoiDialog().showAndWait(),
-                new KeyCodeCombination(KeyCode.V, KeyCombination.SHORTCUT_DOWN))
+        final JMenu geoMenu = createMenu("Geometry", KeyEvent.VK_G,
+                createMenuItem("Convex Hull", KeyEvent.VK_H,
+                        KeyStroke.getKeyStroke(KeyEvent.VK_H, InputEvent.CTRL_DOWN_MASK),
+                        e -> new ConvexHullDialog(INSTANCE)),
+                createMenuItem("Line Intersection", KeyEvent.VK_I,
+                        KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_DOWN_MASK),
+                        e -> new LineIntersectionDialog(INSTANCE)),
+                createMenuItem("Point in Polygon", KeyEvent.VK_P,
+                        KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK),
+                        e -> new PointInPolygonDialog(INSTANCE)),
+                null, // separator
+                createMenuItem("Subdivision", KeyEvent.VK_S,
+                        KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK),
+                        e -> new SubdivisionDialog(INSTANCE)),
+                createMenuItem("Subdivision Intersection", KeyEvent.VK_T,
+                        KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK),
+                        e -> new SubdivisionInterDialog(INSTANCE)),
+                createMenuItem("Voronoi & Delaunay", KeyEvent.VK_V,
+                        KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK),
+                        e -> new VoronoiDialog(INSTANCE))
         );
 
-        final Menu graphMenu = createMenu("_Polygon & Graph",
-            createMenuItem("_Regular Polygon", t -> new RegularPolygonDialog().showAndWait(),
-                new KeyCodeCombination(KeyCode.R, KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN)),
-            createMenuItem("Polygon _Grid", t -> new PolygonGridDialog().showAndWait(),
-                new KeyCodeCombination(KeyCode.G, KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN)),
-            createMenuItem("_Save & Print Grid", t -> new MakeGridDialog().showAndWait(),
-                new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN)),
-            new SeparatorMenuItem(),
-            createMenuItem("Graph _Algorithms", t -> new GraphDialog().showAndWait(),
-                new KeyCodeCombination(KeyCode.A, KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN))
+        final JMenu graphMenu = createMenu("Polygon & Graph", KeyEvent.VK_P,
+                createMenuItem("Regular Polygon", KeyEvent.VK_R, KeyStroke.getKeyStroke(
+                        KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK),
+                        e -> new RegularPolygonDialog(INSTANCE)),
+                createMenuItem("Polygon Grid", KeyEvent.VK_G, KeyStroke.getKeyStroke(
+                        KeyEvent.VK_G, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK),
+                        e -> new PolygonGridDialog(INSTANCE)),
+                createMenuItem("Save & Print Grid", KeyEvent.VK_S, KeyStroke.getKeyStroke(
+                        KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK),
+                        e -> new MakeGridDialog(INSTANCE)),
+                null, // separator
+                createMenuItem("Graph Algorithms", KeyEvent.VK_A, KeyStroke.getKeyStroke(
+                        KeyEvent.VK_A, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK),
+                        e -> new GraphDialog(INSTANCE))
         );
 
-        menu.getMenus().addAll(fileMenu, geoMenu, graphMenu);
+        menu.add(fileMenu);
+        menu.add(geoMenu);
+        menu.add(graphMenu);
         return menu;
     }
 
-    private static Menu createMenu(String title, MenuItem... items) {
-        final Menu menu = new Menu(title);
-        menu.setMnemonicParsing(true);
-        menu.getItems().addAll(items);
+    private static JMenu createMenu(String title, int mnemonic, JMenuItem... items) {
+        final JMenu menu = new JMenu(title);
+        menu.setMnemonic(mnemonic);
+        for (JComponent item: items)
+            if (item == null)
+                menu.addSeparator();
+            else
+                menu.add(item);
         return menu;
     }
-    
-    private static MenuItem createMenuItem(String text,
-            EventHandler<ActionEvent> onAction, KeyCombination key) {
 
-        final MenuItem item = new MenuItem(text);
-        item.setMnemonicParsing(true);
-        item.setOnAction(onAction);
-        if (key != null) item.setAccelerator(key);
+    private static JMenuItem createMenuItem(String text, int mnemonic,
+            KeyStroke accelerator, Consumer<ActionEvent> onAction) {
+
+        final JMenuItem item = new JMenuItem(text);
+        item.setMnemonic(mnemonic);
+        if (accelerator != null) item.setAccelerator(accelerator);
+        item.addActionListener(onAction::accept);
         return item;
     }
 
     /**
-     * Launches the {@link TektosyneDemo} application.
-     * @param args the command line arguments
+     * Closes the {@link TektosyneDemo} window.
      */
-    public static void main(String[] args) {
-        launch(args);
+    private class WindowCloser extends WindowAdapter {
+        /**
+         * Invoked when the user attempts to close the window.
+         * Stops the background thread of the {@link BenchmarkDialog}
+         * and closes the {@link TektosyneDemo} window.
+         *
+         * @param e the {@link WindowEvent} to process
+         */
+        @Override
+        public void windowClosing(WindowEvent e) {
+            BenchmarkDialog.EXECUTOR.shutdownNow();
+            TektosyneDemo.this.dispose();
+        }
     }
 }

@@ -4,25 +4,21 @@ import java.io.IOException;
 import java.net.*;
 import java.nio.file.*;
 
-import javafx.event.*;
-import javafx.geometry.*;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.scene.text.*;
-import javafx.stage.*;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
 
 /**
  * Shows a modal dialog with information about the application.
  * @author Christoph Nahr
- * @version 6.1.0
+ * @version 6.3.0
  */
-public class AboutDialog extends Stage {
+public class AboutDialog {
 
     private final static String TITLE, VERSION, AUTHOR, DATE;
     private final static String MAIL = "webmaster@kynosarges.org", MAIL_URI;
     private final static String SITE = "kynosarges.org/Tektosyne.html";
-    private final static String SITE_URI = "http://kynosarges.org/Tektosyne.html";
+    private final static String SITE_URI = "https://kynosarges.org/Tektosyne.html";
 
     static {
         final Package pack = AboutDialog.class.getPackage();
@@ -38,91 +34,94 @@ public class AboutDialog extends Stage {
 
     /**
      * Creates an {@link AboutDialog}.
+     * Private to prevent instantiation.
      */
-    public AboutDialog() {
-        initOwner(Global.primaryStage());
-        initModality(Modality.APPLICATION_MODAL);
-        initStyle(StageStyle.DECORATED);
+    private AboutDialog() { }
 
-        final Text title = new Text(TITLE);
+    /**
+     * Shows a {@link JOptionPane} with information about the application.
+     */
+    public static void show() {
+
+        final JLabel title = new JLabel(TITLE);
         final Font regular = title.getFont();
-        title.setFont(Font.font(regular.getFamily(), FontWeight.BOLD, 2 * regular.getSize()));
+        title.setFont(regular.deriveFont(Font.BOLD, 2 * regular.getSize()));
 
-        final Text version = new Text(String.format("Version %s%n%s", VERSION, DATE));
-        version.setTextAlignment(TextAlignment.CENTER);
+        final JLabel version = new JLabel("Version " + VERSION);
+        final JLabel date = new JLabel(DATE);
 
-        final HyperlinkHandler handler = new HyperlinkHandler();
-        final Hyperlink author = new Hyperlink(String.format("Copyright \u00a9 %s", AUTHOR));
+        final ActionListener listener = new HyperlinkListener();
+        final String unsupported = "(action not supported on your platform)";
+
+        final JHyperlink author = new JHyperlink();
+        author.setLink("Copyright \u00a9 " + AUTHOR);
         if (DesktopAction.canMail()) {
-            author.setTooltip(new Tooltip("Send email to author"));
-            author.setUnderline(true);
-            author.setUserData(MAIL_URI);
-            author.setOnAction(handler);
+            author.setToolTipText("Send email to author");
+            author.setTarget(MAIL_URI);
+            author.addActionListener(listener);
         } else
-            author.setTooltip(new Tooltip("(action not supported on your platform)"));
+            author.setToolTipText(unsupported);
 
-        final Hyperlink website = new Hyperlink(SITE);
+        final JHyperlink website = new JHyperlink();
+        website.setLink(SITE);
         if (DesktopAction.canBrowse()) {
-            website.setTooltip(new Tooltip("Visit official website"));
-            website.setUnderline(true);
-            website.setUserData(SITE_URI);
-            website.setOnAction(handler);
+            website.setToolTipText("Visit official website");
+            website.setTarget(SITE_URI);
+            website.addActionListener(listener);
         } else
-            website.setTooltip(new Tooltip("(action not supported on your platform)"));
+            website.setToolTipText(unsupported);
 
-        final Hyperlink readme = new Hyperlink("Technical Information");
+        final JHyperlink readme = new JHyperlink();
+        readme.setLink("Technical Information");
         if (DesktopAction.canBrowse()) {
-            readme.setTooltip(new Tooltip("Show ReadMe & WhatsNew files"));
-            readme.setUnderline(true);
-            readme.setUserData("ReadMe.html");
-            readme.setOnAction(handler);
+            readme.setToolTipText("Show ReadMe & WhatsNew files");
+            readme.setTarget("ReadMe.html");
+            readme.addActionListener(listener);
         } else
-            readme.setTooltip(new Tooltip("(action not supported on your platform)"));
+            readme.setToolTipText(unsupported);
 
-        final Button btnOK = new Button("OK");
-        btnOK.setCancelButton(true);
-        btnOK.setDefaultButton(true);
-        btnOK.setPrefWidth(56);
-        btnOK.setOnAction(t -> close());
+        final Box message = Box.createVerticalBox();
+        for (JComponent component: new JComponent[] {
+                title, version, date, author, website, readme }) {
 
-        final VBox box = new VBox(title, version, author, website, readme, btnOK);
-        VBox.setMargin(btnOK, new Insets(8, 0, 0, 0));
-        box.setAlignment(Pos.CENTER);
-        box.setPadding(new Insets(8));
-        box.setSpacing(4);
-        
-        setResizable(false);
-        setScene(new Scene(box));
-        sizeToScene();
-        setTitle("About");
+            // center all info components
+            component.setAlignmentX(0.5f);
+            message.add(component);
+            if (component == date)
+                message.add(Box.createRigidArea(new Dimension(0,12)));
+        }
 
-        // must set after scene built
-        btnOK.requestFocus();
+        JOptionPane.showMessageDialog(TektosyneDemo.INSTANCE,
+                message, "About", JOptionPane.PLAIN_MESSAGE);
     }
 
     /**
-     * Handles clicks on any {@link Hyperlink} control.
+     * Handles clicks on any {@link JHyperlink} control.
      * Shows a modal dialog if an error occurred.
      */
-    private class HyperlinkHandler implements EventHandler<ActionEvent> {
+    private static class HyperlinkListener implements ActionListener {
         /**
          * Handles the specified {@link ActionEvent}.
          * @param t the {@link ActionEvent} to handle
          */
-        @Override public void handle(ActionEvent t) {
+        @Override
+        public void actionPerformed(ActionEvent t) {
             try {
-                final Hyperlink source = (Hyperlink) t.getSource();
-                final String target = (String) source.getUserData();
+                final JHyperlink source = (JHyperlink) t.getSource();
+                final String target = (String) source.getTarget();
 
                 if (target.startsWith("mailto:")) {
                     final URI uri = new URI(target);
                     DesktopAction.mail(uri);
                 } else {
-                    final URI uri = (target.contains("://") ? new URI(target) : Paths.get(target).toUri());
+                    final URI uri = (target.contains("://") ?
+                            new URI(target) : Paths.get(target).toUri());
                     DesktopAction.browse(uri);
                 }
-            } catch (IOException | URISyntaxException e) {
-                Global.showError(AboutDialog.this, "Failed to navigate to desired address.", e);
+            }
+            catch (IOException | URISyntaxException e) {
+                Global.showError(TektosyneDemo.INSTANCE,
+                        "Failed to navigate to desired address.", null, e);
             }
         }
     }

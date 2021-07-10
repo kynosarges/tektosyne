@@ -1,16 +1,13 @@
 package org.kynosarges.tektosyne.demo;
 
 import java.util.*;
-import java.util.function.Predicate;
+import java.util.List; // clash with AWT List class
+import java.util.function.*;
 
-import javafx.geometry.*;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.scene.paint.*;
-import javafx.scene.shape.*;
-import javafx.scene.text.*;
-import javafx.stage.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.geom.*;
+import javax.swing.*;
 
 import org.kynosarges.tektosyne.geometry.*;
 import org.kynosarges.tektosyne.graph.*;
@@ -29,20 +26,21 @@ import org.kynosarges.tektosyne.subdivision.*;
  * algorithm succeeds, all result nodes are marked as well.</p>
  * 
  * @author Christoph Nahr
- * @version 6.1.0
+ * @version 6.3.0
  */
-public class GraphDialog extends Stage {
+public class GraphDialog extends JDialog {
+    private static final long serialVersionUID = 0L;
 
-    private final Pane _output = new Pane();
-    private final Pane _outputUnderlay = new Pane();
+    private final DrawPanel _output = new DrawPanel();
 
-    private final Label _message = new Label("Select a graph type and algorithm.");
-    private final ComboBox<Choice> _graphChoice = new ComboBox<>();
-    private final CheckBox _vertexNeighbors;
+    private final JLabel _message = new JLabel("<html>Select a graph type and algorithm.<br>" +
+            "(Messages about the algorithm appear here.)</html>");
+    private final JComboBox<Choice> _graphChoice = new JComboBox<>();
+    private final JCheckBox _vertexNeighbors;
 
-    private final ComboBox<Choice> _algorithmChoice = new ComboBox<>();
-    private final Button _randomSource;
-    private final Spinner<Double> _threshold = new Spinner<>(0, 1, 0.33, 0.1);
+    private final JComboBox<Choice> _algorithmChoice = new JComboBox<>();
+    private final JButton _randomSource;
+    private final JSpinner _threshold = new JSpinner();
 
     // current Graph: either PolygonGrid or Delaunay Subdivision
     private GraphManager<?> _graphManager;
@@ -50,243 +48,204 @@ public class GraphDialog extends Stage {
 
     /**
      * Creates a {@link GraphDialog}.
-     */    
-    public GraphDialog() {
-        initOwner(Global.primaryStage());
-        initModality(Modality.APPLICATION_MODAL);
-        initStyle(StageStyle.DECORATED);
+     * @param owner the {@link Window} that owns the dialog
+     */
+    public GraphDialog(Window owner) {
+        super(owner);
+        setModal(true);
 
-        _message.setMinHeight(36); // reserve space for two lines
-        _message.setWrapText(true);
+        final JPanel panel = new JPanel();
+        setContentPane(panel);
 
-        Global.clipChildren(_output);
-        _output.setPrefSize(400, 300);
-        _output.setBorder(new Border(new BorderStroke(Color.BLACK,
-                BorderStrokeStyle.SOLID, new CornerRadii(4), BorderWidths.DEFAULT)));
+        final GroupLayout layout = new GroupLayout(panel);
+        layout.setAutoCreateGaps(true);
+        layout.setAutoCreateContainerGaps(true);
+        panel.setLayout(layout);
 
-        Global.clipChildren(_outputUnderlay);
-        _outputUnderlay.setPrefSize(400, 300);
+        _output.setBackground(Color.WHITE);
+        _output.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1, true));
 
-        _graphChoice.getItems().addAll(Choice.SQUARE_EDGE, Choice.SQUARE_VERTEX,
-                Choice.HEXAGON_EDGE, Choice.HEXAGON_VERTEX, Choice.VORONOI);
-        _graphChoice.getEditor().setEditable(false);
-        _graphChoice.setTooltip(new Tooltip("Select graph type (Alt+G)"));
-        _graphChoice.getSelectionModel().select(0);
-        _graphChoice.getSelectionModel().selectedItemProperty().addListener(
-                (ov, oldValue, newValue) -> drawGraph());
+        _graphChoice.addItem(Choice.SQUARE_EDGE);
+        _graphChoice.addItem(Choice.SQUARE_VERTEX);
+        _graphChoice.addItem(Choice.HEXAGON_EDGE);
+        _graphChoice.addItem(Choice.HEXAGON_VERTEX);
+        _graphChoice.addItem(Choice.VORONOI);
 
-        final Label graphLabel = new Label("_Graph");
+        _graphChoice.setEditable(false);
+        _graphChoice.setSelectedIndex(0);
+        _graphChoice.setToolTipText("Select graph type (Alt+G)");
+        _graphChoice.addItemListener(e -> _output.drawGraph());
+
+        final JLabel graphLabel = new JLabel("Graph");
+        graphLabel.setDisplayedMnemonic(KeyEvent.VK_G);
         graphLabel.setLabelFor(_graphChoice);
-        graphLabel.setMnemonicParsing(true);
 
-        _vertexNeighbors = new CheckBox("_Vertex Neighbors");
-        _vertexNeighbors.setTooltip(new Tooltip("Connect squares across vertices as well as edges (Alt+V)"));
-        _vertexNeighbors.selectedProperty().addListener((ov, oldValue, newValue) -> {
-            if (_graphManager.setVertexNeighbors(newValue))
-                drawAlgorithm(false);
+        _vertexNeighbors = new JCheckBox("Vertex Neighbors");
+        _vertexNeighbors.setMnemonic(KeyEvent.VK_V);
+        _vertexNeighbors.setToolTipText("Connect squares across vertices as well as edges (Alt+V)");
+        _vertexNeighbors.addActionListener(e -> {
+            if (_graphManager.setVertexNeighbors(_vertexNeighbors.isSelected()))
+                _output.drawAlgorithm(false);
         });
 
-        _algorithmChoice.getItems().addAll(
-                Choice.A_STAR, Choice.COVERAGE, Choice.FLOOD_FILL, Choice.VISIBILITY);
-        _algorithmChoice.getEditor().setEditable(false);
-        _algorithmChoice.getSelectionModel().select(0);
-        _algorithmChoice.setTooltip(new Tooltip("Select algorithm to run (Alt+A)"));
-        _algorithmChoice.getSelectionModel().selectedItemProperty().addListener(
-                (ov, oldValue, newValue) -> drawAlgorithm(false));
+        _algorithmChoice.addItem(Choice.A_STAR);
+        _algorithmChoice.addItem(Choice.COVERAGE);
+        _algorithmChoice.addItem(Choice.FLOOD_FILL);
+        _algorithmChoice.addItem(Choice.VISIBILITY);
 
-        final Label algorithmLabel = new Label("_Algorithm");
+        _algorithmChoice.setEditable(false);
+        _algorithmChoice.setSelectedIndex(0);
+        _algorithmChoice.setToolTipText("Select algorithm to run (Alt+A)");
+        _algorithmChoice.addItemListener(e -> _output.drawAlgorithm(false));
+
+        final JLabel algorithmLabel = new JLabel("Algorithm");
+        algorithmLabel.setDisplayedMnemonic(KeyEvent.VK_A);
         algorithmLabel.setLabelFor(_algorithmChoice);
-        algorithmLabel.setMnemonicParsing(true);
         
-        _randomSource = new Button("_Random Source");
-        _randomSource.setTooltip(new Tooltip("Re-run algorithm with new random source node (Alt+R)"));
-        _randomSource.setOnAction(t -> drawAlgorithm(true));
+        _randomSource = new JButton("Random Source");
+        _randomSource.setMnemonic(KeyEvent.VK_R);
+        _randomSource.setToolTipText("Re-run algorithm with new random source node (Alt+R)");
+        _randomSource.addActionListener(e -> _output.drawAlgorithm(true));
 
-        _threshold.getEditor().setAlignment(Pos.CENTER_RIGHT);
-        _threshold.getEditor().setText("0.33"); // correct formatting for initial value
-        _threshold.setEditable(true);
-        _threshold.setPrefWidth(70);
-        DoubleStringConverter.createFor(_threshold);
-        Global.addTooltip(_threshold, "Set threshold for visibility algorithm (Alt+T)");
-        _threshold.getValueFactory().valueProperty().addListener(
-                (ov, oldValue, newValue) -> drawAlgorithm(false));
+        _threshold.setModel(new SpinnerNumberModel(0.33, 0, 1, 0.1));
+        _threshold.setToolTipText("Set threshold for visibility algorithm (Alt+T)");
+        _threshold.addChangeListener(e -> _output.drawAlgorithm(false));
 
-        final Label thresholdLabel = new Label("Visibility _Threshold");
+        final JLabel thresholdLabel = new JLabel("Visibility Threshold");
+        thresholdLabel.setDisplayedMnemonic(KeyEvent.VK_T);
+        thresholdLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         thresholdLabel.setLabelFor(_threshold);
-        thresholdLabel.setMnemonicParsing(true);
-        
-        final GridPane input = new GridPane();
-        input.setPadding(new Insets(0, 0, 0, 4));
-        input.setVgap(8);
-        GridPane.setMargin(_vertexNeighbors, new Insets(0, 4, 0, 12));
-        GridPane.setHalignment(_algorithmChoice, HPos.CENTER);
-        GridPane.setMargin(thresholdLabel, new Insets(0, 4, 0, 0));
-        GridPane.setHalignment(thresholdLabel, HPos.RIGHT);
 
-        input.add(graphLabel, 0, 0);
-        input.add(_graphChoice, 1, 0);
-        input.add(_vertexNeighbors, 2, 0);
-        input.add(_randomSource, 3, 0);
+        final GroupLayout.Group inputH1 = layout.createSequentialGroup().
+                addComponent(graphLabel).
+                addComponent(_graphChoice).
+                addComponent(_vertexNeighbors).
+                addComponent(_randomSource).
+                addContainerGap(0, Short.MAX_VALUE);
 
-        input.add(algorithmLabel, 0, 1);
-        input.add(_algorithmChoice, 1, 1);
-        input.add(thresholdLabel, 2, 1);
-        input.add(_threshold, 3, 1);
+        final GroupLayout.Group inputV1 = layout.createParallelGroup(GroupLayout.Alignment.CENTER, false).
+                addComponent(graphLabel).
+                addComponent(_graphChoice).
+                addComponent(_vertexNeighbors).
+                addComponent(_randomSource);
 
-        final Button newGraph = new Button("_New");
-        newGraph.setDefaultButton(true);
-        newGraph.setOnAction(t -> drawGraph());
-        newGraph.setTooltip(new Tooltip("Generate new random graph (Alt+N)"));
+        final GroupLayout.Group inputH2 = layout.createSequentialGroup().
+                addComponent(algorithmLabel).
+                addComponent(_algorithmChoice).
+                addComponent(thresholdLabel).
+                addComponent(_threshold).
+                addContainerGap(0, Short.MAX_VALUE);
 
-        final Button close = new Button("Close");
-        close.setCancelButton(true);
-        close.setOnAction(t -> close());
-        close.setTooltip(new Tooltip("Close dialog (Escape, Alt+F4)"));
+        final GroupLayout.Group inputV2 = layout.createParallelGroup(GroupLayout.Alignment.CENTER, false).
+                addComponent(algorithmLabel).
+                addComponent(_algorithmChoice).
+                addComponent(thresholdLabel).
+                addComponent(_threshold);
 
-        final HBox controls = new HBox(newGraph, close);
-        controls.setAlignment(Pos.CENTER);
-        controls.setSpacing(8);
+        layout.linkSize(SwingConstants.HORIZONTAL, graphLabel, algorithmLabel);
+        layout.linkSize(SwingConstants.HORIZONTAL, _graphChoice, _algorithmChoice);
+        layout.linkSize(SwingConstants.HORIZONTAL, _vertexNeighbors, thresholdLabel);
+        layout.linkSize(SwingConstants.HORIZONTAL, _randomSource, _threshold);
 
-        // underlay hosts pathfinding decoration for main output pane
-        final StackPane outputStack = new StackPane(_outputUnderlay, _output);
-        VBox.setVgrow(outputStack, Priority.ALWAYS);
-        
-        final VBox root = new VBox(_message, input, outputStack, controls);
-        root.setPadding(new Insets(8));
-        root.setSpacing(8);
-        VBox.setVgrow(_output, Priority.ALWAYS);
-        
+        final JButton newGraph = new JButton("New");
+        newGraph.requestFocus();
+        newGraph.addActionListener(t -> _output.drawGraph());
+        newGraph.setMnemonic(KeyEvent.VK_N);
+        newGraph.setToolTipText("Generate new random graph (Alt+N)");
+
+        final JButton close = CloseAction.createButton(this, panel);
+
+        final GroupLayout.Group controlsH = layout.createSequentialGroup().
+                addContainerGap(0, Short.MAX_VALUE).
+                addComponent(newGraph).
+                addComponent(close).
+                addContainerGap(0, Short.MAX_VALUE);
+
+        final GroupLayout.Group controlsV = layout.createParallelGroup(GroupLayout.Alignment.CENTER, false).
+                addComponent(newGraph).
+                addComponent(close);
+
+        layout.setHorizontalGroup(layout.createParallelGroup().
+                addComponent(_message).
+                addGroup(inputH1).
+                addGroup(inputH2).
+                addComponent(_output).
+                addGroup(controlsH));
+
+        layout.setVerticalGroup(layout.createSequentialGroup().
+                addComponent(_message).
+                addGroup(inputV1).
+                addGroup(inputV2).
+                addComponent(_output, 320, 320, Short.MAX_VALUE).
+                addGroup(controlsV));
+
+        setLocationByPlatform(true);
         setResizable(true);
-        setScene(new Scene(root));
-        setTitle("Graph Algorithm Tests");
-        sizeToScene();
+        pack();
+        setTitle("Graph Algorithm Test");
+        SwingUtilities.invokeLater(_output::drawGraph);
 
-        setOnShown(t -> drawGraph());
+        // HACK: Window.setMinimumSize ignores high DPI scaling
+        addComponentListener(new ResizeListener(this));
+        setVisible(true);
     }
 
-    private void drawGraph() {
-        final Choice graphChoice = _graphChoice.getValue();
-        final boolean vertexNeighbors = _vertexNeighbors.isSelected();
-        RegularPolygon polygon = null;
+    private enum Choice {
 
-        switch (graphChoice) {
-            case SQUARE_EDGE:
-                polygon = new RegularPolygon(24, 4, PolygonOrientation.ON_EDGE, vertexNeighbors);
-                break;
-            
-            case SQUARE_VERTEX:
-                polygon = new RegularPolygon(24, 4, PolygonOrientation.ON_VERTEX, vertexNeighbors);
-                break;
-                
-            case HEXAGON_EDGE:
-                polygon = new RegularPolygon(16, 6, PolygonOrientation.ON_EDGE);
-                break;
-                
-            case HEXAGON_VERTEX:
-                polygon = new RegularPolygon(16, 6, PolygonOrientation.ON_VERTEX);
-                break;
+        SQUARE_EDGE("Square on Edge", null, null),
+        SQUARE_VERTEX("Square on Vertex", null, null),
+        HEXAGON_EDGE("Hexagon on Edge", null, null),
+        HEXAGON_VERTEX("Hexagon on Vertex", null, null),
+        VORONOI("Voronoi Regions", null, null),
+
+        A_STAR("A* Pathfinding",
+                "Red squares indicate best path from source to marked target node.",
+                "Could find no connecting path due to impassable random terrain."),
+
+        COVERAGE("Path Coverage",
+                "Red squares indicate reachable nodes with a maximum path cost of 10.",
+                "Could find no reachable locations due to impassable random terrain."),
+
+        FLOOD_FILL("Flood Fill",
+                "Red squares indicate connected nodes with up to 1/2 maximum node cost.",
+                "Could find no matching locations due to impassable random terrain."),
+
+        VISIBILITY("Visibility",
+                "Red squares indicate visible nodes. Impassable nodes block the view.",
+                "Could find no visible locations due to obscuring random terrain.");
+
+        private final String _text, _success, _failure;
+
+        Choice(String text, String success, String failure) {
+            _text = text;
+            _success = success;
+            _failure = failure;
         }
 
-        _output.getChildren().clear();
-        if (polygon != null) {
-            _vertexNeighbors.setDisable(polygon.sides != 4);
-
-            final PolygonGrid grid = new PolygonGrid(polygon);
-            _border = PolygonGridDialog.sizeGrid(grid, _output);
-            _graphManager = new GraphManager<>(grid, 4, _output);
-
-            // draw edges from Subdivision to avoid overlapping polygon edges
-            final PolygonGridMap map = new PolygonGridMap(grid, PointD.EMPTY, 0);
-            drawEdges(map.source(), false);
-        }
-        else {
-            _vertexNeighbors.setDisable(true);
-            _border = PointD.EMPTY;
-
-            final RectD output = new RectD(0, 0, _output.getWidth(), _output.getHeight());
-            final RectD bounds = new RectD(8, 8, output.width() - 16, output.height() - 16);
-            final PointD[] points = GeoUtils.randomPoints(40, bounds, new PointDComparatorX(0), 20);
-
-            final VoronoiResults results = Voronoi.findAll(points, output);
-            final Subdivision division = results.toDelaunaySubdivision(output, true);
-            _graphManager = new GraphManager<>(division, 8, _output);
-
-            // draw Voronoi edges with superimposed Delaunay edges
-            drawEdges(new VoronoiMap(results).source(), false);
-            drawEdges(division, true);
+        String resultMessage(boolean success) {
+            return (success ? _success : _failure);
         }
 
-        drawAlgorithm(true);
-    }
-
-    private void drawAlgorithm(boolean random) {
-        final Choice algorithmChoice = _algorithmChoice.getValue();
-        boolean success = false;
-
-        switch (algorithmChoice) {
-            case A_STAR:
-                success = _graphManager.runAStar();
-                break;
-
-            case COVERAGE:
-                success = _graphManager.runCoverage(random);
-                break;
-
-            case FLOOD_FILL:
-                success = _graphManager.runFloodFill(random);
-                break;
-
-            case VISIBILITY:
-                final double threshold = _threshold.getValue();
-                success = _graphManager.runVisibility(random, threshold);
-                break;
-        }
-
-        _message.setText("Source is blue circle, numbers indicate step costs, dashes are impassable.\n"
-                + algorithmChoice.resultMessage(success));
-        
-        _randomSource.setDisable(algorithmChoice == Choice.A_STAR);
-        _threshold.setDisable(algorithmChoice != Choice.VISIBILITY);
-        
-        _outputUnderlay.getChildren().clear();
-        _graphManager.showNodes(_outputUnderlay, _border);
-    }
-
-    private void drawEdges(Subdivision division, boolean isDelaunay) {
-        for (LineD edge: division.toLines()) {
-            final Line line = new Line(
-                    _border.x + edge.start.x, _border.y + edge.start.y,
-                    _border.x + edge.end.x, _border.y + edge.end.y);
-
-            if (isDelaunay) {
-                line.setStroke(Color.GOLD);
-                line.getStrokeDashArray().addAll(2.0, 4.0);
-
-                // clear space around cost markers
-                final double angle = edge.angle();
-                final double clear = 11;
-                line.setStartX(line.getStartX() + Math.cos(angle) * clear);
-                line.setStartY(line.getStartY() + Math.sin(angle) * clear);
-                line.setEndX(line.getEndX() - Math.cos(angle) * clear);
-                line.setEndY(line.getEndY() - Math.sin(angle) * clear);
-            } else
-                line.setStroke(Color.BLACK);
-
-            _output.getChildren().add(line);
+        @Override
+        public String toString() {
+            return _text;
         }
     }
 
     private static class GraphManager<T> implements GraphAgent<T> {
 
         private final static Color[] NODE_COLORS_4 = {
-            Color.web("#edf8fb"), Color.web("#b2e2e2"), Color.web("#66c2a4"), Color.web("#238b45")
+            Color.decode("#edf8fb"), Color.decode("#b2e2e2"),
+            Color.decode("#66c2a4"), Color.decode("#238b45")
         };
 
         private final static Color[] NODE_COLORS_8 = {
-            Color.web("#f7fcfd"), Color.web("#e5f5f9"), Color.web("#ccece6"), Color.web("#99d8c9"),
-            Color.web("#66c2a4"), Color.web("#41ae76"), Color.web("#238b45"), Color.web("#005824")
+            Color.decode("#f7fcfd"), Color.decode("#e5f5f9"),
+            Color.decode("#ccece6"), Color.decode("#99d8c9"),
+            Color.decode("#66c2a4"), Color.decode("#41ae76"),
+            Color.decode("#238b45"), Color.decode("#005824")
         };
-        
+
         private final Graph<T> _graph;
         private final int _maxCost;
         private final PointD _maxWorld;
@@ -297,10 +256,10 @@ public class GraphDialog extends Stage {
         private final Map<T, Integer> _nodeCosts;
         private final Color[] _nodeColors;
 
-        GraphManager(Graph<T> graph, int maxCost, Pane output) {
+        GraphManager(Graph<T> graph, int maxCost, PointD maxWorld) {
             _graph = graph;
             _maxCost = maxCost;
-            _maxWorld = new PointD(output.getWidth(), output.getHeight());
+            _maxWorld = maxWorld;
 
             // set random step costs for all nodes
             _nodeCosts = new HashMap<>(graph.nodeCount());
@@ -320,8 +279,10 @@ public class GraphDialog extends Stage {
                 default:
                     // create darkening shades for increasing costs
                     _nodeColors = new Color[maxCost];
-                    for (int i = 0; i < maxCost; i++)
-                        _nodeColors[i] = Color.gray(1 - i / (double) maxCost);
+                    for (int i = 0; i < maxCost; i++) {
+                        final float gray = 1 - i / (float) maxCost;
+                        _nodeColors[i] = new Color(gray, gray, gray);
+                    }
                     break;
             }
         }
@@ -421,48 +382,41 @@ public class GraphDialog extends Stage {
             return true;
         }
 
-        void showNodes(Pane output, PointD offset) {
+        void showNodes(Graphics2D g2, PointD offset) {
             for (T node: _graph.nodes()) {
                 final int cost = _nodeCosts.get(node);
 
                 final PointD[] region = _graph.getWorldRegion(node);
                 if (region != null) {
-                    final Polygon polygon = new Polygon(PointD.toDoubles(_graph.getWorldRegion(node)));
-                    polygon.setFill(_nodeColors[cost - 1]);
-                    polygon.setStroke(null);
-                    polygon.setTranslateX(offset.x);
-                    polygon.setTranslateY(offset.y);
-                    output.getChildren().add(polygon);
+                    final PointD[] polygon = _graph.getWorldRegion(node);
+                    final Path2D path = Global.drawPolygon(offset, polygon);
+                    g2.setColor(_nodeColors[cost - 1]);
+                    g2.fill(path);
                 }
-                
+
                 final PointD center = _graph.getWorldLocation(node);
                 final String costString = (cost < _maxCost ? Integer.toString(cost) : "—");
                 final Color costColor = (cost <= _maxCost / 2 ? Color.BLACK : Color.WHITE);
 
-                final Text costText = new Text(costString);
-                costText.setX(center.x + offset.x - costText.getLayoutBounds().getWidth() / 2);
-                costText.setY(center.y + offset.y + costText.getLayoutBounds().getHeight() / 4);
-                costText.setFill(costColor);
-                output.getChildren().add(costText);
+                final Rectangle2D bounds = g2.getFontMetrics().getStringBounds(costString, g2);
+                g2.setColor(costColor);
+                g2.drawString(costString,
+                        (float) (center.x + offset.x - bounds.getWidth() / 2),
+                        (float) (center.y + offset.y + bounds.getHeight() / 4));
 
                 // indicate found nodes by red rectangles
                 if (_locations.contains(node)) {
-                    final Rectangle rect = new Rectangle(-7, -7, 14, 14);
-                    rect.setFill(null);
-                    rect.setStroke(Color.RED);
-                    rect.setTranslateX(center.x + offset.x);
-                    rect.setTranslateY(center.y + offset.y);
-                    output.getChildren().add(rect);
+                    final Rectangle2D rect = new Rectangle2D.Double(
+                            center.x + offset.x - 7, center.y + offset.y - 7, 14, 14);
+                    g2.setColor(Color.RED);
+                    g2.draw(rect);
                 }
 
                 // indicate highlights by blue circles
                 if (_highlights.contains(node)) {
-                    final Circle circle = new Circle(10);
-                    circle.setFill(null);
-                    circle.setStroke(Color.BLUE);
-                    circle.setCenterX(center.x + offset.x);
-                    circle.setCenterY(center.y + offset.y);
-                    output.getChildren().add(circle);
+                    final Ellipse2D circle = Global.drawCircle(center.add(offset), 20);
+                    g2.setColor(Color.BLUE);
+                    g2.draw(circle);
                 }
             }
         }
@@ -518,46 +472,155 @@ public class GraphDialog extends Stage {
             RANDOM
         }
     }
-    
-    private enum Choice {
 
-        SQUARE_EDGE("Square on Edge", null, null),
-        SQUARE_VERTEX("Square on Vertex", null, null),
-        HEXAGON_EDGE("Hexagon on Edge", null, null),
-        HEXAGON_VERTEX("Hexagon on Vertex", null, null),
-        VORONOI("Voronoi Regions", null, null),
-        
-        A_STAR("A* Pathfinding",
-            "Red squares indicate best path from source to marked target node.",
-            "Could find no connecting path due to impassable random terrain."),
+    /**
+     * Provides the custom drawing {@link JPanel} for the {@link GraphDialog}.
+     */
+    private class DrawPanel extends JPanel {
+        private static final long serialVersionUID = 0L;
 
-        COVERAGE("Path Coverage",
-            "Red squares indicate reachable nodes with a maximum path cost of 10.",
-            "Could find no reachable locations due to impassable random terrain."),
+        // call(s) to draw graph edges during repaint
+        private Consumer<Graphics2D> _drawGraphCall;
 
-        FLOOD_FILL("Flood Fill",
-            "Red squares indicate connected nodes with up to 1/2 maximum node cost.",
-            "Could find no matching locations due to impassable random terrain."),
+        /**
+         * Computes and draws the currently configured {@link Graph}.
+         */
+        void drawGraph() {
+            final Choice graphChoice = (Choice) _graphChoice.getSelectedItem();
+            final boolean vertexNeighbors = _vertexNeighbors.isSelected();
+            RegularPolygon polygon = null;
 
-        VISIBILITY("Visibility",
-            "Red squares indicate visible nodes. Impassable nodes block the view.",
-            "Could find no visible locations due to obscuring random terrain.");
+            switch (graphChoice) {
+                case SQUARE_EDGE:
+                    polygon = new RegularPolygon(24, 4, PolygonOrientation.ON_EDGE, vertexNeighbors);
+                    break;
 
-        private final String _text, _success, _failure;
+                case SQUARE_VERTEX:
+                    polygon = new RegularPolygon(24, 4, PolygonOrientation.ON_VERTEX, vertexNeighbors);
+                    break;
 
-        Choice(String text, String success, String failure) {
-            _text = text;
-            _success = success;
-            _failure = failure;
+                case HEXAGON_EDGE:
+                    polygon = new RegularPolygon(16, 6, PolygonOrientation.ON_EDGE);
+                    break;
+
+                case HEXAGON_VERTEX:
+                    polygon = new RegularPolygon(16, 6, PolygonOrientation.ON_VERTEX);
+                    break;
+            }
+
+            if (polygon != null) {
+                _vertexNeighbors.setEnabled(polygon.sides == 4);
+
+                final PolygonGrid grid = new PolygonGrid(polygon);
+                _border = PolygonGridDialog.sizeGrid(grid, this);
+                final PointD maxWorld = new PointD(getWidth(), getHeight());
+                _graphManager = new GraphManager<>(grid, 4, maxWorld);
+
+                // draw edges from Subdivision to avoid overlapping polygon edges
+                final PolygonGridMap map = new PolygonGridMap(grid, PointD.EMPTY, 0);
+                _drawGraphCall = g2 -> drawEdges(g2, map.source(), false);
+            }
+            else {
+                _vertexNeighbors.setEnabled(false);
+                _border = PointD.EMPTY;
+
+                final RectD output = new RectD(0, 0, getWidth(), getHeight());
+                final RectD bounds = new RectD(8, 8, getWidth() - 16, getHeight() - 16);
+                final PointD[] points = GeoUtils.randomPoints(40, bounds, new PointDComparatorX(0), 20);
+
+                final VoronoiResults results = Voronoi.findAll(points, output);
+                final Subdivision division = results.toDelaunaySubdivision(output, true);
+                _graphManager = new GraphManager<>(division, 8, output.max);
+
+                // draw Voronoi edges with superimposed Delaunay edges
+                final VoronoiMap map = new VoronoiMap(results);
+                _drawGraphCall = g2 -> {
+                    drawEdges(g2, map.source(), false);
+                    drawEdges(g2, division, true);
+                };
+            }
+
+            drawAlgorithm(true);
         }
 
-        String resultMessage(boolean success) {
-            return (success ? _success : _failure);
+        /**
+         * Runs and draws the currently configured {@link Graph} algorithm.
+         * @param random {@code true} for a new random starting location, else {@code false}
+         */
+        private void drawAlgorithm(boolean random) {
+            final Choice algorithmChoice = (Choice) _algorithmChoice.getSelectedItem();
+            boolean success = false;
+
+            switch (algorithmChoice) {
+                case A_STAR:
+                    success = _graphManager.runAStar();
+                    break;
+
+                case COVERAGE:
+                    success = _graphManager.runCoverage(random);
+                    break;
+
+                case FLOOD_FILL:
+                    success = _graphManager.runFloodFill(random);
+                    break;
+
+                case VISIBILITY:
+                    final double threshold = (Double) _threshold.getValue();
+                    success = _graphManager.runVisibility(random, threshold);
+                    break;
+            }
+
+            _message.setText("<html>Source is blue circle, numbers indicate step costs, dashes are impassable.<br>" + algorithmChoice.resultMessage(success) + "</html>");
+
+            _randomSource.setEnabled(algorithmChoice != Choice.A_STAR);
+            _threshold.setEnabled(algorithmChoice == Choice.VISIBILITY);
+
+            repaint();
         }
-        
+
+        private void drawEdges(Graphics2D g2, Subdivision division, boolean isDelaunay) {
+            for (LineD edge: division.toLines()) {
+                double x1 = _border.x + edge.start.x;
+                double y1 = _border.y + edge.start.y;
+                double x2 = _border.x + edge.end.x;
+                double y2 = _border.y + edge.end.y;
+
+                final Stroke oldStroke = g2.getStroke();
+                if (isDelaunay) {
+                    g2.setColor(Color.decode("#FFD700")); // JavaFX GOLD
+                    g2.setStroke(new BasicStroke(1f,
+                            BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER,
+                            10f, new float[] { 2f, 4f }, 0));
+
+                    // clear space around cost markers
+                    final double angle = edge.angle();
+                    final double clear = 11;
+                    x1 += Math.cos(angle) * clear;
+                    y1 += Math.sin(angle) * clear;
+                    x2 -= Math.cos(angle) * clear;
+                    y2 -= Math.sin(angle) * clear;
+                } else
+                    g2.setColor(Color.BLACK);
+
+                final Line2D line = new Line2D.Double(x1, y1, x2, y2);
+                g2.draw(line);
+                g2.setStroke(oldStroke);
+            }
+        }
+
+        /**
+         * Invoked by Swing to draw the {@link DrawPanel}.
+         * @param g the {@link Graphics2D} context in which to paint
+         */
         @Override
-        public String toString() {
-            return _text;
+        public void paint(Graphics g) {
+            super.paint(g);
+            if (_graphManager == null)
+                return;
+
+            final Graphics2D g2 = (Graphics2D) g;
+            _graphManager.showNodes(g2, _border);
+            _drawGraphCall.accept(g2);
         }
     }
 }

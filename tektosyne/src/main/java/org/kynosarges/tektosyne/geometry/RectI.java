@@ -6,7 +6,7 @@ package org.kynosarges.tektosyne.geometry;
  * of a rectangle. Use {@link RectD} to represent rectangles with {@link Double} coordinates.
  * 
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.3.0
  */
 public final class RectI {
     /**
@@ -374,7 +374,7 @@ public final class RectI {
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
-        if (obj == null || !(obj instanceof RectI))
+        if (!(obj instanceof RectI))
             return false;
 
         final RectI rect = (RectI) obj;

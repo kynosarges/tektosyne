@@ -9,7 +9,7 @@ import org.kynosarges.tektosyne.*;
  * of a rectangle. Use {@link RectI} to represent rectangles with {@link Integer} coordinates.
  * 
  * @author Christoph Nahr
- * @version 6.1.0
+ * @version 6.3.0
  */
 public final class RectD {
     /**
@@ -627,7 +627,7 @@ public final class RectD {
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
-        if (obj == null || !(obj instanceof RectD))
+        if (!(obj instanceof RectD))
             return false;
 
         final RectD rect = (RectD) obj;

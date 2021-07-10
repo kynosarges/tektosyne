@@ -1,0 +1,147 @@
+﻿<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>ReadMe for Tektosyne 6.3.0</title>
+  <link rel="stylesheet" type="text/css" href="project.css">
+</head>
+<body>
+  <h1>ReadMe for Tektosyne 6.3.0</h1>
+  <table class="data">
+    <tr>
+      <th>Program</th><td>Tektosyne Library for Java</td>
+    </tr><tr>
+      <th>Version</th><td>6.3.0 (<a href="WhatsNew.html">History</a>)</td>
+    </tr><tr>
+      <th>Released</th><td>10 April 2019</td>
+    </tr><tr>
+      <th>Author</th><td>Christoph Nahr (<a href="#Copyright">Copyright</a>)</td>
+    </tr><tr>
+      <th>Contact</th><td><a href="mailto:webmaster@kynosarges.org">webmaster@kynosarges.org</a></td>
+    </tr><tr>
+      <th>Website</th><td><a href="https://kynosarges.org/Tektosyne.html">kynosarges.org/Tektosyne.html</a></td>
+    </tr>
+  </table>
+  <h2>Table of Contents</h2>
+  <ol>
+    <li><a href="#System">System Requirements</a></li>
+    <li><a href="#Package">Package Contents</a></li>
+    <li><a href="#Demo">Demo Application</a></li>
+    <li><a href="#Source">Source Package</a></li>
+    <li><a href="#Changes">Changes from .NET Version</a></li>
+    <li><a href="#Issues">Known Issues</a></li>
+    <li><a href="#Copyright">Copyright Notice</a></li>
+  </ol>
+  <h2 id="System">1. System Requirements</h2>
+  <p class="first">
+    Tektosyne is a Java library that should work on any system with a current Java Runtime Environment (JRE) that supports the <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/compactprofiles/compactprofiles.html">Java SE 8 Compact 1</a> profile, or the module <code>java.base</code> on Java SE 9 and later. The included GUI demo application requires Java SE 8 or later with Java AWT/Swing. Users of high DPI displays should note that Java SE 9 or later is required for high DPI scaling.</p>
+  <p class="last">
+    Some hyperlink actions in the demo application rely on Java’s multiplatform support for invoking default applications, such as web browsers and mail clients. These should work on all desktop platforms, assuming your applications are properly configured to handle the desired URLs or file types. If some action is entirely unsupported on your platform, the hyperlink’s tool tip will state that fact.</p>
+  <p>
+    <strong>Microsoft Windows</strong> — When targeting Java SE 8, please see <a href="https://kynosarges.org/WindowsJava.html">Oracle Java on Windows</a> for information on how to avoid Oracle’s inferior default Windows JRE. This is generally necessary to obtain the best possible performance with computationally intensive code. No special action is required for Java SE 9 and later whose distribution has dropped this inferior JRE.</p>
+  <h2 id="Package">2. Package Contents</h2>
+  <p>The directory to which the binary package was unpacked contains the following files:</p>
+  <table>
+    <tr><td style="width:12em;"><code>ReadMe.html</code></td><td>This file</td></tr>
+    <tr><td><code>WhatsNew.html</code></td><td>Tektosyne version history</td></tr>
+    <tr><td><code>project.css</code></td><td>Style sheet for ReadMe &amp; WhatsNew</td></tr>
+    <tr><td><code>Diagrams.xml</code></td><td>Project file for <a href="#Diagram">overview diagrams</a></td></tr>
+    <tr><td><code>Tektosyne.jar</code></td><td>Tektosyne library</td></tr>
+    <tr><td><code>Tektosyne.Demo.jar</code></td><td>Tektosyne <a href="#Demo">demo application</a></td></tr>
+    <tr><td><code>javadoc/*</code></td><td>Javadoc class reference for the library</td></tr>
+  </table>
+  <p class="first">
+    These files are all you need to use the library or run the demo application. To inspect the original Java code, you may also wish to download the <a href="#Source">source package</a> which is available separately.</p>
+  <p class="last">
+    Available as another download, the <a href="https://kynosarges.org/project/TektosyneGuide.pdf">Tektosyne User’s Guide</a> (PDF) presents an overview of all public library classes and a set of sample benchmark results. Unusual features such as graph algorithms are covered in greater depth. The project file <code>Diagrams.xml</code> was used to create the <a href="#Diagram">UML Diagrams</a> for this guide.</p>
+  <h2 id="Demo">3. Demo Application</h2>
+  <p>Use the command line <code>javaw -jar Tektosyne.Demo.jar</code> to run the Java Swing demo application. Depending on your JVM, you may also be able to omit <code>javaw -jar</code> and directly execute <code>Tektosyne.Demo.jar</code> directly, or to simply double-click on <code>Tektosyne.Demo.jar</code> in your favorite file explorer.</p>
+  <h3><a id="Grids">Saving &amp; Printing Grids</a></h3>
+  <p class="first">
+    <code>Tektosyne.Demo</code> contains a useful feature that helps with the creation of game maps based on real-world terrain. Choose <kbd>Polygon &amp; Graph: Save &amp; Print Grid</kbd> to show a dialog that allows you to save or print grids of arbitrary size that are composed of squares or hexagons of any side length and orientation.</p>
+  <p class="next">
+    You can print a grid on transparent film and overlay it on an atlas page to determine your map layout, or you can save a grid to a PNG file and use your favorite paint program to superimpose it on an image file with your real-world map. I used this feature in Tektosyne for .NET to create some demo scenarios for <a href="https://kynosarges.org/Hexkit.html">Hexkit</a>.</p>
+  <p class="last">
+    Note that PNG output features black grid lines on a transparent background, so you’ll see nothing if you open it in an image viewer with a black display background!</p>
+  <h2 id="Source">4. Source Package</h2>
+  <p>
+    The source package is available as a separate download on the <a href="https://kynosarges.org/Tektosyne.html">Tektosyne home page</a>. The expected environment is <a href="https://www.jetbrains.com/idea/">IntelliJ IDEA</a> 2019.1 with Oracle JDK 10.0.2. This package contains all of the files in the binary package, except for the precompiled Java archives, plus the following:</p>
+  <table>
+    <tr><td style="width:12em;"><code>Tektosyne.iml</code></td><td>IntelliJ project file</td></tr>
+    <tr><td><code>.idea/*</code></td><td>IntelliJ project metadata</td></tr>
+    <tr><td><code>src/*</code></td><td>Source code and JAR manifest</td></tr>
+    <tr><td><code>test/*</code></td><td>Unit tests for JUnit 4</td></tr>
+    <tr><td><code>Tektosyne.Demo/*</code></td><td>Source code for the demo application</td></tr>
+  </table>
+  <p class="first">
+    Most files and directories contain files for the library itself, except for <code>Tektosyne.Demo</code> which contains all files for the Java Swing demo application. The binary package was created by building the artifact <code>Tektosyne.Demo.jar</code> which includes all other output files (except for the Javadoc tree).</p>
+  <p class="last">
+     The source package does not include standard build files (e.g. Ant) but you can simply download the free IntelliJ Community Edition and generate such files from the project.</p>
+  <h3 id="Diagram">UML Diagrams</h3>
+  <p>
+    Open the included project file <code>Diagrams.xml</code> with my free <a href="https://kynosarges.org/Diagrammer.html">Class Diagrammer</a> application to view or change the UML diagrams that appear in the <a href="https://kynosarges.org/project/TektosyneGuide.pdf">Tektosyne User’s Guide</a>. Note that these diagrams were created with locally installed Adobe Myriad Pro fonts, so you may have to adjust the diagram layouts for wider fonts.</p>
+  <h2 id="Changes">5. Changes from .NET Version</h2>
+  <p>
+    Tektosyne is a partial Java port of my older .NET library. For those who have used the older version, here is a list of significant changes in functionality as per the initial Java release.</p>
+  <h3>Removed Classes</h3>
+  <p class="first">
+    Tektosyne for Java only contains functionality from the .NET library <code>Tektosyne.Core</code>. The second library in the .NET edition, <code>Tektosyne.Windows</code>, was entirely specific to Windows and WPF.</p>
+  <p class="last">
+    From <code>Tektosyne.Core</code>, the geometric and graph algorithms with related collections have been ported, along with some fundamental mathematical algorithms. All .NET-specific classes (e.g. <code>Tektosyne.IO</code>), general-purpose classes with existing Java ports (e.g. <code>MersenneTwister</code>), and various helper classes of dubious usefulness have been removed.</p>
+  <h3>Changed Classes</h3>
+  <p class="first">
+    As Java lacks a global flag or keyword for checked arithmetic, many methods were changed to either widen calculations from <code>int</code> to <code>long</code> or throw an <code>ArithmeticException</code> if the target type of a conversion overflows. This has been noted in the corresponding Javadoc entries.</p>
+  <p class="last">
+    The .NET version used to silently ignore negative comparison epsilons, which however could lead to nonsensical results in certain algorithms. The Java version throws an <code>IllegalArgumentException</code> whenever a negative epsilon is specified, except for methods that always raise epsilon to a fixed minimum value (see Javadoc).</p>
+  <p class="first"><code>Fortran</code>:</p>
+  <ul>
+    <li>Removed overloads for <code>decimal</code> and <code>short</code>.</li>
+    <li>Removed <code>sign</code> overloads as the Java method <code>Math.copySign</code> provides equivalent functionality.</li>
+    <li>Added <code>knint</code> overloads that round <code>float</code> and <code>double</code> values to <code>long</code>, equivalent to <code>nint</code> for <code>int</code>.</li>
+    <li>Changed integral <code>modulo</code> overloads to return <code>Math.floorMod</code> which Java conveniently defines for these types. <code>modulo</code> remains for the floating-point overloads which Java lacks.</li>
+  </ul>
+  <p class="first"><code>MathUtility</code>:</p>
+  <ul>
+    <li>Renamed to <code>MathUtils</code> in conformance with standard Java usage.</li>
+    <li>Added <code>toIntExact</code> and <code>toLongExact</code> for checked conversions from <code>double</code> and <code>float</code>.</li>
+    <li>Removed overloads for <code>decimal</code>, <code>short</code>, and <code>uint</code>.</li>
+  </ul>
+  <p class="first"><code>Collections</code>:</p>
+  <ul>
+    <li>Removed separate namespace (package) as the Java Collections Framework already provides most of the features that my own classed added to the .NET Framework collections.</li>
+    <li>Added <code>NodeList</code> which is the exact equivalent of Java’s <code>LinkedList</code> but publicly exposes its node structure, like .NET’s <code>LinkedList</code>.</li>
+    <li>Ported <code>BraidedTree.FindRange</code> as <code>PointDComparator.findRange</code> for Java’s <code>NavigableMap</code> and <code>NavigableSet</code> which proved sufficient replacements for <code>BraidedTree</code>.</li>
+    <li>Ported <code>QuadTree</code> but with massive API differences due to JCF conformity, e.g. attempting to add an existing entry will silently overwrite the existing value rather than throwing an exception.</li>
+  </ul>
+  <p class="first"><code>Geometry</code>:</p>
+  <ul>
+    <li>Removed primitives with <code>float</code> coordinates (<code>LineF</code>, <code>PointF</code>, <code>RectF</code>, <code>SizeF</code>) as I had never used them in practice.</li>
+    <li>Removed ability to set comparison epsilon after construction from <code>PointDComparatorX/Y</code> and <code>Subdivision</code>. This was a testing convenience that would cause bugs when used on live objects.</li>
+    <li><code>GeoAlgorithms:</code> Renamed to <code>GeoUtils</code> and made random number generation thread-safe via standard method <code>Math.random</code>.</li>
+    <li><code>LineIntersection.locateCollinear:</code> Documentation claimed that this algorithm was identical to <code>LineD.locateCollinear</code> but the implementations differed, and the epsilon overload performed fewer epsilon checks. The <code>LineD</code> implementations were copied to <code>LineIntersection</code>, and <code>LineD/I</code> now simply forward to that class.</li>
+    <li><code>PointDComparator:</code> Java’s <code>List.sort</code> throws an <code>IllegalArgumentException</code> for any <code>Comparator</code> that signals equality for objects with false <code>equals</code> or unequal <code>hashCode</code> results. This happens when the comparison epsilon overlaps <code>PointD</code> distances in both dimensions. I cannot influence this behavior but have documented it in <code>setEpsilon</code>.</li>
+    <li><code>PolygonGrid:</code> Renamed <code>…Display…</code> methods to <code>…World…</code>, matching <code>Graph</code> usage and no longer implying display output.</li>
+    <li><code>RectI/D:</code> Completely rewritten with minimum &amp; maximum coordinates rather than location &amp; size. <code>RectI</code> now also includes its greatest coordinates, like <code>RectD</code>. This greatly simplified the code, but all algorithms using these classes must be changed accordingly.</li>
+    <li><code>RectLocation:</code> Simplified redesign as combination of two <code>LineLocation</code> values.</li>
+  </ul>
+  <p class="first"><code>Graph</code>:</p>
+  <ul>
+    <li><code>Graph</code>: Renamed <code>Graph2D</code> to <code>Graph</code> as there is only one, and all other classes assume that one class. Also added <code>getNeighbors</code> overload with <code>steps</code> parameter and a default implementation that works for all graphs.</li>
+  </ul>
+  <p class="first"><code>Subdivision</code>:</p>
+  <ul>
+    <li>Moved <code>Subdivision</code> &amp; all related classes to new package <code>org.kynosarges.tektosyne.subdivision</code> as there were a <em>lot</em> of related classes, and more in the Java port.</li>
+    <li><code>Subdivision:</code> Collections no longer offer index access as Java does not provide collections that are both indexed and (quickly, automatically) sorted. In particular, vertices are now exclusively identified by their <code>PointD</code> coordinates rather than by collection indices. This simplified the API overall.</li>
+  </ul>
+  <h2 id="Issues">6. Known Issues</h2>
+  <p>On Java SE 9 and later, Swing supports high DPI scaling but with the notable exception of minimum window sizes. The demo application works around this bug using a <a href="https://news.kynosarges.org/2019/03/14/minimum-size-scaling-for-swing-windows/">resize listener</a>. This works but causes some annoying flickering as the minimum size is restored.</p>
+  <h2 id="Copyright">7. Copyright Notice</h2>
+  <p class="first">
+    All files – individual files, multi-file packages, and individual files contained in multi-file packages – that constitute the original distribution of Tektosyne are Copyright © 2002–2019 by Christoph Nahr, except where otherwise noted.</p>
+  <p class="next">
+    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
+  <p class="last">
+    The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
+  <p>THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+</body>
+</html>

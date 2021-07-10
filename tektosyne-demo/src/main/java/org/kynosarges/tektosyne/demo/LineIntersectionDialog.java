@@ -1,12 +1,8 @@
 package org.kynosarges.tektosyne.demo;
 
-import javafx.geometry.*;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.scene.paint.*;
-import javafx.scene.shape.*;
-import javafx.stage.*;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
 
 import org.kynosarges.tektosyne.geometry.*;
 
@@ -15,153 +11,209 @@ import org.kynosarges.tektosyne.geometry.*;
  * Draws a random set of lines and marks any points of intersection that were found.
  * 
  * @author Christoph Nahr
- * @version 6.1.0
+ * @version 6.3.0
  */
-public class LineIntersectionDialog extends Stage {
+public class LineIntersectionDialog extends JDialog {
+    private static final long serialVersionUID = 0L;
 
-    private final Pane _output = new Pane();
-    private final Label _linesCount = new Label("0/0");
-    private final Spinner<Double> _tolerance = new Spinner<>(0, 10, 0, 0.1);
+    private final JLabel _linesCount = new JLabel("0/0");
+    private final JSpinner _tolerance = new JSpinner();
 
     private LineD[] _lines;
     private MultiLinePoint[] _crossings;
 
     /**
      * Creates a {@link LineIntersectionDialog}.
+     * @param owner the {@link Window} that owns the dialog
      */    
-    public LineIntersectionDialog() {
-        initOwner(Global.primaryStage());
-        initModality(Modality.APPLICATION_MODAL);
-        initStyle(StageStyle.DECORATED);
+    public LineIntersectionDialog(Window owner) {
+        super(owner);
+        setModal(true);
 
-        final Label message = new Label(
-                "Crossings (intersection points) are marked by hollow red circles.\n" +
-                "Use Tolerance to adjust intersection proximity matching.");
-        message.setMinHeight(36); // reserve space for two lines
-        message.setWrapText(true);
+        final JPanel panel = new JPanel();
+        setContentPane(panel);
 
-        final Label linesLabel = new Label("Lines/Crossings");
-        _linesCount.setAlignment(Pos.CENTER);
-        _linesCount.setPrefWidth(40);
+        final GroupLayout layout = new GroupLayout(panel);
+        layout.setAutoCreateGaps(true);
+        layout.setAutoCreateContainerGaps(true);
+        panel.setLayout(layout);
 
-        _tolerance.getEditor().setAlignment(Pos.CENTER_RIGHT);
-        _tolerance.getEditor().setText("0.00"); // correct formatting for initial value
-        _tolerance.setEditable(true);
-        _tolerance.setPrefWidth(70);
-        DoubleStringConverter.createFor(_tolerance);
-        Global.addTooltip(_tolerance, "Set tolerance for proximity matching (Alt+T)");
-        _tolerance.getValueFactory().valueProperty().addListener((ov, oldValue, newValue) -> draw(_lines));
+        final JLabel message = new JLabel(
+                "<html>Crossings (intersection points) are marked by hollow red circles.<br>" +
+                "Use Tolerance to adjust intersection proximity matching.</html>");
 
-        final Label toleranceLabel = new Label("_Tolerance");
+        final JLabel linesLabel = new JLabel("Lines/Crossings");
+        final DrawPanel output = new DrawPanel();
+        output.setBackground(Color.WHITE);
+        output.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1, true));
+
+        _tolerance.setModel(new SpinnerNumberModel(0.0, 0.0, 10.0, 0.1));
+        _tolerance.getModel().addChangeListener(e -> output.draw(_lines));
+        _tolerance.setEditor(new JSpinner.NumberEditor(_tolerance, "0.00"));
+        _tolerance.setToolTipText("Set tolerance for proximity matching (Alt+T)");
+
+        final JLabel toleranceLabel = new JLabel("Tolerance");
         toleranceLabel.setLabelFor(_tolerance);
-        toleranceLabel.setMnemonicParsing(true);
+        toleranceLabel.setDisplayedMnemonic(KeyEvent.VK_T);
+        toleranceLabel.setToolTipText(_tolerance.getToolTipText());
 
-        final Button maxTolerance = new Button("M_ax");
-        maxTolerance.setOnAction(t -> _tolerance.getValueFactory().setValue(10.0));
-        maxTolerance.setTooltip(new Tooltip("Set tolerance to maximum (Alt+A)"));
+        final JButton maxTolerance = new JButton("Max");
+        maxTolerance.addActionListener(t -> _tolerance.getModel().setValue(10.0));
+        maxTolerance.setMnemonic(KeyEvent.VK_A);
+        maxTolerance.setToolTipText("Set tolerance to maximum (Alt+A)");
 
-        final Button minTolerance = new Button("M_in");
-        minTolerance.setOnAction(t -> _tolerance.getValueFactory().setValue(0.0));
-        minTolerance.setTooltip(new Tooltip("Set tolerance to minimum (Alt+I)"));
+        final JButton minTolerance = new JButton("Min");
+        minTolerance.addActionListener(t -> _tolerance.getModel().setValue(0.0));
+        minTolerance.setMnemonic(KeyEvent.VK_I);
+        minTolerance.setToolTipText("Set tolerance to minimum (Alt+I)");
         
-        final Button splitLines = new Button("_Split");
-        splitLines.setOnAction(t -> {
+        final JButton splitLines = new JButton("Split");
+        splitLines.addActionListener(t -> {
             final LineD[] lines = MultiLineIntersection.split(_lines, _crossings);
-            draw(lines);
+            output.draw(lines);
         });
-        splitLines.setTooltip(new Tooltip("Split lines on intersection points (Alt+S)"));
+        splitLines.setMnemonic(KeyEvent.VK_S);
+        splitLines.setToolTipText("Split lines on intersection points (Alt+S)");
 
-        final HBox input = new HBox(linesLabel, _linesCount, splitLines,
-                toleranceLabel, _tolerance, maxTolerance, minTolerance);
-        input.setAlignment(Pos.CENTER_LEFT);
-        HBox.setMargin(splitLines, new Insets(0, 8, 0, 4));
-        HBox.setMargin(maxTolerance, new Insets(0, 8, 0, 8));
+        final GroupLayout.Group inputH = layout.createSequentialGroup().
+                addComponent(linesLabel).
+                addComponent(_linesCount, 40, 40, 40).
+                addComponent(splitLines).
+                addComponent(toleranceLabel).
+                addComponent(_tolerance, 70, 70, 70).
+                addComponent(maxTolerance).
+                addComponent(minTolerance);
 
-        Global.clipChildren(_output);
-        _output.setPrefSize(400, 300);
-        _output.setBorder(new Border(new BorderStroke(Color.BLACK,
-                BorderStrokeStyle.SOLID, new CornerRadii(4), BorderWidths.DEFAULT)));
+        final GroupLayout.Group inputV = layout.createParallelGroup(GroupLayout.Alignment.CENTER, false).
+                addComponent(linesLabel).
+                addComponent(_linesCount).
+                addComponent(splitLines).
+                addComponent(toleranceLabel).
+                addComponent(_tolerance).
+                addComponent(maxTolerance).
+                addComponent(minTolerance);
 
-        final Button newTest = new Button("_New");
-        newTest.setDefaultButton(true);
-        newTest.setOnAction(t -> draw(null));
-        newTest.setTooltip(new Tooltip("Generate new random line set (Alt+N)"));
+        final JButton newTest = new JButton("New");
+        newTest.requestFocus();
+        newTest.addActionListener(t -> output.draw(null));
+        newTest.setMnemonic(KeyEvent.VK_N);
+        newTest.setToolTipText("Generate new random line set (Alt+N)");
 
-        final Button copy = new Button("_Copy");
-        copy.setOnAction(t -> Global.copy(this, LineD.class, _lines));
-        copy.setTooltip(new Tooltip("Copy current line set to clipboard (Alt+C)"));
+        final JButton copy = new JButton("Copy");
+        copy.addActionListener(t -> Global.copy(this, LineD.class, _lines));
+        copy.setMnemonic(KeyEvent.VK_C);
+        copy.setToolTipText("Copy current line set to clipboard (Alt+C)");
 
-        final Button paste = new Button("_Paste");
-        paste.setOnAction(t -> {
+        final JButton paste = new JButton("Paste");
+        paste.addActionListener(t -> {
             final LineD[] lines = Global.paste(this, LineD.class);
-            if (lines != null) draw(lines);
+            if (lines != null) output.draw(lines);
         });
-        paste.setTooltip(new Tooltip("Paste existing line set from clipboard (Alt+P)"));
+        paste.setMnemonic(KeyEvent.VK_P);
+        paste.setToolTipText("Paste existing line set from clipboard (Alt+P)");
 
-        final Button close = new Button("Close");
-        close.setCancelButton(true);
-        close.setOnAction(t -> close());
-        close.setTooltip(new Tooltip("Close dialog (Escape, Alt+F4)"));
+        final JButton close = CloseAction.createButton(this, panel);
 
-        final HBox controls = new HBox(newTest, copy, paste, close);
-        controls.setAlignment(Pos.CENTER);
-        controls.setSpacing(8);
+        final GroupLayout.Group controlsH = layout.createSequentialGroup().
+                addContainerGap(0, Short.MAX_VALUE).
+                addComponent(newTest).
+                addComponent(copy).
+                addComponent(paste).
+                addComponent(close).
+                addContainerGap(0, Short.MAX_VALUE);
 
-        final VBox root = new VBox(message, new Separator(), input, _output, controls);
-        root.setPadding(new Insets(8));
-        root.setSpacing(8);
-        VBox.setVgrow(_output, Priority.ALWAYS);
-        
+        final GroupLayout.Group controlsV = layout.createParallelGroup(GroupLayout.Alignment.CENTER, false).
+                addComponent(newTest).
+                addComponent(copy).
+                addComponent(paste).
+                addComponent(close);
+
+        final JSeparator separator = new JSeparator();
+
+        layout.setHorizontalGroup(layout.createParallelGroup().
+                addComponent(message).
+                addComponent(separator).
+                addGroup(inputH).
+                addComponent(output).
+                addGroup(controlsH));
+
+        layout.setVerticalGroup(layout.createSequentialGroup().
+                addComponent(message).
+                addComponent(separator, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE).
+                addGroup(inputV).
+                addComponent(output, 250, 250, Short.MAX_VALUE).
+                addGroup(controlsV));
+
+        setLocationByPlatform(true);
         setResizable(true);
-        setScene(new Scene(root));
+        pack();
         setTitle("Line Intersection Test");
-        sizeToScene();
-        
-        setOnShown(t -> draw(null));
+        SwingUtilities.invokeLater(() -> output.draw(null));
+
+        // HACK: Window.setMinimumSize ignores high DPI scaling
+        addComponentListener(new ResizeListener(this));
+        setVisible(true);
     }
 
     /**
-     * Draws all intersections for the specified {@link LineD} array.
-     * Creates a new {@link LineD} array if {@code lines} is {@code null}.
-     * 
-     * @param lines the {@link LineD} array whose intersections to draw
+     * Provides the custom drawing {@link JPanel} for the {@link LineIntersectionDialog}.
      */
-    private void draw(LineD[] lines) {
-        final double diameter = 8;
+    private class DrawPanel extends JPanel {
+        private static final long serialVersionUID = 0L;
 
-        // generate new random line set if desired
-        if (lines == null) {
-            final int count = 3 + Global.RANDOM.nextInt(18);
-            lines = new LineD[count];
+        // diameter of circles marking random points
+        private final static double DIAMETER = 8;
 
-            final double width = _output.getWidth() - 2 * diameter;
-            final double height = _output.getHeight() - 2 * diameter;
-            for (int i = 0; i < lines.length; i++)
-                lines[i] = GeoUtils.randomLine(diameter, diameter, width, height);
+        /**
+         * Draws all intersections for the specified {@link LineD} array.
+         * Creates a new {@link LineD} array if {@code lines} is {@code null}.
+         *
+         * @param lines the {@link LineD} array whose intersections to draw
+         */
+        void draw(LineD[] lines) {
+
+            // generate new random line set if desired
+            if (lines == null) {
+                final int count = 3 + Global.RANDOM.nextInt(18);
+                lines = new LineD[count];
+
+                final double width = getWidth() - 2 * DIAMETER;
+                final double height = getHeight() - 2 * DIAMETER;
+                for (int i = 0; i < lines.length; i++)
+                    lines[i] = GeoUtils.randomLine(DIAMETER, DIAMETER, width, height);
+            }
+
+            _lines = lines;
+            final double epsilon = (Double) _tolerance.getModel().getValue();
+            _crossings = (epsilon > 0 ?
+                    MultiLineIntersection.findSimple(lines, epsilon) :
+                    MultiLineIntersection.findSimple(lines));
+
+            repaint();
         }
 
-        _lines = lines;
-        final double epsilon = _tolerance.getValue();
-        _crossings = (epsilon > 0 ?
-            MultiLineIntersection.findSimple(lines, epsilon) :
-            MultiLineIntersection.findSimple(lines));
+        /**
+         * Invoked by Swing to draw the {@link DrawPanel}.
+         * @param g the {@link Graphics2D} context in which to paint
+         */
+        @Override
+        public void paint(Graphics g) {
+            super.paint(g);
+            if (_lines == null || _crossings == null)
+                return;
 
-        _linesCount.setText(String.format("%d/%d", lines.length, _crossings.length));
-        _output.getChildren().clear();
+            _linesCount.setText(String.format("%d/%d", _lines.length, _crossings.length));
+            final Graphics2D g2 = (Graphics2D) g;
 
-        // draw line set
-        for (LineD line: lines) {
-            final Line shape = new Line(line.start.x, line.start.y, line.end.x, line.end.y);
-            shape.setStroke(Color.BLACK);
-            _output.getChildren().add(shape);
-        }
+            // draw line set
+            g2.setColor(Color.BLACK);
+            for (LineD line: _lines)
+                g2.draw(Global.drawLine(line));
 
-        // draw intersections as hollow circles
-        for (MultiLinePoint crossing: _crossings) {
-            final Circle circle = new Circle(crossing.shared.x, crossing.shared.y, diameter / 2);
-            circle.setFill(null);
-            circle.setStroke(Color.RED);
-            _output.getChildren().add(circle);
+            // draw intersections as hollow circles
+            g2.setColor(Color.RED);
+            for (MultiLinePoint crossing: _crossings)
+                g2.draw(Global.drawCircle(crossing.shared, DIAMETER));
         }
     }
 }

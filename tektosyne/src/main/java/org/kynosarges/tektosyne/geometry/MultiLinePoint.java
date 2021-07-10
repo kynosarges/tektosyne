@@ -13,7 +13,7 @@ import java.util.*;
  * coordinates relative to each line segment.</p>
  * 
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.3.0
  */
 public final class MultiLinePoint {
     /**
@@ -68,7 +68,7 @@ public final class MultiLinePoint {
      */
     @Override
     public boolean equals(Object obj) {
-        if (obj == null || !(obj instanceof MultiLinePoint))
+        if (!(obj instanceof MultiLinePoint))
             return false;
 
         final MultiLinePoint other = (MultiLinePoint) obj;
@@ -145,7 +145,7 @@ public final class MultiLinePoint {
          */
         @Override
         public boolean equals(Object obj) {
-            if (obj == null || !(obj instanceof Line))
+            if (!(obj instanceof Line))
                 return false;
 
             final Line other = (Line) obj;
