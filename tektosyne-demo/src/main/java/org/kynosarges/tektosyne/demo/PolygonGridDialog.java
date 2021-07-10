@@ -1,14 +1,9 @@
 package org.kynosarges.tektosyne.demo;
 
-import javafx.geometry.*;
-import javafx.scene.*;
-import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
-import javafx.scene.paint.*;
-import javafx.scene.shape.*;
-import javafx.scene.text.*;
-import javafx.stage.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.geom.*;
+import javax.swing.*;
 
 import org.kynosarges.tektosyne.geometry.*;
 
@@ -21,164 +16,187 @@ import org.kynosarges.tektosyne.geometry.*;
  * neighbors within a given distance, and show all distances from the current element.</p>
  * 
  * @author Christoph Nahr
- * @version 6.1.0
+ * @version 6.3.0
  */
-public class PolygonGridDialog extends Stage {
+public class PolygonGridDialog extends JDialog {
+    private static final long serialVersionUID = 0L;
 
-    private final Pane _output = new Pane();
-    private final Pane _outputUnderlay = new Pane();
+    private final DrawPanel _output = new DrawPanel();
 
-    private final RadioButton _elementSquare, _elementHexagon;
-    private final CheckBox _vertexNeighbors;
-    private final RadioButton _elementOnEdge, _elementOnVertex;
-    private final RadioButton _shiftNone, _shiftColumnUp,
+    private final JRadioButton _elementSquare, _elementHexagon;
+    private final JCheckBox _vertexNeighbors;
+    private final JRadioButton _elementOnEdge, _elementOnVertex;
+    private final JRadioButton _shiftNone, _shiftColumnUp,
             _shiftColumnDown, _shiftRowLeft, _shiftRowRight;
 
-    private final Label _columnsLabel = new Label("0");
-    private final Label _rowsLabel = new Label("0");
-    private final Label _cursorLabel = new Label("—");
+    private final JLabel _columnsLabel = new JLabel("0");
+    private final JLabel _rowsLabel = new JLabel("0");
+    private final JLabel _cursorLabel = new JLabel("—");
 
     // current element and grid
     private RegularPolygon _element;
     private PolygonGrid _grid;
 
-    // auxiliary variables for drawing
-    private PointD _border = PointD.EMPTY;
-    private final Polygon _cursorShape = new Polygon();
-    private double[] _insetDoubles;
+    // highlight options for neighbors of cursor
+    private enum NeighborHighlight {
+        IMMEDIATE,
+        THREE_STEPS,
+        DISTANCES
+    }
 
-    private final static Color[] NEIGHBOR_COLORS = {
-        Color.GREEN,
-        Color.YELLOWGREEN,
-        Color.LIGHTGREEN,
-    };
+    // auxiliary variables for drawing
+    private PointI _gridCursor;
+    private NeighborHighlight _highlight;
+    private PointD _border = PointD.EMPTY, _drawCursor;
+    private PointD[] _insetVertices;
 
     // ignore input while updating grid
     private boolean _updating;
     
     /**
      * Creates a {@link PolygonGridDialog}.
-     */    
-    public PolygonGridDialog() {
-        initOwner(Global.primaryStage());
-        initModality(Modality.APPLICATION_MODAL);
-        initStyle(StageStyle.DECORATED);
+     * @param owner the {@link Window} that owns the dialog
+     */
+    public PolygonGridDialog(Window owner) {
+        super(owner);
+        setModal(true);
 
-        final Label message = new Label(
-                "Resize dialog to change grid size. Mouse over grid to highlight elements. Left-click to show\n" +
-                "immediate neighbors. Middle-click to show third neighbors. Right-click to show distances.");
-        message.setMinHeight(36); // reserve space for two lines
-        message.setWrapText(true);
+        final JPanel panel = new JPanel();
+        setContentPane(panel);
 
-        Global.clipChildren(_output);
-        _output.setPrefSize(400, 300);
-        _output.setBorder(new Border(new BorderStroke(Color.BLACK,
-                BorderStrokeStyle.SOLID, new CornerRadii(4), BorderWidths.DEFAULT)));
+        final GroupLayout layout = new GroupLayout(panel);
+        layout.setAutoCreateGaps(true);
+        layout.setAutoCreateContainerGaps(true);
+        panel.setLayout(layout);
 
-        _output.setOnMouseClicked(this::onMouseClicked);
-        _output.setOnMouseMoved(this::onMouseMoved);
-        _output.setOnMouseExited(t -> clearCursor());
+        final JLabel message = new JLabel(
+                "<html>Resize dialog to change grid size. Mouse over grid to highlight elements. Left-click to show<br>" +
+                "immediate neighbors. Middle-click to show third neighbors. Right-click to show distances.</html>");
 
-        Global.clipChildren(_outputUnderlay);
-        _outputUnderlay.setPrefSize(400, 300);
+        _output.setBackground(Color.WHITE);
+        _output.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1, true));
 
-        _cursorShape.setFill(Color.RED);
-        _cursorShape.setStroke(null);
-        _cursorShape.setVisible(false);
+        final MouseAdapter mouseListener = new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                onMouseClicked(e);
+            }
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                onMouseMoved(e);
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+                clearCursor();
+            }
+        };
+        _output.addMouseListener(mouseListener);
+        _output.addMouseMotionListener(mouseListener);
 
-        final ToggleGroup elementGroup = new ToggleGroup();
-        final VBox elementPane = new VBox();
-        final TitledPane elementTitle = new TitledPane("Element", elementPane);
-        elementTitle.setCollapsible(false);
+        final ButtonGroup elementGroup = new ButtonGroup();
+        final JPanel elementPanel = new JPanel();
+        elementPanel.setBorder(BorderFactory.createTitledBorder("Element "));
+        elementPanel.setLayout(new GridLayout(5, 1, 0, 2));
 
-        _elementSquare = createRadioButton("_Square",
-                "Square elements (Alt+S)", elementGroup, elementPane);
-        _elementHexagon = createRadioButton("_Hexagon",
-                "Hexagonal elements (Alt+H)", elementGroup, elementPane);
+        _elementSquare = createRadioButton("Square",
+                "Square elements (Alt+S)", KeyEvent.VK_S, elementGroup, elementPanel);
+        _elementHexagon = createRadioButton("Hexagon",
+                "Hexagonal elements (Alt+H)", KeyEvent.VK_H, elementGroup, elementPanel);
         _elementSquare.setSelected(true);
 
-        _vertexNeighbors = new CheckBox("V-_Neighbors");
-        _vertexNeighbors.setTooltip(new Tooltip("Vertex neighbors (Alt+N)"));
-        elementPane.getChildren().add(_vertexNeighbors);
+        _vertexNeighbors = new JCheckBox("V-Neighbors");
+        _vertexNeighbors.setToolTipText("Vertex neighbors (Alt+N)");
+        _vertexNeighbors.setMnemonic(KeyEvent.VK_N);
+        elementPanel.add(_vertexNeighbors);
 
-        final ToggleGroup orientationGroup = new ToggleGroup();
-        final VBox orientationPane = new VBox();
-        final TitledPane orientationTitle = new TitledPane("Orientation", orientationPane);
-        orientationTitle.setCollapsible(false);
+        final ButtonGroup orientationGroup = new ButtonGroup();
+        final JPanel orientationPanel = new JPanel();
+        orientationPanel.setBorder(BorderFactory.createTitledBorder("Orientation "));
+        orientationPanel.setLayout(new GridLayout(5, 1, 0, 2));
 
-        _elementOnEdge = createRadioButton("On _Edge",
-                "Elements on edge (Alt+E)", orientationGroup, orientationPane);
-        _elementOnVertex = createRadioButton("On _Vertex",
-                "Elements on vertex (Alt+V)", orientationGroup, orientationPane);
+        _elementOnEdge = createRadioButton("On Edge",
+                "Elements on edge (Alt+E)", KeyEvent.VK_E, orientationGroup, orientationPanel);
+        _elementOnVertex = createRadioButton("On Vertex",
+                "Elements on vertex (Alt+V)", KeyEvent.VK_V, orientationGroup, orientationPanel);
         _elementOnEdge.setSelected(true);
 
-        final ToggleGroup shiftGroup = new ToggleGroup();
-        final VBox shiftPane = new VBox();
-        final TitledPane shiftTitle = new TitledPane("Grid Shift", shiftPane);
-        shiftTitle.setCollapsible(false);
+        final ButtonGroup shiftGroup = new ButtonGroup();
+        final JPanel shiftPanel = new JPanel();
+        shiftPanel.setBorder(BorderFactory.createTitledBorder("Grid Shift "));
+        shiftPanel.setLayout(new GridLayout(5, 1, 0, 2));
 
-        _shiftNone = createRadioButton("N_one", "No grid shift (Alt+O)", shiftGroup, shiftPane);
-        _shiftColumnUp = createRadioButton("Column _Up", "Shift column up (Alt+U)", shiftGroup, shiftPane);
-        _shiftColumnDown = createRadioButton("Column _Down", "Shift column down (Alt+D)", shiftGroup, shiftPane);
-        _shiftRowLeft = createRadioButton("Row _Left", "Shift row left (Alt+L)", shiftGroup, shiftPane);
-        _shiftRowRight = createRadioButton("Row _Right", "Shift row right (Alt+R)", shiftGroup, shiftPane);
+        _shiftNone = createRadioButton("None",
+                "No grid shift (Alt+O)", KeyEvent.VK_O, shiftGroup, shiftPanel);
+        _shiftColumnUp = createRadioButton("Column Up",
+                "Shift column up (Alt+U)", KeyEvent.VK_U, shiftGroup, shiftPanel);
+        _shiftColumnDown = createRadioButton("Column Down",
+                "Shift column down (Alt+D)", KeyEvent.VK_D, shiftGroup, shiftPanel);
+        _shiftRowLeft = createRadioButton("Row Left",
+                "Shift row left (Alt+L)", KeyEvent.VK_L, shiftGroup, shiftPanel);
+        _shiftRowRight = createRadioButton("Row Right",
+                "Shift row right (Alt+R)", KeyEvent.VK_R, shiftGroup, shiftPanel);
         _shiftNone.setSelected(true);
 
-        final GridPane sizePane = new GridPane();
-        final TitledPane sizeTitle = new TitledPane("Grid Size", sizePane);
-        sizeTitle.setCollapsible(false);
+        final JPanel sizePanel = new JPanel();
+        sizePanel.setBorder(BorderFactory.createTitledBorder("Grid Size "));
+        sizePanel.setLayout(new GridLayout(5, 2));
 
-        _columnsLabel.setAlignment(Pos.CENTER_RIGHT);
-        _columnsLabel.setPrefWidth(48);
-        _columnsLabel.setTooltip(new Tooltip("Current number of grid columns"));
-        sizePane.add(new Label("Columns"), 0, 0);
-        sizePane.add(_columnsLabel, 1, 0);
+        _columnsLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        _columnsLabel.setToolTipText("Current number of grid columns");
+        sizePanel.add(new JLabel("Columns"));
+        sizePanel.add(_columnsLabel);
 
-        _rowsLabel.setAlignment(Pos.CENTER_RIGHT);
-        _rowsLabel.setPrefWidth(48);
-        _rowsLabel.setTooltip(new Tooltip("Current number of grid rows"));
-        sizePane.add(new Label("Rows"), 0, 1);
-        sizePane.add(_rowsLabel, 1, 1);
+        _rowsLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        _rowsLabel.setToolTipText("Current number of grid rows");
+        sizePanel.add(new JLabel("Rows"));
+        sizePanel.add(_rowsLabel);
 
-        _cursorLabel.setAlignment(Pos.CENTER_RIGHT);
-        _cursorLabel.setPrefWidth(48);
-        _cursorLabel.setTooltip(new Tooltip("Grid coordinates under mouse cursor"));
-        sizePane.add(new Label("Cursor"), 0, 2);
-        sizePane.add(_cursorLabel, 1, 2);
+        _cursorLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        _cursorLabel.setToolTipText("Grid coordinates under mouse cursor");
+        sizePanel.add(new JLabel("Cursor"));
+        sizePanel.add(_cursorLabel);
 
-        final HBox input = new HBox(elementTitle, orientationTitle, shiftTitle, sizeTitle);
-        for (Node node: input.getChildren()) {
-            final Region region = (Region) ((TitledPane) node).getContent();
+        final GroupLayout.Group inputH = layout.createSequentialGroup().
+                addComponent(elementPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE).
+                addComponent(orientationPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE).
+                addComponent(shiftPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE).
+                addComponent(sizePanel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE);
 
-            // uniform sizing and spacing for all containers
-            region.setPrefSize(120, 120);
-            if (region instanceof VBox)
-                ((VBox) region).setSpacing(4);
-            else
-                ((GridPane) region).setVgap(4);
-        }
+        final GroupLayout.Group inputV = layout.createParallelGroup().
+                addComponent(elementPanel).
+                addComponent(orientationPanel).
+                addComponent(shiftPanel).
+                addComponent(sizePanel);
 
-        final Button close = new Button("Close");
-        close.setCancelButton(true);
-        close.setOnAction(t -> close());
-        close.setTooltip(new Tooltip("Close dialog (Escape, Alt+F4)"));
+        layout.linkSize(SwingConstants.VERTICAL,
+                elementPanel, orientationPanel, shiftPanel, sizePanel);
 
-        final HBox controls = new HBox(close);
-        controls.setAlignment(Pos.CENTER);
-        controls.setSpacing(8);
+        final JButton close = CloseAction.createButton(this, panel);
 
-        // underlay hosts mouse click decoration for main output pane
-        final StackPane outputStack = new StackPane(_outputUnderlay, _output);
-        VBox.setVgrow(outputStack, Priority.ALWAYS);
-        
-        final VBox root = new VBox(message, input, outputStack, controls);
-        root.setPadding(new Insets(8));
-        root.setSpacing(8);
+        final GroupLayout.Group controlsH = layout.createSequentialGroup().
+                addContainerGap(0, Short.MAX_VALUE).
+                addComponent(close).
+                addContainerGap(0, Short.MAX_VALUE);
 
+        final GroupLayout.Group controlsV = layout.createParallelGroup(GroupLayout.Alignment.CENTER, false).
+                addComponent(close);
+
+        layout.setHorizontalGroup(layout.createParallelGroup().
+                addComponent(message).
+                addGroup(inputH).
+                addComponent(_output).
+                addGroup(controlsH));
+
+        layout.setVerticalGroup(layout.createSequentialGroup().
+                addComponent(message).
+                addGroup(inputV).
+                addComponent(_output, 300, 300, Short.MAX_VALUE).
+                addGroup(controlsV));
+
+        setLocationByPlatform(true);
         setResizable(true);
-        setScene(new Scene(root));
+        pack();
         setTitle("Polygon Grid Test");
-        sizeToScene();
 
         /*
          * Update element and element controls immediately without drawing.
@@ -186,31 +204,52 @@ public class PolygonGridDialog extends Stage {
          */
         updateElement(false);
 
-        elementGroup.selectedToggleProperty().addListener((ov, oldValue, newValue) -> {
-            if (!_updating) updateElement(true);
-        });
-        _vertexNeighbors.selectedProperty().addListener((ov, oldValue, newValue) -> {
-            if (!_updating) updateElement(true);
-        });
-        orientationGroup.selectedToggleProperty().addListener((ov, oldValue, newValue) -> {
-            if (!_updating) updateElement(true);
-        });
-        shiftGroup.selectedToggleProperty().addListener((ov, oldValue, newValue) ->  {
-            if (!_updating) draw();
-        });
+        Global.addGroupListener(elementGroup,
+                e -> { if (!_updating) updateElement(true); });
+        _vertexNeighbors.addActionListener(
+                e -> { if (!_updating) updateElement(true); });
+        Global.addGroupListener(orientationGroup,
+                e -> { if (!_updating) updateElement(true); });
+        Global.addGroupListener(shiftGroup,
+                e -> { if (!_updating) _output.draw(); });
 
-        _output.layoutBoundsProperty().addListener((ov, oldBounds, newBounds) -> draw());
+        // HACK: Window.setMinimumSize ignores high DPI scaling
+        // For PolygonGridDialog, the listener also resizes the grid.
+        addComponentListener(new GridResizeListener());
+        setVisible(true);
+    }
+
+    private class GridResizeListener extends ResizeListener {
+        /**
+         * Creates a {@link GridResizeListener} for the {@link PolygonGridDialog}.
+         */
+        GridResizeListener() {
+            super(PolygonGridDialog.this);
+        }
+
+        /**
+         * Invoked when the size of the {@link Component} changes.
+         * Restores the minimum size obtained during construction if
+         * the current size is smaller in either or both dimensions.
+         *
+         * @param e the {@link ComponentEvent} that occurred
+         */
+        @Override
+        public void componentResized(ComponentEvent e) {
+            super.componentResized(e);
+            _output.draw();
+        }
     }
 
     /**
-     * Resizes the specified {@link PolygonGrid} to the specified {@link Region}.
+     * Resizes the specified {@link PolygonGrid} to the specified {@link JPanel}.
      * @param grid the {@link PolygonGrid} to resize
-     * @param region the {@link Region} that should contain {@code grid}
+     * @param panel the {@link JPanel} that should contain {@code grid}
      * @return a {@link PointD} containing the left and top offsets by which to
-     *         shift {@code grid} so that it is centered within {@code region}
-     * @throws NullPointerException if {@code grid} or {@code region} is {@code null}
+     *         shift {@code grid} so that it is centered within {@code panel}
+     * @throws NullPointerException if {@code grid} or {@code panel} is {@code null}
      */
-    static PointD sizeGrid(PolygonGrid grid, Region region) {
+    static PointD sizeGrid(PolygonGrid grid, JPanel panel) {
         /*
          * PolygonGrid default size (1,1) is too small for meaningful calculations.
          * We need multiple rows and columns to see the effect of PolygonGridShift.
@@ -218,8 +257,8 @@ public class PolygonGridDialog extends Stage {
         grid.setSize(new SizeI(10, 10));
 
         // check for available space when using default size
-        final double ratioX = region.getWidth() / grid.worldBounds().width();
-        final double ratioY = region.getHeight() / grid.worldBounds().height();
+        final double ratioX = panel.getWidth() / grid.worldBounds().width();
+        final double ratioY = panel.getHeight() / grid.worldBounds().height();
 
         // increase grid size accordingly if possible
         grid.setSize(new SizeI(
@@ -228,72 +267,26 @@ public class PolygonGridDialog extends Stage {
 
         // calculate left and top drawing offsets
         return new PointD(
-                (region.getWidth() - grid.worldBounds().width()) / 2,
-                (region.getHeight()- grid.worldBounds().height()) / 2);
+                (panel.getWidth() - grid.worldBounds().width()) / 2,
+                (panel.getHeight()- grid.worldBounds().height()) / 2);
     }
 
-    private static RadioButton createRadioButton(
-            String text, String tip, ToggleGroup actionGroup, Pane actionPane) {
+    private static JRadioButton createRadioButton(String text, String tip,
+            int shortcut, ButtonGroup actionGroup, JPanel actionPanel) {
 
-        final RadioButton button = new RadioButton(text);
-        button.setMnemonicParsing(true);
-        button.setToggleGroup(actionGroup);
-        button.setTooltip(new Tooltip(tip));
+        final JRadioButton button = new JRadioButton(text);
+        button.setMnemonic(shortcut);
+        button.setToolTipText(tip);
 
-        actionPane.getChildren().add(button);
+        actionGroup.add(button);
+        actionPanel.add(button);
         return button;
-    }
-    
-    private void draw() {
-        if (_element == null) return;
-        _grid = new PolygonGrid(_element, getGridShift());
-
-        // resize grid and show actual grid size
-        _border = sizeGrid(_grid, _output);
-        _columnsLabel.setText(Integer.toString(_grid.size().width));
-        _rowsLabel.setText(Integer.toString(_grid.size().height));
-
-        _output.getChildren().clear();
-        _outputUnderlay.getChildren().clear();
-        final double[] standard = PointD.toDoubles(_element.vertices);
-
-        for (int x = 0; x < _grid.size().width; x++)
-            for (int y = 0; y < _grid.size().height; y++) {
-                final PointD center = _grid.gridToWorld(x, y);
-                final Polygon poly = new Polygon(standard);
-
-                poly.setFill(null);
-                poly.setStroke(Color.BLACK);
-                poly.setTranslateX(_border.x + center.x);
-                poly.setTranslateY(_border.y + center.y);
-
-                _output.getChildren().add(poly);
-            }
-
-        _output.getChildren().add(_cursorShape);
-    }
-
-    private void drawInset(PointI location, Color color, int distance) {
-        final Polygon shape = new Polygon(_insetDoubles);
-        shape.setFill(color);
-        shape.setStroke(null);
-
-        final PointD center = _grid.gridToWorld(location);
-        shape.setTranslateX(_border.x + center.x);
-        shape.setTranslateY(_border.y + center.y);
-        _outputUnderlay.getChildren().add(shape);
-
-        if (distance >= 0) {
-            final Text text = new Text(Integer.toString(distance));
-            text.setX(_border.x + center.x - text.getLayoutBounds().getWidth() / 2);
-            text.setY(_border.y + center.y + text.getLayoutBounds().getHeight() / 3);
-            _outputUnderlay.getChildren().add(text);
-        }
     }
 
     private void clearCursor() {
         _cursorLabel.setText("—");
-        _cursorShape.setVisible(false);
+        _drawCursor = null;
+        _output.repaint();
     }
 
     private PointI cursorToGrid(MouseEvent event) {
@@ -331,39 +324,23 @@ public class PolygonGridDialog extends Stage {
 
     private void onMouseClicked(MouseEvent event) {
         if (_grid == null) return;
-        _outputUnderlay.getChildren().clear();
+        _highlight = null;
+        _gridCursor = cursorToGrid(event);
 
-        final PointI p = cursorToGrid(event);
-        if (!_grid.isValid(p)) return;
-
-        switch (event.getButton()) {
-            case PRIMARY:
-                // highlight immediate neighbors
-                for (PointI neighbor: _grid.getNeighbors(p))
-                    drawInset(neighbor, Color.YELLOW, -1);
-                break;
-
-            case MIDDLE:
-                // highlight neighbors within three steps
-                for (PointI neighbor: _grid.getNeighbors(p, 3))
-                    drawInset(neighbor, Color.YELLOW, -1);
-                break;
-            
-            case SECONDARY:
-                // show color-coded step distances from cursor
-                for (int x = 0; x < _grid.size().width; x++)
-                    for (int y = 0; y < _grid.size().height; y++) {
-                        final PointI target = new PointI(x, y);
-                        if (!p.equals(target)) {
-                            final int distance = _grid.getStepDistance(p, target);
-
-                            // use different brushes to highlight distances
-                            final int index = (distance - 1) % NEIGHBOR_COLORS.length;
-                            drawInset(target, NEIGHBOR_COLORS[index], distance);
-                        }
-                    }
-                break;
+        if (_grid.isValid(_gridCursor)) {
+            switch (event.getButton()) {
+                case MouseEvent.BUTTON1:
+                    _highlight = NeighborHighlight.IMMEDIATE;
+                    break;
+                case MouseEvent.BUTTON2:
+                    _highlight = NeighborHighlight.THREE_STEPS;
+                    break;
+                case MouseEvent.BUTTON3:
+                    _highlight = NeighborHighlight.DISTANCES;
+                    break;
+            }
         }
+        _output.repaint();
     }
 
     private void onMouseMoved(MouseEvent event) {
@@ -375,9 +352,9 @@ public class PolygonGridDialog extends Stage {
         
         _cursorLabel.setText(String.format("%d/%d", p.x, p.y));
         final PointD center = _grid.gridToWorld(p);
-        _cursorShape.setTranslateX(_border.x + center.x);
-        _cursorShape.setTranslateY(_border.y + center.y);
-        _cursorShape.setVisible(true);
+        _drawCursor = new PointD(_border.x + center.x, _border.y + center.y);
+
+        _output.repaint();
     }
 
     private void updateControls(int sides, PolygonOrientation orientation) {
@@ -386,20 +363,20 @@ public class PolygonGridDialog extends Stage {
         final boolean onEdge = (orientation == PolygonOrientation.ON_EDGE);
         if (sides == 4) {
             setGridShift(onEdge ? PolygonGridShift.NONE : PolygonGridShift.ROW_RIGHT);
-            _shiftNone.setDisable(!onEdge);
-            _shiftColumnUp.setDisable(onEdge);
-            _shiftColumnDown.setDisable(onEdge);
-            _vertexNeighbors.setDisable(false);
+            _shiftNone.setEnabled(onEdge);
+            _shiftColumnUp.setEnabled(!onEdge);
+            _shiftColumnDown.setEnabled(!onEdge);
+            _vertexNeighbors.setEnabled(true);
         } else {
             setGridShift(onEdge ? PolygonGridShift.COLUMN_DOWN : PolygonGridShift.ROW_RIGHT);
-            _shiftNone.setDisable(true);
-            _shiftColumnUp.setDisable(!onEdge);
-            _shiftColumnDown.setDisable(!onEdge);
-            _vertexNeighbors.setDisable(true);
+            _shiftNone.setEnabled(false);
+            _shiftColumnUp.setEnabled(onEdge);
+            _shiftColumnDown.setEnabled(onEdge);
+            _vertexNeighbors.setEnabled(false);
         }
 
-        _shiftRowLeft.setDisable(onEdge);
-        _shiftRowRight.setDisable(onEdge);
+        _shiftRowLeft.setEnabled(!onEdge);
+        _shiftRowRight.setEnabled(!onEdge);
 
         _updating = false;
     }
@@ -416,14 +393,124 @@ public class PolygonGridDialog extends Stage {
         final double length = 160.0 / sides;
         _element = new RegularPolygon(length, sides, orientation, vertexNeighbors);
         final RegularPolygon inset = _element.inflate(-3.0);
-        _insetDoubles = PointD.toDoubles(inset.vertices);
-
-        // permanent inset polygon for cursor tracking
-        _cursorShape.getPoints().clear();
-        for (double coord: _insetDoubles)
-            _cursorShape.getPoints().add(coord);
+        _insetVertices = inset.vertices;
 
         updateControls(sides, orientation);
-        if (draw) draw();
+        if (draw) _output.draw();
+    }
+
+    /**
+     * Provides the custom drawing {@link JPanel} for the {@link PolygonGridDialog}.
+     */
+    private class DrawPanel extends JPanel {
+        private static final long serialVersionUID = 0L;
+
+        private final Color[] NEIGHBOR_COLORS = {
+                Color.GREEN,
+                Color.decode("#9ACD32"), // JavaFX YELLOWGREEN
+                Color.decode("#90EE90")  // JavaFX LIGHTGREEN
+        };
+
+        /**
+         * Computes and draws the currently configured {@link PolygonGrid}.
+         */
+        void draw() {
+            if (_element == null) return;
+            _highlight = null;
+            _grid = new PolygonGrid(_element, getGridShift());
+
+            // resize grid and show actual grid size
+            _border = sizeGrid(_grid, this);
+            _columnsLabel.setText(Integer.toString(_grid.size().width));
+            _rowsLabel.setText(Integer.toString(_grid.size().height));
+
+            repaint();
+        }
+
+        /**
+         * Invoked by Swing to draw the {@link DrawPanel}.
+         * @param g the {@link Graphics2D} context in which to paint
+         */
+        @Override
+        public void paint(Graphics g) {
+            super.paint(g);
+            if (_element == null || _grid == null)
+                return;
+
+            final Graphics2D g2 = (Graphics2D) g;
+            g2.setColor(Color.BLACK);
+
+            // draw polygon grid outlines
+            for (int x = 0; x < _grid.size().width; x++)
+                for (int y = 0; y < _grid.size().height; y++) {
+                    final PointD world = _grid.gridToWorld(x, y);
+                    final PointD center = new PointD(
+                            _border.x + world.x, _border.y + world.y);
+                    final Path2D poly = Global.drawPolygon(center, _element.vertices);
+                    g2.draw(poly);
+                }
+
+            // draw inset cursor if present
+            if (_drawCursor != null) {
+                final Path2D cursor = Global.drawPolygon(_drawCursor, _insetVertices);
+                g2.setColor(Color.RED);
+                g2.fill(cursor);
+            }
+
+            // draw inset highlights if requested
+            if (_highlight != null) {
+                switch (_highlight) {
+
+                    case IMMEDIATE:
+                        // highlight immediate neighbors
+                        for (PointI neighbor: _grid.getNeighbors(_gridCursor))
+                            drawInset(g2, neighbor, Color.YELLOW, -1);
+                        break;
+
+                    case THREE_STEPS:
+                        // highlight neighbors within three steps
+                        for (PointI neighbor: _grid.getNeighbors(_gridCursor, 3))
+                            drawInset(g2, neighbor, Color.YELLOW, -1);
+                        break;
+
+                    case DISTANCES:
+                        // show color-coded step distances from cursor
+                        for (int x = 0; x < _grid.size().width; x++)
+                            for (int y = 0; y < _grid.size().height; y++) {
+                                final PointI target = new PointI(x, y);
+                                if (!_gridCursor.equals(target)) {
+                                    final int distance = _grid.getStepDistance(_gridCursor, target);
+
+                                    // use different brushes to highlight distances
+                                    final int index = (distance - 1) % NEIGHBOR_COLORS.length;
+                                    drawInset(g2, target, NEIGHBOR_COLORS[index], distance);
+                                }
+                            }
+                        break;
+                }
+            }
+        }
+
+        private void drawInset(Graphics2D g2, PointI location, Color color, int distance) {
+
+            final PointD worldLocation = _grid.gridToWorld(location);
+            final PointD center = new PointD(
+                    _border.x + worldLocation.x,
+                    _border.y + worldLocation.y);
+
+            final Path2D shape = Global.drawPolygon(center, _insetVertices);
+            g2.setColor(color);
+            g2.fill(shape);
+
+            if (distance >= 0) {
+                final String text = Integer.toString(distance);
+                final Rectangle2D bounds = g2.getFontMetrics().getStringBounds(text, g2);
+
+                g2.setColor(Color.BLACK);
+                g2.drawString(text,
+                        (float) (center.x - bounds.getWidth() / 2),
+                        (float) (center.y + bounds.getHeight() / 3));
+            }
+        }
     }
 }

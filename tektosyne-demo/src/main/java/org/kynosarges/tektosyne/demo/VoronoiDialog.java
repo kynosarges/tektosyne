@@ -1,12 +1,8 @@
 package org.kynosarges.tektosyne.demo;
 
-import javafx.geometry.*;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.scene.paint.*;
-import javafx.scene.shape.*;
-import javafx.stage.*;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
 
 import org.kynosarges.tektosyne.geometry.*;
 
@@ -16,126 +12,182 @@ import org.kynosarges.tektosyne.geometry.*;
  * diagram and Delaunay triangulation.
  * 
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.3.0
  */
-public class VoronoiDialog extends Stage {
+public class VoronoiDialog extends JDialog {
+    private static final long serialVersionUID = 0L;
 
-    private final Pane _output = new Pane();
     private PointD[] _points;
 
     /**
      * Creates a {@link VoronoiDialog}.
-     */    
-    public VoronoiDialog() {
-        initOwner(Global.primaryStage());
-        initModality(Modality.APPLICATION_MODAL);
-        initStyle(StageStyle.DECORATED);
+     * @param owner the {@link Window} that owns the dialog
+     */
+    public VoronoiDialog(Window owner) {
+        super(owner);
+        setModal(true);
 
-        final Label message = new Label(
-                "Voronoi regions are shaded yellow, Voronoi edges appear as red solid lines.\n" +
-                "Edges of the Delaunay triangulation appear as blue dashed lines.");
-        message.setMinHeight(36); // reserve space for two lines
-        message.setWrapText(true);
+        final JPanel panel = new JPanel();
+        setContentPane(panel);
 
-        // no border as Voronoi diagram has no fixed maximum size
-        Global.clipChildren(_output);
-        _output.setPrefSize(400, 300);
+        final GroupLayout layout = new GroupLayout(panel);
+        layout.setAutoCreateGaps(true);
+        layout.setAutoCreateContainerGaps(true);
+        panel.setLayout(layout);
 
-        final Button newTest = new Button("_New");
-        newTest.setDefaultButton(true);
-        newTest.setOnAction(t -> draw(null));
-        newTest.setTooltip(new Tooltip("Generate new random point set (Alt+N)"));
+        final JLabel message = new JLabel(
+                "<html>Voronoi regions are shaded yellow, Voronoi edges appear as red solid lines.<br>" +
+                "Edges of the Delaunay triangulation appear as blue dashed lines.</html>");
 
-        final Button copy = new Button("_Copy");
-        copy.setOnAction(t -> Global.copy(this, PointD.class, _points));
-        copy.setTooltip(new Tooltip("Copy current point set to clipboard (Alt+C)"));
+        final DrawPanel output = new DrawPanel();
+        output.setBackground(Color.WHITE);
+        output.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1, true));
 
-        final Button paste = new Button("_Paste");
-        paste.setOnAction(t -> {
+        final JButton newTest = new JButton("New");
+        newTest.requestFocus();
+        newTest.addActionListener(t -> output.draw(null));
+        newTest.setMnemonic(KeyEvent.VK_N);
+        newTest.setToolTipText("Generate new random point set (Alt+N)");
+
+        final JButton copy = new JButton("Copy");
+        copy.addActionListener(t -> Global.copy(this, PointD.class, _points));
+        copy.setMnemonic(KeyEvent.VK_C);
+        copy.setToolTipText("Copy current point set to clipboard (Alt+C)");
+
+        final JButton paste = new JButton("Paste");
+        paste.addActionListener(t -> {
             final PointD[] points = Global.paste(this, PointD.class);
-            if (points != null) draw(points);
+            if (points != null) output.draw(points);
         });
-        paste.setTooltip(new Tooltip("Paste existing point set from clipboard (Alt+P)"));
+        paste.setMnemonic(KeyEvent.VK_P);
+        paste.setToolTipText("Paste existing point set from clipboard (Alt+P)");
 
-        final Button close = new Button("Close");
-        close.setCancelButton(true);
-        close.setOnAction(t -> close());
-        close.setTooltip(new Tooltip("Close dialog (Escape, Alt+F4)"));
+        final JButton close = CloseAction.createButton(this, panel);
 
-        final HBox controls = new HBox(newTest, copy, paste, close);
-        controls.setAlignment(Pos.CENTER);
-        controls.setSpacing(8);
+        final GroupLayout.Group controlsH = layout.createSequentialGroup().
+                addContainerGap(0, Short.MAX_VALUE).
+                addComponent(newTest).
+                addComponent(copy).
+                addComponent(paste).
+                addComponent(close).
+                addContainerGap(0, Short.MAX_VALUE);
 
-        final VBox root = new VBox(message, _output, controls);
-        root.setPadding(new Insets(8));
-        root.setSpacing(8);
-        VBox.setVgrow(_output, Priority.ALWAYS);
-        
+        final GroupLayout.Group controlsV = layout.createParallelGroup(GroupLayout.Alignment.CENTER, false).
+                addComponent(newTest).
+                addComponent(copy).
+                addComponent(paste).
+                addComponent(close);
+
+        layout.setHorizontalGroup(layout.createParallelGroup().
+                addComponent(message).
+                addComponent(output).
+                addGroup(controlsH));
+
+        layout.setVerticalGroup(layout.createSequentialGroup().
+                addComponent(message).
+                addComponent(output, 250, 250, Short.MAX_VALUE).
+                addGroup(controlsV));
+
+        setLocationByPlatform(true);
         setResizable(true);
-        setScene(new Scene(root));
+        pack();
         setTitle("Voronoi & Delaunay Test");
-        sizeToScene();
-        
-        setOnShown(t -> draw(null));
+        SwingUtilities.invokeLater(() -> output.draw(null));
+
+        // HACK: Window.setMinimumSize ignores high DPI scaling
+        addComponentListener(new ResizeListener(this));
+        setVisible(true);
     }
 
     /**
-     * Draws a Voronoi diagram for the specified {@link PointD} array.
-     * Creates a new {@link PointD} array if {@code points} is {@code null}.
-     * 
-     * @param points the {@link PointD} array whose Voronoi diagram to draw
+     * Provides the custom drawing {@link JPanel} for the {@link VoronoiDialog}.
      */
-    private void draw(PointD[] points) {
-        final double diameter = 4;
+    private class DrawPanel extends JPanel {
+        private static final long serialVersionUID = 0L;
 
-        // generate new random point set if desired
-        if (points == null) {
-            final double width = _output.getWidth();
-            final double height = _output.getHeight();
-            final RectD bounds = new RectD(0.1 * width, 0.1 * height, 0.9 * width, 0.9 * height);
+        // diameter of circles marking random points
+        private final static double DIAMETER = 8;
 
-            final int count = 4 + Global.RANDOM.nextInt(17);
-            points = GeoUtils.randomPoints(count, bounds, new PointDComparatorY(0), diameter);
+        private final Color PALEGOLDENROD = Color.decode("#EEE8AA");
+        private VoronoiResults _results;
+
+        /**
+         * Draws a Voronoi diagram for the specified {@link PointD} array.
+         * Creates a new {@link PointD} array if {@code points} is {@code null}.
+         *
+         * @param points the {@link PointD} array whose Voronoi diagram to draw
+         */
+        void draw(PointD[] points) {
+
+            // generate new random point set if desired
+            if (points == null) {
+                final double width = getWidth();
+                final double height = getHeight();
+                final RectD bounds = new RectD(0.1 * width, 0.1 * height, 0.9 * width, 0.9 * height);
+
+                final int count = 4 + Global.RANDOM.nextInt(17);
+                points = GeoUtils.randomPoints(count, bounds, new PointDComparatorY(0), DIAMETER);
+            }
+
+            _points = points;
+            final RectD clip = new RectD(0, 0, getWidth(), getHeight());
+            _results = Voronoi.findAll(points, clip);
+
+            repaint();
         }
 
-        _points = points;
-        final RectD clip = new RectD(0, 0, _output.getWidth(), _output.getHeight());
-        final VoronoiResults results = Voronoi.findAll(points, clip);
-        _output.getChildren().clear();
+        /**
+         * Invoked by Swing to draw the {@link DrawPanel}.
+         * @param g the {@link Graphics2D} context in which to paint
+         */
+        @Override
+        public void paint(Graphics g) {
+            super.paint(g);
+            if (_points == null || _results == null)
+                return;
 
-        // draw interior of Voronoi regions
-        for (PointD[] region: results.voronoiRegions()) {
-            final Polygon polygon = new Polygon(PointD.toDoubles(region));
-            polygon.setFill(Color.PALEGOLDENROD);
-            polygon.setStroke(Color.WHITE);
-            polygon.setStrokeWidth(6);
-            _output.getChildren().add(polygon);
-        }
+            final Graphics2D g2 = (Graphics2D) g;
+            final Stroke oldStroke = g2.getStroke();
 
-        // draw edges of Voronoi diagram
-        for (VoronoiEdge edge: results.voronoiEdges) {
-            final PointD start = results.voronoiVertices[edge.vertex1];
-            final PointD end = results.voronoiVertices[edge.vertex2];
+            // draw interior of Voronoi regions
+            g2.setStroke(new BasicStroke(6f));
+            for (PointD[] region: _results.voronoiRegions()) {
+                final Shape polygon = Global.drawPolygon(region);
+                g2.setColor(PALEGOLDENROD); g2.fill(polygon);
+                g2.setColor(Color.WHITE); g2.draw(polygon);
+            }
 
-            final Line line = new Line(start.x, start.y, end.x, end.y);
-            line.setStroke(Color.RED);
-            _output.getChildren().add(line);
-        }
+            // draw edges of Voronoi diagram
+            g2.setStroke(oldStroke);
+            g2.setColor(Color.RED);
+            for (VoronoiEdge edge: _results.voronoiEdges) {
+                final PointD start = _results.voronoiVertices[edge.vertex1];
+                final PointD end = _results.voronoiVertices[edge.vertex2];
+                final Shape line = Global.drawLine(new LineD(start, end));
+                g2.draw(line);
+            }
 
-        // draw edges of Delaunay triangulation
-        for (LineD edge: results.delaunayEdges()) {
-            final Line line = new Line(edge.start.x, edge.start.y, edge.end.x, edge.end.y);
-            line.getStrokeDashArray().addAll(3.0, 2.0);
-            line.setStroke(Color.BLUE);
-            _output.getChildren().add(line);
-        }
+            // draw edges of Delaunay triangulation
+            g2.setColor(Color.BLUE);
+            g2.setStroke(new BasicStroke(1f,
+                    BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER,
+                    10f, new float[] { 3f, 2f }, 0));
 
-        // draw generator points
-        for (PointD point: points) {
-            final Circle shape = new Circle(point.x, point.y, diameter / 2);
-            shape.setFill(Color.BLACK);
-            shape.setStroke(Color.BLACK);
-            _output.getChildren().add(shape);
+            for (LineD edge: _results.delaunayEdges()) {
+                final Shape line = Global.drawLine(edge);
+                g2.draw(line);
+            }
+
+            // draw generator points
+            g2.setStroke(oldStroke);
+            g2.setColor(Color.BLACK);
+            for (PointD point: _points) {
+                final Shape circle = Global.drawCircle(point, DIAMETER);
+                g2.fill(circle);
+                g2.draw(circle);
+            }
+
+            super.paintBorder(g2);
         }
     }
 }

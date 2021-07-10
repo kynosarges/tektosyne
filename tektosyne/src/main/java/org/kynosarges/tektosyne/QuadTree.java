@@ -34,7 +34,7 @@ import org.kynosarges.tektosyne.geometry.*;
  * 
  * @param <V> the type of all values in the {@link QuadTree}
  * @author Christoph Nahr
- * @version 6.1.0
+ * @version 6.3.0
  */
 public class QuadTree<V> extends AbstractMap<PointD, V> {
     /**
@@ -753,7 +753,6 @@ public class QuadTree<V> extends AbstractMap<PointD, V> {
      */
     @Override
     public boolean remove(Object key, Object value) {
-        @SuppressWarnings("unchecked")
         final PointD realKey = (PointD) key;
         @SuppressWarnings("unchecked")
         final V realValue = (V) value;

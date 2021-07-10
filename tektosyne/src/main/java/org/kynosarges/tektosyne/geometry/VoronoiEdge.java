@@ -9,7 +9,7 @@ package org.kynosarges.tektosyne.geometry;
  * This allows constructing the Voronoi region corresponding to each generator site.
  * 
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.3.0
  */
 public final class VoronoiEdge {
     /**
@@ -76,7 +76,7 @@ public final class VoronoiEdge {
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
-        if (obj == null || !(obj instanceof VoronoiEdge))
+        if (!(obj instanceof VoronoiEdge))
             return false;
 
         final VoronoiEdge edge = (VoronoiEdge) obj;

@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
 Specification-Title: Tektosyne
-Specification-Version: 6.2.0
+Specification-Version: 6.3.0
 Specification-Vendor: Christoph Nahr
-Implementation-Version: 2018-03-25
+Implementation-Version: 2019-04-10

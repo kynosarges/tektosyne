@@ -19,7 +19,7 @@ import org.kynosarges.tektosyne.geometry.*;
  * with its own twin half-edge; such a zero-area cycle always forms an inner boundary.</p>
  * 
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.3.0
  */
 public final class SubdivisionEdge {
     /**
@@ -670,7 +670,7 @@ public final class SubdivisionEdge {
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
-        if (obj == null || !(obj instanceof SubdivisionEdge))
+        if (!(obj instanceof SubdivisionEdge))
             return false;
 
         final SubdivisionEdge edge = (SubdivisionEdge) obj;

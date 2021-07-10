@@ -17,7 +17,7 @@ import org.kynosarges.tektosyne.geometry.*;
  * element. Use the <b>cycle…</b> properties of these half-edges to obtain face boundaries etc.</p>
  * 
  * @author Christoph Nahr
- * @version 6.1.0
+ * @version 6.3.0
  */
 public final class SubdivisionFace {
     /**
@@ -362,7 +362,7 @@ public final class SubdivisionFace {
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
-        if (obj == null || !(obj instanceof SubdivisionFace))
+        if (!(obj instanceof SubdivisionFace))
             return false;
         
         final SubdivisionFace face = (SubdivisionFace) obj;

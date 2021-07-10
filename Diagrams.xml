@@ -1,0 +1,725 @@
+<?xml version="1.0" encoding="UTF-8"?><project>
+    <application product="Class Diagrammer Core" version="2.2.0"/>
+    <title>Tektosyne Class Diagrams</title>
+    <description>This project defines all UML diagrams for the "Tektosyne User’s Guide."</description>
+    <display>
+        <font>Myriad Pro</font>
+    </display>
+    <relativePaths value="true"/>
+    <jarFile>Tektosyne.jar</jarFile>
+    <diagram>
+        <name>Collection Classes</name>
+        <element>
+            <name>org.kynosarges.tektosyne.NodeList</name>
+        </element>
+        <element left="24" top="792">
+            <name>org.kynosarges.tektosyne.NodeList$Node</name>
+        </element>
+        <element left="288">
+            <name>org.kynosarges.tektosyne.QuadTree</name>
+        </element>
+        <element left="360" top="600">
+            <name>org.kynosarges.tektosyne.QuadTree$Node</name>
+        </element>
+        <relation alignment="sourceTarget">
+            <source anchor="bottom" symbol="filledDiamond">
+                <element>org.kynosarges.tektosyne.NodeList</element>
+            </source>
+            <target anchor="top">
+                <element>org.kynosarges.tektosyne.NodeList$Node</element>
+                <multiplicity>*</multiplicity>
+            </target>
+        </relation>
+        <relation alignment="sourceTarget">
+            <source anchor="bottom" symbol="filledDiamond">
+                <element>org.kynosarges.tektosyne.QuadTree</element>
+            </source>
+            <target anchor="top">
+                <element>org.kynosarges.tektosyne.QuadTree$Node</element>
+                <multiplicity>*</multiplicity>
+            </target>
+        </relation>
+    </diagram>
+    <diagram>
+        <name>Comparator Classes</name>
+        <element left="64">
+            <name>org.kynosarges.tektosyne.geometry.PointDComparator</name>
+        </element>
+        <element top="312">
+            <name>org.kynosarges.tektosyne.geometry.PointDComparatorX</name>
+        </element>
+        <element left="288" top="312">
+            <name>org.kynosarges.tektosyne.geometry.PointDComparatorY</name>
+        </element>
+        <relation dashedLine="true">
+            <source anchor="top">
+                <element>org.kynosarges.tektosyne.geometry.PointDComparatorX</element>
+            </source>
+            <target anchor="bottom" symbol="hollowArrow">
+                <element>org.kynosarges.tektosyne.geometry.PointDComparator</element>
+            </target>
+            <point fromTargetY="true" y="56"/>
+            <point fromTargetX="true" fromTargetY="true" y="56"/>
+        </relation>
+        <relation dashedLine="true">
+            <source anchor="top">
+                <element>org.kynosarges.tektosyne.geometry.PointDComparatorY</element>
+            </source>
+            <target anchor="bottom" symbol="hollowArrow">
+                <element>org.kynosarges.tektosyne.geometry.PointDComparator</element>
+            </target>
+            <point fromTargetY="true" y="56"/>
+            <point fromTargetX="true" fromTargetY="true" y="56"/>
+        </relation>
+    </diagram>
+    <diagram>
+        <name>Double Coordinates</name>
+        <element>
+            <name>org.kynosarges.tektosyne.geometry.LineD</name>
+        </element>
+        <element left="304">
+            <name>org.kynosarges.tektosyne.geometry.PointD</name>
+        </element>
+        <element left="624">
+            <name>org.kynosarges.tektosyne.geometry.RectD</name>
+        </element>
+        <element left="312" top="528">
+            <name>org.kynosarges.tektosyne.geometry.SizeD</name>
+        </element>
+        <relation alignment="sourceTarget">
+            <source anchor="right" symbol="filledDiamond">
+                <element>org.kynosarges.tektosyne.geometry.LineD</element>
+            </source>
+            <target anchor="left">
+                <element>org.kynosarges.tektosyne.geometry.PointD</element>
+                <multiplicity>2</multiplicity>
+            </target>
+        </relation>
+        <relation alignment="sourceTarget">
+            <source anchor="left" symbol="filledDiamond">
+                <element>org.kynosarges.tektosyne.geometry.RectD</element>
+            </source>
+            <target anchor="right">
+                <element>org.kynosarges.tektosyne.geometry.PointD</element>
+                <multiplicity>2</multiplicity>
+            </target>
+        </relation>
+    </diagram>
+    <diagram>
+        <name>Geometry Classes</name>
+        <element>
+            <name>org.kynosarges.tektosyne.geometry.Angle</name>
+        </element>
+        <element left="432">
+            <name>org.kynosarges.tektosyne.geometry.Compass</name>
+        </element>
+        <element top="216">
+            <name>org.kynosarges.tektosyne.geometry.GeoUtils</name>
+        </element>
+        <element left="456" top="312">
+            <name>org.kynosarges.tektosyne.geometry.PolygonLocation</name>
+        </element>
+        <relation alignment="sourceTarget">
+            <name>pointInPolygon</name>
+            <source anchor="right" offset="-72">
+                <element>org.kynosarges.tektosyne.geometry.GeoUtils</element>
+            </source>
+            <target anchor="left" symbol="arrow">
+                <element>org.kynosarges.tektosyne.geometry.PolygonLocation</element>
+            </target>
+        </relation>
+        <relation alignment="sourceTarget">
+            <source anchor="right">
+                <element>org.kynosarges.tektosyne.geometry.Angle</element>
+            </source>
+            <target anchor="left" symbol="arrow">
+                <element>org.kynosarges.tektosyne.geometry.Compass</element>
+            </target>
+        </relation>
+    </diagram>
+    <diagram>
+        <name>Graph Classes</name>
+        <element left="744" top="192">
+            <name>org.kynosarges.tektosyne.geometry.PolygonGrid</name>
+            <display>
+                <showAttributes value="false"/>
+                <showOperations value="false"/>
+                <showPackage value="false"/>
+                <showPrivate value="false"/>
+                <showProtected value="false"/>
+                <showPublic value="false"/>
+            </display>
+        </element>
+        <element left="288" minWidth="288">
+            <name>org.kynosarges.tektosyne.graph.AStar</name>
+        </element>
+        <element left="288" minWidth="288" top="264">
+            <name>org.kynosarges.tektosyne.graph.Coverage</name>
+        </element>
+        <element left="288" minWidth="288" top="432">
+            <name>org.kynosarges.tektosyne.graph.FloodFill</name>
+        </element>
+        <element left="600" top="312">
+            <name>org.kynosarges.tektosyne.graph.Graph</name>
+        </element>
+        <element top="192">
+            <name>org.kynosarges.tektosyne.graph.GraphAgent</name>
+        </element>
+        <element left="48">
+            <name>org.kynosarges.tektosyne.graph.GraphPath</name>
+        </element>
+        <element left="48" top="576">
+            <name>org.kynosarges.tektosyne.graph.NodeArc</name>
+        </element>
+        <element left="672">
+            <name>org.kynosarges.tektosyne.graph.PathNode</name>
+        </element>
+        <element left="288" minWidth="288" top="576">
+            <name>org.kynosarges.tektosyne.graph.Visibility</name>
+        </element>
+        <element left="744" top="552">
+            <name>org.kynosarges.tektosyne.subdivision.Subdivision</name>
+            <display>
+                <showAttributes value="false"/>
+                <showOperations value="false"/>
+                <showPackage value="false"/>
+                <showPrivate value="false"/>
+                <showProtected value="false"/>
+                <showPublic value="false"/>
+            </display>
+        </element>
+        <relation alignment="sourceTarget" dashedLine="true">
+            <source anchor="left">
+                <element>org.kynosarges.tektosyne.graph.AStar</element>
+            </source>
+            <target anchor="right" symbol="hollowArrow">
+                <element>org.kynosarges.tektosyne.graph.GraphPath</element>
+            </target>
+        </relation>
+        <relation>
+            <name>agent</name>
+            <source anchor="left" offset="-32" symbol="hollowDiamond">
+                <element>org.kynosarges.tektosyne.graph.AStar</element>
+            </source>
+            <target anchor="top">
+                <element>org.kynosarges.tektosyne.graph.GraphAgent</element>
+            </target>
+            <point fromTargetX="true"/>
+        </relation>
+        <relation>
+            <source anchor="bottomRight" offset="-16" symbol="hollowDiamond">
+                <element>org.kynosarges.tektosyne.graph.AStar</element>
+            </source>
+            <target anchor="top" offset="-32">
+                <element>org.kynosarges.tektosyne.graph.Graph</element>
+            </target>
+            <point fromTargetX="true"/>
+        </relation>
+        <relation>
+            <source anchor="topRight" offset="16" symbol="hollowDiamond">
+                <element>org.kynosarges.tektosyne.graph.Coverage</element>
+            </source>
+            <target anchor="top" offset="-32">
+                <element>org.kynosarges.tektosyne.graph.Graph</element>
+            </target>
+            <point fromTargetX="true"/>
+        </relation>
+        <relation>
+            <source anchor="topRight" offset="16" symbol="hollowDiamond">
+                <element>org.kynosarges.tektosyne.graph.Visibility</element>
+            </source>
+            <target anchor="bottom" offset="32">
+                <element>org.kynosarges.tektosyne.graph.Graph</element>
+            </target>
+            <point fromTargetX="true"/>
+        </relation>
+        <relation>
+            <source anchor="bottomRight" offset="-16" symbol="hollowDiamond">
+                <element>org.kynosarges.tektosyne.graph.FloodFill</element>
+            </source>
+            <target anchor="bottom" offset="32">
+                <element>org.kynosarges.tektosyne.graph.Graph</element>
+            </target>
+            <point fromTargetX="true"/>
+        </relation>
+        <relation>
+            <name>agent</name>
+            <source anchor="left" offset="-32" symbol="hollowDiamond">
+                <element>org.kynosarges.tektosyne.graph.Coverage</element>
+            </source>
+            <target anchor="bottom">
+                <element>org.kynosarges.tektosyne.graph.GraphAgent</element>
+            </target>
+            <point fromTargetX="true"/>
+        </relation>
+        <relation alignment="targetSource" dashedLine="true">
+            <source anchor="bottom">
+                <element>org.kynosarges.tektosyne.geometry.PolygonGrid</element>
+            </source>
+            <target anchor="top" symbol="hollowArrow">
+                <element>org.kynosarges.tektosyne.graph.Graph</element>
+            </target>
+        </relation>
+        <relation alignment="targetSource" dashedLine="true">
+            <source anchor="top">
+                <element>org.kynosarges.tektosyne.subdivision.Subdivision</element>
+            </source>
+            <target anchor="bottom" symbol="hollowArrow">
+                <element>org.kynosarges.tektosyne.graph.Graph</element>
+            </target>
+        </relation>
+        <relation alignment="sourceTarget">
+            <name>nodes</name>
+            <source anchor="right" symbol="filledDiamond">
+                <element>org.kynosarges.tektosyne.graph.AStar</element>
+            </source>
+            <target anchor="left">
+                <element>org.kynosarges.tektosyne.graph.PathNode</element>
+                <multiplicity>*</multiplicity>
+            </target>
+        </relation>
+        <relation alignment="sourceTarget">
+            <name>nodeArcs</name>
+            <source anchor="left" symbol="filledDiamond">
+                <element>org.kynosarges.tektosyne.graph.Visibility</element>
+            </source>
+            <target anchor="right">
+                <element>org.kynosarges.tektosyne.graph.NodeArc</element>
+                <multiplicity>*</multiplicity>
+            </target>
+        </relation>
+    </diagram>
+    <diagram>
+        <name>Integer Coordinates</name>
+        <element>
+            <name>org.kynosarges.tektosyne.geometry.LineI</name>
+        </element>
+        <element left="24" top="624">
+            <name>org.kynosarges.tektosyne.geometry.LineLocation</name>
+        </element>
+        <element left="264">
+            <name>org.kynosarges.tektosyne.geometry.PointI</name>
+        </element>
+        <element left="552">
+            <name>org.kynosarges.tektosyne.geometry.RectI</name>
+        </element>
+        <element left="504" top="648">
+            <name>org.kynosarges.tektosyne.geometry.RectLocation</name>
+        </element>
+        <element left="288" top="456">
+            <name>org.kynosarges.tektosyne.geometry.SizeI</name>
+        </element>
+        <relation alignment="sourceTarget">
+            <name>locate</name>
+            <source anchor="bottom" offset="-64">
+                <element>org.kynosarges.tektosyne.geometry.RectI</element>
+            </source>
+            <target anchor="top" symbol="arrow">
+                <element>org.kynosarges.tektosyne.geometry.RectLocation</element>
+            </target>
+        </relation>
+        <relation alignment="sourceTarget">
+            <name>locate</name>
+            <source anchor="bottom">
+                <element>org.kynosarges.tektosyne.geometry.LineI</element>
+            </source>
+            <target anchor="top" symbol="arrow">
+                <element>org.kynosarges.tektosyne.geometry.LineLocation</element>
+            </target>
+        </relation>
+        <relation alignment="sourceTarget">
+            <source anchor="right" symbol="filledDiamond">
+                <element>org.kynosarges.tektosyne.geometry.LineI</element>
+            </source>
+            <target anchor="left">
+                <element>org.kynosarges.tektosyne.geometry.PointI</element>
+                <multiplicity>2</multiplicity>
+            </target>
+        </relation>
+        <relation alignment="targetSource">
+            <source anchor="left" offset="-52" symbol="hollowDiamond">
+                <element>org.kynosarges.tektosyne.geometry.RectLocation</element>
+            </source>
+            <target anchor="right">
+                <element>org.kynosarges.tektosyne.geometry.LineLocation</element>
+                <multiplicity>2</multiplicity>
+            </target>
+        </relation>
+        <relation alignment="sourceTarget">
+            <source anchor="left" symbol="filledDiamond">
+                <element>org.kynosarges.tektosyne.geometry.RectI</element>
+            </source>
+            <target anchor="right">
+                <element>org.kynosarges.tektosyne.geometry.PointI</element>
+                <multiplicity>2</multiplicity>
+            </target>
+        </relation>
+    </diagram>
+    <diagram>
+        <name>Line Intersection</name>
+        <element>
+            <name>org.kynosarges.tektosyne.geometry.LineIntersection</name>
+        </element>
+        <element top="360">
+            <name>org.kynosarges.tektosyne.geometry.LineLocation</name>
+        </element>
+        <element left="240" top="360">
+            <name>org.kynosarges.tektosyne.geometry.LineRelation</name>
+        </element>
+        <element left="384">
+            <name>org.kynosarges.tektosyne.geometry.MultiLineIntersection</name>
+        </element>
+        <element left="408" top="192">
+            <name>org.kynosarges.tektosyne.geometry.MultiLinePoint</name>
+        </element>
+        <element left="420" top="408">
+            <name>org.kynosarges.tektosyne.geometry.MultiLinePoint$Line</name>
+        </element>
+        <relation alignment="sourceTarget">
+            <name>relation</name>
+            <source anchor="bottom" symbol="hollowDiamond">
+                <element>org.kynosarges.tektosyne.geometry.LineIntersection</element>
+            </source>
+            <target anchor="top">
+                <element>org.kynosarges.tektosyne.geometry.LineRelation</element>
+            </target>
+        </relation>
+        <relation alignment="sourceTarget">
+            <source anchor="bottom">
+                <element>org.kynosarges.tektosyne.geometry.MultiLineIntersection</element>
+            </source>
+            <target anchor="top" symbol="arrow">
+                <element>org.kynosarges.tektosyne.geometry.MultiLinePoint</element>
+            </target>
+        </relation>
+        <relation alignment="sourceTarget">
+            <source anchor="bottom" symbol="filledDiamond">
+                <element>org.kynosarges.tektosyne.geometry.MultiLinePoint</element>
+            </source>
+            <target anchor="top">
+                <element>org.kynosarges.tektosyne.geometry.MultiLinePoint$Line</element>
+                <multiplicity>*</multiplicity>
+            </target>
+        </relation>
+        <relation alignment="sourceTarget">
+            <name>first/second</name>
+            <source anchor="bottom" symbol="hollowDiamond">
+                <element>org.kynosarges.tektosyne.geometry.LineIntersection</element>
+            </source>
+            <target anchor="top">
+                <element>org.kynosarges.tektosyne.geometry.LineLocation</element>
+                <multiplicity>2</multiplicity>
+            </target>
+        </relation>
+    </diagram>
+    <diagram>
+        <name>Package Overview</name>
+        <display>
+            <colorRight blue="204" green="230" red="255"/>
+        </display>
+        <element left="24">
+            <name>org.kynosarges.tektosyne</name>
+        </element>
+        <element top="216">
+            <name>org.kynosarges.tektosyne.geometry</name>
+        </element>
+        <element left="360">
+            <name>org.kynosarges.tektosyne.graph</name>
+        </element>
+        <element left="336" top="264">
+            <name>org.kynosarges.tektosyne.subdivision</name>
+        </element>
+        <relation alignment="sourceTarget">
+            <source anchor="top" symbol="arrow">
+                <element>org.kynosarges.tektosyne.geometry</element>
+            </source>
+            <target anchor="bottom" symbol="arrow">
+                <element>org.kynosarges.tektosyne</element>
+            </target>
+        </relation>
+        <relation>
+            <source anchor="topRight" symbol="arrow">
+                <element>org.kynosarges.tektosyne.geometry</element>
+            </source>
+            <target anchor="bottomLeft" symbol="arrow">
+                <element>org.kynosarges.tektosyne.graph</element>
+            </target>
+        </relation>
+        <relation alignment="sourceTarget">
+            <source anchor="right" symbol="arrow">
+                <element>org.kynosarges.tektosyne.geometry</element>
+            </source>
+            <target anchor="left" symbol="arrow">
+                <element>org.kynosarges.tektosyne.subdivision</element>
+            </target>
+        </relation>
+        <relation alignment="sourceTarget">
+            <source anchor="top">
+                <element>org.kynosarges.tektosyne.subdivision</element>
+            </source>
+            <target anchor="bottom" symbol="arrow">
+                <element>org.kynosarges.tektosyne.graph</element>
+            </target>
+        </relation>
+    </diagram>
+    <diagram>
+        <name>Polygon Classes</name>
+        <element>
+            <name>org.kynosarges.tektosyne.geometry.PolygonGrid</name>
+        </element>
+        <element left="432" top="624">
+            <name>org.kynosarges.tektosyne.geometry.PolygonGridShift</name>
+        </element>
+        <element left="504" top="480">
+            <name>org.kynosarges.tektosyne.geometry.PolygonOrientation</name>
+        </element>
+        <element left="408">
+            <name>org.kynosarges.tektosyne.geometry.RegularPolygon</name>
+        </element>
+        <element left="24" top="936">
+            <name>org.kynosarges.tektosyne.subdivision.PolygonGridMap</name>
+        </element>
+        <element left="360" top="960">
+            <name>org.kynosarges.tektosyne.subdivision.SubdivisionMap</name>
+        </element>
+        <relation alignment="sourceTarget">
+            <name>element</name>
+            <source anchor="right" symbol="filledDiamond">
+                <element>org.kynosarges.tektosyne.geometry.PolygonGrid</element>
+            </source>
+            <target anchor="left">
+                <element>org.kynosarges.tektosyne.geometry.RegularPolygon</element>
+            </target>
+        </relation>
+        <relation alignment="sourceTarget" dashedLine="true">
+            <source anchor="right">
+                <element>org.kynosarges.tektosyne.subdivision.PolygonGridMap</element>
+            </source>
+            <target anchor="left" symbol="hollowArrow">
+                <element>org.kynosarges.tektosyne.subdivision.SubdivisionMap</element>
+            </target>
+        </relation>
+        <relation alignment="targetSource">
+            <name>ctor</name>
+            <source anchor="top">
+                <element>org.kynosarges.tektosyne.subdivision.PolygonGridMap</element>
+            </source>
+            <target anchor="bottom" symbol="arrow">
+                <element>org.kynosarges.tektosyne.geometry.PolygonGrid</element>
+            </target>
+        </relation>
+        <relation alignment="sourceTarget">
+            <name>orientation</name>
+            <source anchor="bottom" symbol="hollowDiamond">
+                <element>org.kynosarges.tektosyne.geometry.RegularPolygon</element>
+            </source>
+            <target anchor="top">
+                <element>org.kynosarges.tektosyne.geometry.PolygonOrientation</element>
+            </target>
+        </relation>
+        <relation alignment="sourceTarget">
+            <name>gridShift</name>
+            <source anchor="right" symbol="hollowDiamond">
+                <element>org.kynosarges.tektosyne.geometry.PolygonGrid</element>
+            </source>
+            <target anchor="left">
+                <element>org.kynosarges.tektosyne.geometry.PolygonGridShift</element>
+            </target>
+        </relation>
+    </diagram>
+    <diagram>
+        <name>Subdivision Classes</name>
+        <element top="216">
+            <name>org.kynosarges.tektosyne.subdivision.Subdivision</name>
+        </element>
+        <element left="672" top="336">
+            <name>org.kynosarges.tektosyne.subdivision.SubdivisionEdge</name>
+        </element>
+        <element left="408">
+            <name>org.kynosarges.tektosyne.subdivision.SubdivisionElement</name>
+        </element>
+        <element left="744">
+            <name>org.kynosarges.tektosyne.subdivision.SubdivisionElementType</name>
+        </element>
+        <element left="408" top="336">
+            <name>org.kynosarges.tektosyne.subdivision.SubdivisionFace</name>
+        </element>
+        <element left="408" top="744">
+            <name>org.kynosarges.tektosyne.subdivision.SubdivisionFullMap</name>
+        </element>
+        <element left="408" top="576">
+            <name>org.kynosarges.tektosyne.subdivision.SubdivisionMap</name>
+        </element>
+        <element left="48">
+            <name>org.kynosarges.tektosyne.subdivision.SubdivisionSearch</name>
+        </element>
+        <relation alignment="sourceTarget">
+            <source anchor="bottom" symbol="hollowDiamond">
+                <element>org.kynosarges.tektosyne.subdivision.SubdivisionSearch</element>
+            </source>
+            <target anchor="top">
+                <element>org.kynosarges.tektosyne.subdivision.Subdivision</element>
+            </target>
+        </relation>
+        <relation alignment="sourceTarget" dashedLine="true">
+            <source anchor="top">
+                <element>org.kynosarges.tektosyne.subdivision.SubdivisionFullMap</element>
+            </source>
+            <target anchor="bottom" symbol="hollowArrow">
+                <element>org.kynosarges.tektosyne.subdivision.SubdivisionMap</element>
+            </target>
+        </relation>
+        <relation alignment="targetSource">
+            <name>find</name>
+            <source anchor="right">
+                <element>org.kynosarges.tektosyne.subdivision.SubdivisionSearch</element>
+            </source>
+            <target anchor="left" symbol="arrow">
+                <element>org.kynosarges.tektosyne.subdivision.SubdivisionElement</element>
+            </target>
+        </relation>
+        <relation>
+            <name>find</name>
+            <source anchor="topRight" offset="-16">
+                <element>org.kynosarges.tektosyne.subdivision.Subdivision</element>
+            </source>
+            <target anchor="left" symbol="arrow">
+                <element>org.kynosarges.tektosyne.subdivision.SubdivisionElement</element>
+            </target>
+            <point fromTargetY="true"/>
+        </relation>
+        <relation alignment="targetSource">
+            <name>face</name>
+            <source anchor="bottom" symbol="hollowDiamond">
+                <element>org.kynosarges.tektosyne.subdivision.SubdivisionElement</element>
+            </source>
+            <target anchor="top">
+                <element>org.kynosarges.tektosyne.subdivision.SubdivisionFace</element>
+                <multiplicity>0…1</multiplicity>
+            </target>
+        </relation>
+        <relation>
+            <name>edge</name>
+            <source anchor="bottomRight" symbol="hollowDiamond">
+                <element>org.kynosarges.tektosyne.subdivision.SubdivisionElement</element>
+            </source>
+            <target anchor="topLeft">
+                <element>org.kynosarges.tektosyne.subdivision.SubdivisionEdge</element>
+                <multiplicity>0…1</multiplicity>
+            </target>
+        </relation>
+        <relation alignment="sourceTarget">
+            <name>type</name>
+            <source anchor="right" symbol="hollowDiamond">
+                <element>org.kynosarges.tektosyne.subdivision.SubdivisionElement</element>
+            </source>
+            <target anchor="left">
+                <element>org.kynosarges.tektosyne.subdivision.SubdivisionElementType</element>
+            </target>
+        </relation>
+        <relation alignment="sourceTarget">
+            <name>faces</name>
+            <source anchor="right" symbol="filledDiamond">
+                <element>org.kynosarges.tektosyne.subdivision.Subdivision</element>
+            </source>
+            <target anchor="left">
+                <element>org.kynosarges.tektosyne.subdivision.SubdivisionFace</element>
+                <multiplicity>*</multiplicity>
+            </target>
+        </relation>
+        <relation>
+            <name>edges</name>
+            <source anchor="bottomRight" offset="-24" symbol="filledDiamond">
+                <element>org.kynosarges.tektosyne.subdivision.Subdivision</element>
+            </source>
+            <target anchor="bottom">
+                <element>org.kynosarges.tektosyne.subdivision.SubdivisionEdge</element>
+                <multiplicity>*</multiplicity>
+            </target>
+            <point fromTargetX="true"/>
+        </relation>
+        <relation alignment="targetSource">
+            <source anchor="top">
+                <element>org.kynosarges.tektosyne.subdivision.SubdivisionMap</element>
+            </source>
+            <target anchor="bottom" symbol="arrow">
+                <element>org.kynosarges.tektosyne.subdivision.SubdivisionFace</element>
+            </target>
+        </relation>
+        <relation alignment="targetSource">
+            <source anchor="left" symbol="hollowDiamond">
+                <element>org.kynosarges.tektosyne.subdivision.SubdivisionMap</element>
+            </source>
+            <target anchor="right">
+                <element>org.kynosarges.tektosyne.subdivision.Subdivision</element>
+            </target>
+        </relation>
+    </diagram>
+    <diagram>
+        <name>Utility Classes</name>
+        <element>
+            <name>org.kynosarges.tektosyne.Fortran</name>
+        </element>
+        <element left="240">
+            <name>org.kynosarges.tektosyne.MathUtils</name>
+        </element>
+    </diagram>
+    <diagram>
+        <name>Voronoi Classes</name>
+        <element minWidth="300">
+            <name>org.kynosarges.tektosyne.geometry.Voronoi</name>
+        </element>
+        <element left="408" top="216">
+            <name>org.kynosarges.tektosyne.geometry.VoronoiEdge</name>
+        </element>
+        <element minWidth="300" top="192">
+            <name>org.kynosarges.tektosyne.geometry.VoronoiResults</name>
+        </element>
+        <element left="360" top="504">
+            <name>org.kynosarges.tektosyne.subdivision.SubdivisionMap</name>
+        </element>
+        <element minWidth="300" top="480">
+            <name>org.kynosarges.tektosyne.subdivision.VoronoiMap</name>
+        </element>
+        <relation alignment="targetSource">
+            <name>findAll</name>
+            <source anchor="bottom">
+                <element>org.kynosarges.tektosyne.geometry.Voronoi</element>
+            </source>
+            <target anchor="top" symbol="arrow">
+                <element>org.kynosarges.tektosyne.geometry.VoronoiResults</element>
+            </target>
+        </relation>
+        <relation alignment="sourceTarget" dashedLine="true">
+            <source anchor="right">
+                <element>org.kynosarges.tektosyne.subdivision.VoronoiMap</element>
+            </source>
+            <target anchor="left" symbol="hollowArrow">
+                <element>org.kynosarges.tektosyne.subdivision.SubdivisionMap</element>
+            </target>
+        </relation>
+        <relation alignment="sourceTarget">
+            <name>voronoiEdges</name>
+            <source anchor="right" symbol="filledDiamond">
+                <element>org.kynosarges.tektosyne.geometry.VoronoiResults</element>
+            </source>
+            <target anchor="left">
+                <element>org.kynosarges.tektosyne.geometry.VoronoiEdge</element>
+                <multiplicity>*</multiplicity>
+            </target>
+        </relation>
+        <relation alignment="sourceTarget">
+            <name>ctor</name>
+            <source anchor="top">
+                <element>org.kynosarges.tektosyne.subdivision.VoronoiMap</element>
+            </source>
+            <target anchor="bottom" symbol="arrow">
+                <element>org.kynosarges.tektosyne.geometry.VoronoiResults</element>
+            </target>
+        </relation>
+    </diagram>
+    <output format="PDF" includeAll="true">
+        <name>PDF Output</name>
+        <margin bottom="8" left="8" right="8" top="8"/>
+    </output>
+</project>

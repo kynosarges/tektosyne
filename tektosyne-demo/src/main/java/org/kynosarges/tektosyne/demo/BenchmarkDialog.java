@@ -2,16 +2,13 @@ package org.kynosarges.tektosyne.demo;
 
 import java.time.*;
 import java.util.*;
+import java.util.List; // clash with AWT List class
 import java.util.concurrent.*;
 import java.util.function.*;
 
-import javafx.application.Platform;
-import javafx.geometry.*;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.scene.text.*;
-import javafx.stage.*;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
 
 import org.kynosarges.tektosyne.*;
 import org.kynosarges.tektosyne.geometry.*;
@@ -20,101 +17,138 @@ import org.kynosarges.tektosyne.subdivision.*;
 /**
  * Provides a dialog for benchmarking several Tektosyne algorithms.
  * Runs a selected benchmark suite in a background thread and
- * appends any new results to a scrollable {@link TextArea}.
+ * appends any new results to a scrollable {@link JTextArea}.
  * 
  * @author Christoph Nahr
- * @version 6.1.0
+ * @version 6.3.0
  */
-public class BenchmarkDialog extends Stage {
+public class BenchmarkDialog extends JDialog {
+    private static final long serialVersionUID = 0L;
 
     final static ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
     private Exception _testException;
     private Future<?> _testFuture;
 
-    private final ComboBox<TestCategory> _categories = new ComboBox<>();
-    private final TextArea _output = new TextArea();
-    private final Button _run, _runAll, _stop;
+    private final JComboBox<TestCategory> _categories;
+    private final JTextArea _output = new JTextArea();
+    private final JButton _run, _runAll, _stop;
+
+    private final TestCategory[] _testCategories = new TestCategory[] {
+            new TestCategory("Geometric Algorithms", () -> {
+                geometryBasicTest();
+                output("\n");
+                geometryTest();
+            }),
+            new TestCategory("Multiline Intersection", this::intersectionTest),
+            new TestCategory("Nearest Point Search", this::nearestPointTest),
+            new TestCategory("Range Tree Search", this::rangeTreeTest),
+            new TestCategory("Subdivision Intersection", this::subdivisionTest),
+            new TestCategory("Subdivision Search", () -> {
+                subdivisionSearchTest(false);
+                output("\n");
+                subdivisionSearchTest(true);
+            })
+    };
 
     /**
      * Creates a {@link BenchmarkDialog}.
+     * @param owner the {@link Window} that owns the dialog
      */
-    public BenchmarkDialog() {
-        initOwner(Global.primaryStage());
-        initModality(Modality.APPLICATION_MODAL);
-        initStyle(StageStyle.DECORATED);
+    public BenchmarkDialog(Window owner) {
+        super(owner);
+        setModal(true);
 
-        final Label message = new Label(
-                "Choose Run All, or select Test and choose Run. Copy output via clipboard.\n" +
-                "Tests run on background thread and can be interrupted using Stop or Close.");
-        message.setMinHeight(36); // reserve space for two lines
-        message.setWrapText(true);
+        // stop any running benchmark on closing
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowCloser());
 
-        _categories.getItems().addAll(
-                new TestCategory("Geometric Algorithms", () -> {
-                    geometryBasicTest();
-                    output("\n");
-                    geometryTest();
-                }),
-                new TestCategory("Multiline Intersection", this::intersectionTest),
-                new TestCategory("Nearest Point Search", this::nearestPointTest),
-                new TestCategory("Range Tree Search", this::rangeTreeTest),
-                new TestCategory("Subdivision Intersection", this::subdivisionTest),
-                new TestCategory("Subdivision Search", () -> {
-                    subdivisionSearchTest(false);
-                    output("\n");
-                    subdivisionSearchTest(true);
-                })
-        );
-        _categories.getSelectionModel().select(0);
+        final JPanel panel = new JPanel();
+        setContentPane(panel);
+
+        final GroupLayout layout = new GroupLayout(panel);
+        layout.setAutoCreateGaps(true);
+        layout.setAutoCreateContainerGaps(true);
+        panel.setLayout(layout);
+
+        final JLabel message = new JLabel(
+                "<html>Choose Run All, or select Test and choose Run. Copy output via clipboard.<br>" +
+                "Tests run on background thread and can be interrupted using Stop or Close.</html>");
+
+        _categories = new JComboBox<>(_testCategories);
+        _categories.setSelectedIndex(0);
         _categories.setEditable(false);
-        _categories.setTooltip(new Tooltip("Select test to run (Alt+T)"));
+        _categories.setToolTipText("Select test to run (Alt+T)");
 
-        final Label categoryLabel = new Label("_Test");
+        final JLabel categoryLabel = new JLabel("Test");
         categoryLabel.setLabelFor(_categories);
-        categoryLabel.setMnemonicParsing(true);
-        
-        _run = new Button("_Run");
-        _run.setDefaultButton(true);
-        _run.setOnAction(t -> runTest());
-        _run.setTooltip(new Tooltip("Run selected benchmark (Alt+R)"));
+        categoryLabel.setDisplayedMnemonic(KeyEvent.VK_T);
 
-        _runAll = new Button("Run _All");
-        _runAll.setOnAction(t -> runAllTests());
-        _runAll.setTooltip(new Tooltip("Run all benchmarks (Alt+A)"));
+        _run = new JButton("Run");
+        _run.addActionListener(t -> runTest());
+        _run.setMnemonic(KeyEvent.VK_R);
+        _run.setToolTipText("Run selected benchmark (Alt+R)");
+        getRootPane().setDefaultButton(_run);
 
-        final HBox selection = new HBox(categoryLabel, _categories, _run, _runAll);
-        selection.setAlignment(Pos.CENTER);
-        selection.setSpacing(4);
-        HBox.setMargin(_run, new Insets(0, 8, 0, 8));
+        _runAll = new JButton("Run All");
+        _runAll.addActionListener(t -> runAllTests());
+        _runAll.setMnemonic(KeyEvent.VK_A);
+        _runAll.setToolTipText("Run all benchmarks (Alt+A)");
 
-        _output.setEditable(true); // for visibility and selection
-        _output.setFont(Font.font("Monospaced"));
-        _output.setPrefRowCount(12);
-        _output.setWrapText(false);
+        final GroupLayout.Group selectionH = layout.createSequentialGroup().
+                addComponent(categoryLabel).
+                addComponent(_categories).
+                addComponent(_run).
+                addComponent(_runAll);
 
-        _stop = new Button("_Stop");
-        _stop.setDisable(true);
-        _stop.setOnAction(t -> stopTest());
-        _stop.setTooltip(new Tooltip("Stop benchmark in progress (Alt+S)"));
+        final GroupLayout.Group selectionV = layout.createParallelGroup(GroupLayout.Alignment.CENTER, false).
+                addComponent(categoryLabel).
+                addComponent(_categories).
+                addComponent(_run).
+                addComponent(_runAll);
 
-        final Button close = new Button("Close");
-        close.setCancelButton(true);
-        close.setOnAction(t -> { stopTest(); close(); });
-        close.setTooltip(new Tooltip("Close dialog (Escape, Alt+F4)"));
+        _output.setEditable(false);
+        _output.setFont(new Font(Font.MONOSPACED, Font.PLAIN, getFont().getSize()));
+        _output.setLineWrap(false);
+        final JScrollPane outputScroll = new JScrollPane(_output);
 
-        final HBox controls = new HBox(_stop, close);
-        controls.setAlignment(Pos.CENTER);
-        controls.setSpacing(8);
+        _stop = new JButton("Stop");
+        _stop.setEnabled(false);
+        _stop.addActionListener(t -> stopTest());
+        _stop.setMnemonic(KeyEvent.VK_S);
+        _stop.setToolTipText("Stop benchmark in progress (Alt+S)");
 
-        final VBox root = new VBox(message, selection, _output, controls);
-        root.setPadding(new Insets(8));
-        root.setSpacing(8);
-        VBox.setVgrow(_output, Priority.ALWAYS);
+        final JButton close = CloseAction.createButton(this, panel);
 
+        final GroupLayout.Group controlsH = layout.createSequentialGroup().
+                addContainerGap(0, Short.MAX_VALUE).
+                addComponent(_stop).
+                addComponent(close).
+                addContainerGap(0, Short.MAX_VALUE);
+
+        final GroupLayout.Group controlsV = layout.createParallelGroup(GroupLayout.Alignment.CENTER, false).
+                addComponent(_stop).
+                addComponent(close);
+
+        layout.setHorizontalGroup(layout.createParallelGroup().
+                addComponent(message).
+                addGroup(selectionH).
+                addComponent(outputScroll).
+                addGroup(controlsH));
+
+        layout.setVerticalGroup(layout.createSequentialGroup().
+                addComponent(message).
+                addGroup(selectionV).
+                addComponent(outputScroll, 200, 200, Short.MAX_VALUE).
+                addGroup(controlsV));
+
+        setLocationByPlatform(true);
         setResizable(true);
-        setScene(new Scene(root));
+        pack();
         setTitle("Benchmark Tests");
-        sizeToScene();
+
+        // HACK: Window.setMinimumSize ignores high DPI scaling
+        addComponentListener(new ResizeListener(this));
+        setVisible(true);
     }
 
     /**
@@ -125,7 +159,7 @@ public class BenchmarkDialog extends Stage {
         if (_testFuture != null || EXECUTOR.isShutdown())
             return;
 
-        final TestCategory category = _categories.getSelectionModel().getSelectedItem();
+        final TestCategory category = (TestCategory) _categories.getSelectedItem();
         if (category == null) return;
 
         output(String.format("%s\nTest Started: %s\n\n", category.name, Instant.now()));
@@ -137,7 +171,7 @@ public class BenchmarkDialog extends Stage {
             } catch (Exception e) {
                 _testException = e;
             } finally {
-                Platform.runLater(this::endTest);
+                SwingUtilities.invokeLater(this::endTest);
             }
         });
     }
@@ -154,14 +188,14 @@ public class BenchmarkDialog extends Stage {
         _testException = null;
         _testFuture = EXECUTOR.submit(() -> {
             try {
-                for (TestCategory category: _categories.getItems()) {
+                for (TestCategory category: _testCategories) {
                     output(String.format("\n%s\nTest Started: %s\n\n", category.name, Instant.now()));
                     category.action.run();
                 }
             } catch (Exception e) {
                 _testException = e;
             } finally {
-                Platform.runLater(this::endTest);
+                SwingUtilities.invokeLater(this::endTest);
             }
         });
     }
@@ -208,30 +242,47 @@ public class BenchmarkDialog extends Stage {
      * @param running {@code true} if a test is about to run, else {@code false}
      */
     private void enableControls(boolean running) {
-        _categories.setDisable(running);
-        _run.setDisable(running);
-        _runAll.setDisable(running);
-        _stop.setDisable(!running);
+        _categories.setEnabled(!running);
+        _run.setEnabled(!running);
+        _runAll.setEnabled(!running);
+        _stop.setEnabled(running);
     }
     
     /**
-     * Shows the specified {@link String} in the output {@link TextArea}.
-     * Dispatches to the JavaFX application thread and checks for cancellation
+     * Shows the specified {@link String} in the output {@link JTextArea}.
+     * Dispatches to the Swing event dispatch thread and checks for cancellation
      * when called by a test running on an {@link #EXECUTOR} thread.
      * 
      * @param text the {@link String} to show
      * @throws CancellationException if the {@link #EXECUTOR} thread was interrupted
      */
     private void output(String text) {
-        if (Platform.isFxApplicationThread()) {
-            _output.appendText(text);
+        if (SwingUtilities.isEventDispatchThread()) {
+            _output.append(text);
             return;
         }
 
         if (Thread.interrupted())
             throw new CancellationException();
 
-        Platform.runLater(() -> _output.appendText(text));
+        SwingUtilities.invokeLater(() -> _output.append(text));
+    }
+
+    /**
+     * Closes the {@link BenchmarkDialog} window.
+     */
+    private class WindowCloser extends WindowAdapter {
+        /**
+         * Invoked when the user attempts to close the window.
+         * Stops any currently executing benchmarks.
+         *
+         * @param e the {@link WindowEvent} to process
+         */
+        @Override
+        public void windowClosing(WindowEvent e) {
+            stopTest();
+            BenchmarkDialog.this.dispose();
+        }
     }
 
     // ----- Test Suites -----

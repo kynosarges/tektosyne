@@ -7,7 +7,7 @@ package org.kynosarges.tektosyne.geometry;
  * are calculated on demand. Use {@link LineI} to represent lines with {@link Integer} coordinates.
  *
  * @author Christoph Nahr
- * @version 6.1.0
+ * @version 6.3.0
  */
 public final class LineD {
 
@@ -532,7 +532,7 @@ public final class LineD {
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
-        if (obj == null || !(obj instanceof LineD))
+        if (!(obj instanceof LineD))
             return false;
 
         final LineD line = (LineD) obj;
