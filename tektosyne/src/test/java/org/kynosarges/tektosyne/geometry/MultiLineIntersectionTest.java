@@ -8,7 +8,7 @@ import java.util.*;
 /**
  * Provides unit tests for class {@link MultiLineIntersection}.
  * @author Christoph Nahr
- * @version 6.1.0
+ * @version 6.3.1
  */
 public class MultiLineIntersectionTest {
 
@@ -338,6 +338,7 @@ public class MultiLineIntersectionTest {
         final MultiLinePoint[] brute = MultiLineIntersection.findSimple(lines);
         final MultiLinePoint[] sweep = MultiLineIntersection.find(lines);
         compareResults(brute, sweep);
+        MultiLineIntersection.split(lines, brute);
         return brute;
     }
 

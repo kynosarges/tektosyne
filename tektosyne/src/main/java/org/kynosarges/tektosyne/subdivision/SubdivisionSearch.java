@@ -22,7 +22,7 @@ import org.kynosarges.tektosyne.geometry.*;
  * actual bounding rectangle around the {@link Subdivision}.</p>
  * 
  * @author Christoph Nahr
- * @version 6.1.0
+ * @version 6.1.1
  */
 public class SubdivisionSearch {
 
@@ -734,7 +734,7 @@ public class SubdivisionSearch {
      * graph nodes to the left of its {@link EdgeNode#edge}, and the {@link Node#right} child
      * contains all nodes to the right, assuming that y-coordinates increase upward.
      */
-    private final class EdgeNode extends Node {
+    private final static class EdgeNode extends Node {
         /**
          * The {@link SubdivisionEdge} that divides the subtree beginning at the {@link EdgeNode}.
          * Always oriented so that its {@link SubdivisionEdge#origin} is lexicographically smaller
@@ -882,7 +882,7 @@ public class SubdivisionSearch {
      * graph nodes to the left of its {@link VertexNode#vertex}, and the {@link Node#right} child
      * contains all nodes to the right.
      */
-    private final class VertexNode extends Node {
+    private final static class VertexNode extends Node {
         /**
          * The {@link PointD} vertex that divides the subtree beginning at the {@link VertexNode}.
          */

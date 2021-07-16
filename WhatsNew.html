@@ -2,12 +2,19 @@
 <html lang="en-US">
 <head>
   <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
-  <title>WhatsNew for Tektosyne 6.3.0</title>
+  <title>WhatsNew for Tektosyne 6.3.1</title>
   <link rel="stylesheet" type="text/css" href="project.css">
 </head>
 <body>
-  <h1>WhatsNew for Tektosyne 6.3.0</h1>
+  <h1>WhatsNew for Tektosyne 6.3.1</h1>
   <p>This file contains the version history for the Tektosyne Library, starting with the initial release for Java. Please refer to the <a href="ReadMe.html">ReadMe</a> file for general information. Entries link to weblog posts with further details where available.</p>
+  <h3>Version 6.3.1 (released 2021-07-10)</h3>
+  <p>Small bugfix release. Thanks to Jeff Lockhart for reporting this bug!</p>
+  <ul>
+    <li>Updated build environment to IntelliJ IDEA 2021.1.3. This changes the path to the JUnit library.</li>
+    <li>MultiLineIntersection.split: Fixed assertion on line 264 that would misfire for lines intersecting only at start and end points, i.e. <code>points.size() == 2</code>.</li>
+    <li>MultiLineIntersectionTest.findBoth: Added call to <code>split</code> which had not previously been covered by unit tests, only by the interactive test in Tektosyne.Demo.</li>
+  </ul>
   <h3>Version 6.3.0 (released 2019-04-10)</h3>
   <p>Complete rewrite of Tektosyne Demo in Java Swing to avoid dependency on stand-alone JavaFX distribution as of Java SE 11. No functional library changes. See <a href="https://news.kynosarges.org/2019/04/10/tektosyne-6-3-for-swing-released/">announcement</a> for more information.</p>
   <ul>
