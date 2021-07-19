@@ -10,7 +10,7 @@ import org.kynosarges.tektosyne.geometry.PointD;
  * {@link SubdivisionElementType} value indicates which element type is present.
  * 
  * @author Christpoh Nahr
- * @version 6.0.0
+ * @version 6.3.0
  */
 public final class SubdivisionElement {
     /**
@@ -143,7 +143,7 @@ public final class SubdivisionElement {
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
-        if (obj == null || !(obj instanceof SubdivisionElement))
+        if (!(obj instanceof SubdivisionElement))
             return false;
 
         final SubdivisionElement element = (SubdivisionElement) obj;

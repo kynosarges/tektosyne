@@ -1,0 +1,139 @@
+﻿<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+  <title>WhatsNew for Tektosyne 6.3.2</title>
+  <link rel="stylesheet" type="text/css" href="project.css">
+</head>
+<body>
+  <h1>WhatsNew for Tektosyne 6.3.2</h1>
+  <p>This file contains the version history for the Tektosyne Library, starting with the initial release for Java. Please refer to the <a href="ReadMe.html">ReadMe</a> file for general information. Entries link to weblog posts with further details where available.</p>
+  <h3>Version 6.3.2 (released 2021-07-18)</h3>
+  <p>Another bugfix release. Thanks again to Jeff Lockhart! See <a href="https://news.kynosarges.org/2021/07/18/tektosyne-6-3-2-released/">announcement</a> for more information.</p>
+  <ul>
+    <li>MultiLineIntersection.Status.handle: Fixed rare search structure corruption when sweep line indices converging at intersection points were ordered inversely to their slope ordering.</li>
+    <li>MultiLineIntersectionTest: Added method testSearch with sample polygon provided by Jeff Lockhart to test for this search structure corruption.</li>
+  </ul>
+  <h3>Version 6.3.1 (released 2021-07-10)</h3>
+  <p>Small bugfix release. Thanks to Jeff Lockhart for reporting this bug! See <a href="https://news.kynosarges.org/2021/07/10/tektosyne-6-3-1-released/">announcement</a> for more information.</p>
+  <ul>
+    <li>Updated build environment to IntelliJ IDEA 2021.1.3. This changes the path to the JUnit library.</li>
+    <li>MultiLineIntersection.split: Fixed assertion on line 264 that would misfire for lines intersecting only at start and end points, i.e. <code>points.size() == 2</code>.</li>
+    <li>MultiLineIntersectionTest.findBoth: Added call to <code>split</code> which had not previously been covered by unit tests, only by the interactive test in Tektosyne.Demo.</li>
+  </ul>
+  <h3>Version 6.3.0 (released 2019-04-10)</h3>
+  <p>Complete rewrite of Tektosyne Demo in Java Swing to avoid dependency on stand-alone JavaFX distribution as of Java SE 11. No functional library changes. See <a href="https://news.kynosarges.org/2019/04/10/tektosyne-6-3-for-swing-released/">announcement</a> for more information.</p>
+  <ul>
+    <li>Updated to Java SE 10.0.2. The precompiled library JAR still targets Java SE 8.</li>
+    <li>LineD/I, LineIntersection, MultiLinePoint, PointD/I, RectD/I, RectLocation, SizeD/I, SubdivisionEdge/Element/Face, VoronoiEdge: Removed redundant null checks from <code>equals</code> methods.</li>
+    <li>PointD.fromDoubles/toDoubles: Removed Javadoc references to JavaFX API documentation.</li>
+    <li>QuadTree.remove(key, value): Removed erroneous <code>unchecked</code> suppression.</li>
+  </ul>
+  <h4>Tektosyne Demo</h4>
+  <ul>
+    <li>Changed required GUI framework from JavaFX to Java Swing.</li>
+    <li>Lowered minimum requirement to Java SE 8, same as for the library, but note that Swing only supports high DPI scaling on Java SE 9 and later.</li>
+    <li>Added minimum size constraints to all dialogs (with some flickering, see ReadMe).</li>
+    <li>Planar Subdivision Test: Fixed duplicate shortcut keys.</li>
+    <li>Regular Polygon Test: Automatically resize polygon with dialog window.</li>
+  </ul>
+  <h4>Tektosyne User’s Guide</h4>
+  <ul>
+    <li>Updated to reflect new Swing implementation of demo application.</li>
+    <li>Added source code changes in previous releases: new methods in <code>GeoUtils</code>, default methods in <code>SubdivisionMap</code>, and new interface <code>SubdivisionFullMap</code>.</li>
+    <li>Most UML diagrams were also revised to account for taller element boxes, caused by improved leading in the current Class Diagrammer release.</li>
+  </ul>
+  <h3>Version 6.2.0 (released 2018-03-25)</h3>
+  <p>See <a href="https://news.kynosarges.org/2018/03/25/tektosyne-6-2-0-released/">Tektosyne 6.2.0 Released</a> for more information.</p>
+  <ul>
+    <li>GeoUtils &amp; MathUtils: Updated Javadoc for use of ThreadLocalRandom since 6.1.0.</li>
+    <li>GeoUtils:
+      <ul>
+        <li>randomPoint: Added overload that takes a bounding RectD.</li>
+        <li>Added method randomRect with a given bounding RectD.</li>
+      </ul>
+    </li>
+  </ul>
+  <h4>Planar Subdivisions</h4>
+  <ul>
+    <li>Subdivision.intersection:
+      <ul>
+        <li>Fixed output faces incorrectly mapping to the unbounded face of an input Subdivision. This happened when all incident edges of an output face were from the other input Subdivision.</li>
+        <li>SplitEdgeResult.updateFaces: Fixed face mapping not being updated for twins of current edges.</li>
+        <li>Added extensive unit tests, both random and non-random.</li>
+      </ul>
+    </li>
+    <li>SubdivisionMap:
+      <ul>
+        <li>from/toFace: Added default implementations that throw UnsupportedOperationException.</li>
+        <li>Added interface SubdivisionFullMap that extends SubdivisionMap to support edges and vertices. The additional conversion methods also throw UnsupportedOperationException by default, allowing selective implementation by clients.</li>
+      </ul>
+    </li>
+    <li>SubdivisionLinesTest: Added more factory methods to create subdivisions.</li>
+    <li>SubdivisionPolygonsTest: Actually added factory methods promised in Javadoc…</li>
+  </ul>
+  <h4>Voronoi Diagrams</h4>
+  <ul>
+    <li>Allowed special case of only two generator sites, with a single edge separating them and no natural vertices.</li>
+    <li>VoronoiResults.voronoiRegions:
+      <ul>
+        <li>Fixed invalid result when edges exactly hit corners of the clipping rectangle.</li>
+        <li>Source: Extensive rewrite for two-site support, bug fixes, and general legibility.</li>
+      </ul>
+    </li>
+    <li>VoronoiTest:
+      <ul>
+        <li>Added tests for both cases described above.</li>
+        <li>Random Voronoi test now also randomizes boundaries and runs repeatedly.</li>
+        <li>Extracted generation of random Voronoi diagrams as factory method.</li>
+      </ul>
+    </li>
+  </ul>
+  <h3>Version 6.1.0 (released 2018-03-01)</h3>
+  <p>See <a href="https://news.kynosarges.org/2018/03/01/tektosyne-6-1-0-released/">Tektosyne 6.1.0 Released</a> for more information.</p>
+  <ul>
+    <li>Updated to Java SE 9.0.4. The precompiled library JAR still targets Java SE 8.</li>
+    <li>Added proper manifest to library JAR file.</li>
+    <li>GeoUtils, MathUtils, Tests &amp; Demo: Changed Random to faster ThreadLocalRandom.</li>
+    <li>NodeList1/2Test: Changed deprecated “new Integer(…)” to Integer.valueOf(…).</li>
+    <li>PointI.toString: Fixed coordinates being labeled “width/height” rather than “x/y.”</li>
+    <li>Demo: Improved tooltips on numerical Spinner controls.</li>
+    <li>ReadMe: Removed notes on Java and JavaFX issues which appear to be obsolete as of Java SE 9.</li>
+    <li>Source: Changed project from NetBeans to IntelliJ IDEA.</li>
+    <li>Source: Fixed minor issues detected by IntelliJ IDEA.</li>
+  </ul>
+  <h4>Float/Double.MIN_VALUE</h4>
+  <ul>
+    <li>Float/Double.MIN_VALUE is the smallest <em>positive</em> value, not the smallest negative value as for integral types. NEGATIVE_INFINITY must be used instead, or algorithms will fail for negative arguments.</li>
+    <li>Float/Double.MAX_VALUE works the same as for integral types but was also changed to POSITIVE_INFINITY where needed for symmetry.</li>
+    <li>Fortran.max/min: Changed default values for Float/Double arguments from MIN/MAX_VALUE to NEGATIVE/POSITIVE_INFINITY.</li>
+    <li>RectD.circumscribe(PointD...), SubdivisionSearch.Trapezoid (internal use): Changed search initializations from MIN/MAX_VALUE to NEGATIVE/POSITIVE_INFINITY.</li>
+    <li>Changed unit tests for the cases described above to include negative values.</li>
+  </ul>
+  <h4>Voronoi Diagrams</h4>
+  <ul>
+    <li>Fixed Voronoi edges being output twice when they do not touch any vertices, only the clipping bounds.</li>
+    <li>VoronoiResults.voronoiRegions:
+      <ul>
+        <li>Fixed invalid result when a Voronoi region must be closed over three corners of the clipping rectangle. Previously this case was mistakenly closed over the opposite single corner.</li>
+        <li>Fixed open regions not being closed for exactly horizontal or vertical edges.</li>
+        <li>Added unit tests for the cases described above.</li>
+        <li>Upgraded some assertion failures to exceptions.</li>
+      </ul>
+    </li>
+  </ul>
+  <h3>Version 6.0.1 (released 2017-04-08)</h3>
+  <p>Fixed several FindBugs complaints.</p>
+  <ul>
+    <li>PointDComparator/X/Y: Implemented Serializable interface for compatibility with serializable collections. This also required default constructors that leave epsilon at zero.</li>
+    <li>MultiLineIntersection: Added exceptions for illegal MultiLinePoint.Line location values.</li>
+    <li>PolygonGrid: Changed switch/case statements without default to simpler if/else statements.</li>
+    <li>RegularPolygon.inscribe: Clarified intentional truncating integer division.</li>
+    <li>SubdivisionSearch: Several small changes to shut up FindBugs, no functional differences.</li>
+  </ul>
+  <h3>Version 6.0.0 (released 2016-12-14)</h3>
+  <p><a href="https://news.kynosarges.org/2016/12/14/tektosyne-library-for-java/">Complete rewrite</a> in Java SE 8u112 with JavaFX demo application.</p>
+  <h3>Version 1.0.0 (released 2002-05-27)</h3>
+  <p>Initial release for the .NET Framework, updated through version 5.6.6 (2015-09-30). See the WhatsNew file packaged with the .NET edition for a complete version history of that edition.</p>
+</body>
+</html>

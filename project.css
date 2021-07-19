@@ -1,0 +1,111 @@
+html {
+	overflow-y: scroll;
+	font-size: 100%;
+	-webkit-text-size-adjust: 100%;
+	-ms-text-size-adjust: 100%;
+}
+
+*, *:before, *:after {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+body, table {
+  font-family: Georgia, serif;
+  font-size: 16px; font-size: 1rem;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  line-height: 1.5; margin: 0;
+  min-width: 320px; min-width: 20rem;
+  max-width: 832px; max-width: 52rem;
+  padding: 0 16px; padding: 0 1rem;
+  vertical-align: top; text-align: justify;
+  -moz-hyphens: auto; -ms-hyphens: auto; -webkit-hyphens: auto; hyphens: auto;
+  word-wrap: break-all;
+}
+
+acronym { font-variant: small-caps; }
+blockquote { font-style: italic; }
+c, code, pre {
+  font-family: Consolas, monospace;
+  font-size: 14px; font-size: .875rem;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  line-height: normal; text-align: left;
+}
+h3, h5 {
+  font-style: italic; text-align: left;
+}
+h4, h6, kbd, strong {
+  font-family: "Trebuchet MS", sans-serif;
+}
+pre { line-height: 1.5; }
+sub, sup { line-height: 0; }
+
+table {
+  border: 0; border-collapse: collapse;
+  border-spacing: 0; margin: 0; padding: 0;
+}
+th { text-align: center; }
+th, td:first-child { white-space: nowrap; }
+
+table.data { white-space: nowrap; }
+table.data td, table.data th {
+  padding: 0 8px 0 8px;
+  padding: 0 .5rem 0 .5rem;
+}
+table.data th {
+  background-color: #E8E8E8;
+  border: solid 1px #E8E8E8;
+  font-family: "Trebuchet MS", sans-serif;
+  font-size: 14px; font-size: .875rem;
+}
+
+img { border-style: none; }
+
+p {
+  text-indent: 0;
+  margin: 16px 0 16px 0; margin: 1rem 0 1rem 0;
+}
+p.first {
+  text-indent: 0;
+  margin: 16px 0 0 0; margin: 1rem 0 0 0;
+}
+p.next {
+  text-indent: 32px; text-indent: 2rem;
+  margin: 0;
+}
+p.last {
+  text-indent: 32px; text-indent: 2rem;
+  margin: 0 0 16px 0; margin: 0 0 1rem 0;
+}
+
+ul { list-style-type: square; }
+ul ul { list-style-type: disc; }
+ol, ul {
+  margin: 0 0 16px 32px; margin: 0 0 1rem 2rem;
+  padding-left: 0;
+}
+
+ul.stars > li, ul.term > li {
+  list-style-type: none;
+  text-indent: -32px; text-indent: -2rem;
+}
+ol.space > li, ul.space > li {
+  margin: 16px 0 16px 0; margin: 1rem 0 1rem 0;
+}
+ul.term-space > li {
+  list-style-type: none;
+  margin: 16px 0 16px 0; margin: 1rem 0 1rem 0;
+  text-indent: -32px; text-indent: -2rem;
+}
+ul.term span {
+  display: inline-block;
+  margin: 0; padding: 0;
+  text-indent: 0;
+  text-align: right;
+}

@@ -9,7 +9,7 @@ import org.kynosarges.tektosyne.*;
  * Use {@link PointD} to represent points with {@link Double} dimensions.
  * 
  * @author Christoph Nahr
- * @version 6.1.0
+ * @version 6.3.0
  */
 public final class PointI {
 
@@ -316,7 +316,7 @@ public final class PointI {
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
-        if (obj == null || !(obj instanceof PointI))
+        if (!(obj instanceof PointI))
             return false;
 
         final PointI point = (PointI) obj;

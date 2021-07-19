@@ -9,7 +9,7 @@ import org.kynosarges.tektosyne.*;
  * Use {@link PointI} to represent points with {@link Integer} dimensions.
  * 
  * @author Christoph Nahr
- * @version 6.1.0
+ * @version 6.3.0
  */
 public final class PointD {
 
@@ -168,8 +168,7 @@ public final class PointD {
     /**
      * Converts the specified {@link Double} array to a {@link PointD} array.
      * The returned array has half as many elements as the specified {@code points}
-     * and retains the same coordinate sequence. Expects input suitable for the JavaFX
-     * {@link javafx.scene.shape.Polygon} and {@link javafx.scene.shape.Polyline} classes.
+     * and retains the same coordinate sequence.
      * 
      * @param points an array containing the {@link #x} and {@link #y} components of
      *               {@link PointD} instances, stored in alternating index positions
@@ -368,9 +367,8 @@ public final class PointD {
     /**
      * Converts the specified {@link PointD} array to a {@link Double} array.
      * The returned array has twice as many elements as the specified {@code points}
-     * and retains the same coordinate sequence. Produces output suitable for the JavaFX
-     * {@link javafx.scene.shape.Polygon} and {@link javafx.scene.shape.Polyline} classes.
-     * 
+     * and retains the same coordinate sequence.
+     *
      * @param points the {@link PointD} array to convert
      * @return an array containing the {@link #x} and {@link #y} components
      *         of all {@code points}, stored in alternating index positions
@@ -411,7 +409,7 @@ public final class PointD {
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
-        if (obj == null || !(obj instanceof PointD))
+        if (!(obj instanceof PointD))
             return false;
 
         final PointD point = (PointD) obj;

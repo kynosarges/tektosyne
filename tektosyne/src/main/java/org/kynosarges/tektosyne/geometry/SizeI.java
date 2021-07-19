@@ -6,7 +6,7 @@ package org.kynosarges.tektosyne.geometry;
  * Use {@link SizeD} to represent sizes with {@link Double} dimensions.
  * 
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.3.0
  */
 public final class SizeI {
     /**
@@ -169,7 +169,7 @@ public final class SizeI {
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
-        if (obj == null || !(obj instanceof SizeI))
+        if (!(obj instanceof SizeI))
             return false;
 
         final SizeI size = (SizeI) obj;

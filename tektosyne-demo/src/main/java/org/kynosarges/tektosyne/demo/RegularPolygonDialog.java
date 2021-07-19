@@ -1,12 +1,9 @@
 package org.kynosarges.tektosyne.demo;
 
-import javafx.geometry.*;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.scene.paint.*;
-import javafx.scene.shape.*;
-import javafx.stage.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.geom.AffineTransform;
+import javax.swing.*;
 
 import org.kynosarges.tektosyne.geometry.*;
 
@@ -21,171 +18,242 @@ import org.kynosarges.tektosyne.geometry.*;
  * or deflated circumcircle radius.</p>
  * 
  * @author Christoph Nahr
- * @version 6.1.0
+ * @version 6.3.0
  */
-public class RegularPolygonDialog extends Stage {
+public class RegularPolygonDialog extends JDialog {
+    private static final long serialVersionUID = 0L;
 
-    private final Pane _output = new Pane();
+    private final DrawPanel _output = new DrawPanel();
 
-    private final Spinner<Integer> _sides = new Spinner<>(3, 12, 3, 1);
-    private final Spinner<Integer> _delta = new Spinner<>(-100, 100, 0, 10);
-    private final RadioButton _onEdge = new RadioButton("On _Edge");
-    private final RadioButton _onVertex = new RadioButton("On _Vertex");
+    private final JSpinner _sides = new JSpinner();
+    private final JSpinner _delta = new JSpinner();
+    private final JRadioButton _onEdge = new JRadioButton("On Edge");
+    private final JRadioButton _onVertex = new JRadioButton("On Vertex");
 
     /**
      * Creates a {@link RegularPolygonDialog}.
-     */    
-    public RegularPolygonDialog() {
-        initOwner(Global.primaryStage());
-        initModality(Modality.APPLICATION_MODAL);
-        initStyle(StageStyle.DECORATED);
+     * @param owner the {@link Window} that owns the dialog
+     */
+    public RegularPolygonDialog(Window owner) {
+        super(owner);
+        setModal(true);
 
-        final Label message = new Label(
-                "Polygon and center point are black, optional delta-inflated clone is blue.\n" +
-                "Inscribed and circumscribed circles are red, circumscribed rectangle is green.");
-        message.setMinHeight(36); // reserve space for two lines
-        message.setWrapText(true);
+        final JPanel panel = new JPanel();
+        setContentPane(panel);
 
-        _sides.getEditor().setAlignment(Pos.CENTER_RIGHT);
-        _sides.setEditable(true);
-        _sides.setPrefWidth(60);
-        IntegerStringConverter.createFor(_sides);
-        Global.addTooltip(_sides, "Set number of sides for the polygon (Alt+S)");
-        _sides.getValueFactory().valueProperty().addListener((ov, oldValue, newValue) -> draw());
+        final GroupLayout layout = new GroupLayout(panel);
+        layout.setAutoCreateGaps(true);
+        layout.setAutoCreateContainerGaps(true);
+        panel.setLayout(layout);
 
-        final Label sidesLabel = new Label("_Sides ");
+        final JLabel message = new JLabel(
+                "<html>Polygon and center point are black, optional delta-inflated clone is blue.<br>" +
+                "Inscribed and circumscribed circles are red, circumscribed rectangle is green.</html>");
+
+        _output.setBackground(Color.WHITE);
+        _output.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1, true));
+
+        _sides.setModel(new SpinnerNumberModel(3, 3, 12, 1));
+        _sides.getModel().addChangeListener(e -> _output.draw());
+        _sides.setEditor(new JSpinner.NumberEditor(_sides));
+        _sides.setToolTipText("Set number of sides for the polygon (Alt+S)");
+
+        final JLabel sidesLabel = new JLabel("Sides");
         sidesLabel.setLabelFor(_sides);
-        sidesLabel.setMnemonicParsing(true);
+        sidesLabel.setDisplayedMnemonic(KeyEvent.VK_S);
+        sidesLabel.setToolTipText(_sides.getToolTipText());
 
-        final HBox sidesBox = new HBox(sidesLabel, _sides);
-        sidesBox.setAlignment(Pos.CENTER_LEFT);
+        _delta.setModel(new SpinnerNumberModel(0, -100, 100, 10));
+        _delta.getModel().addChangeListener(e -> _output.draw());
+        _delta.setEditor(new JSpinner.NumberEditor(_delta));
+        _delta.setToolTipText("Set inflation or deflation for cloned polygon (Alt+D)");
 
-        _delta.getEditor().setAlignment(Pos.CENTER_RIGHT);
-        _delta.setEditable(true);
-        _delta.setPrefWidth(80);
-        IntegerStringConverter.createFor(_delta);
-        Global.addTooltip(_delta, "Set inflation or deflation for cloned polygon (Alt+D)");
-        _delta.getValueFactory().valueProperty().addListener((ov, oldValue, newValue) -> draw());
-
-        final Label deltaLabel = new Label("_Delta ");
+        final JLabel deltaLabel = new JLabel("Delta");
         deltaLabel.setLabelFor(_delta);
-        deltaLabel.setMnemonicParsing(true);
+        deltaLabel.setDisplayedMnemonic(KeyEvent.VK_D);
+        deltaLabel.setToolTipText(_delta.getToolTipText());
 
-        final HBox deltaBox = new HBox(deltaLabel, _delta);
-        deltaBox.setAlignment(Pos.CENTER_LEFT);
+        final ButtonGroup group = new ButtonGroup();
+        group.add(_onEdge);
+        group.add(_onVertex);
 
-        final ToggleGroup group = new ToggleGroup();
-        _onEdge.selectedProperty().addListener((ov, oldValue, newValue) -> draw());
-        _onEdge.setToggleGroup(group);
-        _onEdge.setTooltip(new Tooltip("Stand polygon on an edge (Alt+E)"));
+        _onEdge.setSelected(true);
+        _onEdge.addActionListener(e -> _output.draw());
+        _onEdge.setMnemonic(KeyEvent.VK_E);
+        _onEdge.setToolTipText("Stand polygon on an edge (Alt+E)");
 
-        _onVertex.selectedProperty().addListener((ov, oldValue, newValue) -> draw());
-        _onVertex.setToggleGroup(group);
-        _onVertex.setTooltip(new Tooltip("Stand polygon on a vertex (Alt+V)"));
-        
-        final VBox orientation = new VBox(_onEdge, _onVertex);
-        orientation.setSpacing(4);
+        _onVertex.addActionListener(e -> _output.draw());
+        _onVertex.setMnemonic(KeyEvent.VK_V);
+        _onVertex.setToolTipText("Stand polygon on a vertex (Alt+V)");
 
-        final HBox input = new HBox(sidesBox, new Separator(Orientation.VERTICAL),
-                orientation, new Separator(Orientation.VERTICAL), deltaBox);
-        input.setAlignment(Pos.CENTER_LEFT);
-        input.setSpacing(8);
+        final JSeparator leftOrientation = new JSeparator(SwingConstants.VERTICAL);
+        final JSeparator rightOrientation = new JSeparator(SwingConstants.VERTICAL);
 
-        Global.clipChildren(_output);
-        _output.setPrefSize(400, 300);
-        _output.setBorder(new Border(new BorderStroke(Color.BLACK,
-                BorderStrokeStyle.SOLID, new CornerRadii(4), BorderWidths.DEFAULT)));
+        final GroupLayout.Group inputH = layout.createSequentialGroup().
+                addComponent(sidesLabel).
+                addComponent(_sides, 60, 60, 60).
+                addComponent(leftOrientation, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE).
+                addComponent(_onEdge).
+                addComponent(_onVertex).
+                addComponent(rightOrientation, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE).
+                addComponent(deltaLabel).
+                addComponent(_delta, 60, 60, 60);
 
-        final Button close = new Button("Close");
-        close.setCancelButton(true);
-        close.setOnAction(t -> close());
-        close.setTooltip(new Tooltip("Close dialog (Escape, Alt+F4)"));
+        final GroupLayout.Group inputV = layout.createParallelGroup(GroupLayout.Alignment.CENTER, false).
+                addComponent(sidesLabel).
+                addComponent(_sides).
+                addComponent(leftOrientation).
+                addComponent(_onEdge).
+                addComponent(_onVertex).
+                addComponent(rightOrientation).
+                addComponent(deltaLabel).
+                addComponent(_delta);
 
-        final HBox controls = new HBox(close);
-        controls.setAlignment(Pos.CENTER);
-        controls.setSpacing(8);
+        final JButton close = CloseAction.createButton(this, panel);
 
-        final VBox root = new VBox(message, new Separator(), input, _output, controls);
-        root.setPadding(new Insets(8));
-        root.setSpacing(8);
-        VBox.setVgrow(_output, Priority.ALWAYS);
-        
+        final GroupLayout.Group controlsH = layout.createSequentialGroup().
+                addContainerGap(0, Short.MAX_VALUE).
+                addComponent(close).
+                addContainerGap(0, Short.MAX_VALUE);
+
+        final GroupLayout.Group controlsV = layout.createParallelGroup(GroupLayout.Alignment.CENTER, false).
+                addComponent(close);
+
+        final JSeparator separator = new JSeparator();
+
+        layout.setHorizontalGroup(layout.createParallelGroup().
+                addComponent(message).
+                addComponent(separator).
+                addGroup(inputH).
+                addComponent(_output).
+                addGroup(controlsH));
+
+        layout.setVerticalGroup(layout.createSequentialGroup().
+                addComponent(message).
+                addComponent(separator, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE).
+                addGroup(inputV).
+                addComponent(_output, 250, 250, Short.MAX_VALUE).
+                addGroup(controlsV));
+
+        setLocationByPlatform(true);
         setResizable(true);
-        setScene(new Scene(root));
+        pack();
         setTitle("Regular Polygon Test");
-        sizeToScene();
+        SwingUtilities.invokeLater(_output::draw);
 
-        setOnShown(t -> _onEdge.setSelected(true));
+        // HACK: Window.setMinimumSize ignores high DPI scaling
+        // For RegularPolygonDialog, the listener also resizes the grid.
+        addComponentListener(new PolygonResizeListener());
+        setVisible(true);
+    }
+
+    private class PolygonResizeListener extends ResizeListener {
+        /**
+         * Creates a {@link PolygonResizeListener} for the {@link RegularPolygonDialog}.
+         */
+        PolygonResizeListener() {
+            super(RegularPolygonDialog.this);
+        }
+
+        /**
+         * Invoked when the size of the {@link Component} changes.
+         * Restores the minimum size obtained during construction if
+         * the current size is smaller in either or both dimensions.
+         *
+         * @param e the {@link ComponentEvent} that occurred
+         */
+        @Override
+        public void componentResized(ComponentEvent e) {
+            super.componentResized(e);
+            _output.draw();
+        }
     }
 
     /**
-     * Draws the {@link RegularPolygon} shapes specified in the dialog.
+     * Provides the custom drawing {@link JPanel} for the {@link RegularPolygonDialog}.
      */
-    private void draw() {
+    private class DrawPanel extends JPanel {
+        private static final long serialVersionUID = 0L;
 
-        // determine side count and orientation
-        final int sides = _sides.getValue();
-        final PolygonOrientation orientation = (_onEdge.isSelected() ?
-            PolygonOrientation.ON_EDGE : PolygonOrientation.ON_VERTEX);
+        private PointD _center;
+        private Shape _innerCircle, _outerCircle, _outerRect;
+        private Shape _centerPoint, _standardPoly, _inflatedPoly;
 
-        // compute side length based on layout size and side count
-        final double layout = Math.min(_output.getWidth(), _output.getHeight());
-        final double length = 2.5 * layout / sides;
-        final RegularPolygon standard = new RegularPolygon(length, sides, orientation);
+        /**
+         * Draws the {@link RegularPolygon} shapes specified in the dialog.
+         */
+        void draw() {
 
-        // determine inflation relative to standard polygon
-        final int delta = _delta.getValue();
-        final RegularPolygon inflated = standard.inflate(delta);
+            // determine side count and orientation
+            final int sides = (Integer) _sides.getModel().getValue();
+            final PolygonOrientation orientation = (_onEdge.isSelected() ?
+                    PolygonOrientation.ON_EDGE : PolygonOrientation.ON_VERTEX);
 
-        _output.getChildren().clear();
+            // compute side length based on layout size and side count
+            final double layout = Math.min(getWidth(), getHeight());
+            final double length = 2.5 * layout / sides;
+            final RegularPolygon standard = new RegularPolygon(length, sides, orientation);
 
-        final double centerX = _output.getWidth() / 2;
-        final double centerY = _output.getHeight() / 2;
+            // determine inflation relative to standard polygon
+            final int delta = (Integer) _delta.getModel().getValue();
+            final RegularPolygon inflated = standard.inflate(delta);
 
-        // draw inscribed circle in red
-        final Circle innerCircle = new Circle(centerX, centerY, standard.innerRadius);
-        innerCircle.setFill(null);
-        innerCircle.setStroke(Color.RED);
-        _output.getChildren().add(innerCircle);
+            // inscribed circle, circumscribed circle and rectangle
+            _center = new PointD(getWidth() / 2.0, getHeight() / 2.0);
+            _innerCircle = Global.drawCircle(_center, 2 * standard.innerRadius);
+            _outerCircle = Global.drawCircle(_center, 2 * standard.outerRadius);
+            _outerRect = Global.drawRectangle(standard.bounds);
 
-        // draw circumscribed circle in red
-        final Circle outerCircle = new Circle(centerX, centerY, standard.outerRadius);
-        outerCircle.setFill(null);
-        outerCircle.setStroke(Color.RED);
-        _output.getChildren().add(outerCircle);
+            // draw center point, basic and inflated polygon
+            _centerPoint = Global.drawCircle(_center, 2);
+            _standardPoly = Global.drawPolygon(standard.vertices);
+            _inflatedPoly = (delta == 0 ? null : Global.drawPolygon(inflated.vertices));
 
-        // draw circumscribed rectangle in green
-        final Rectangle outerRect = new Rectangle(
-                standard.bounds.min.x, standard.bounds.min.y,
-                standard.bounds.width(), standard.bounds.height());
-        outerRect.setTranslateX(centerX);
-        outerRect.setTranslateY(centerY);
-        outerRect.setFill(null);
-        outerRect.setStroke(Color.GREEN);
-        _output.getChildren().add(outerRect);
+            repaint();
+        }
 
-        // draw basic polygon in black
-        final Polygon standardShape = new Polygon(PointD.toDoubles(standard.vertices));
-        standardShape.setTranslateX(centerX);
-        standardShape.setTranslateY(centerY);
-        standardShape.setFill(null);
-        standardShape.setStroke(Color.BLACK);
-        _output.getChildren().add(standardShape);
+        /**
+         * Invoked by Swing to draw the {@link DrawPanel}.
+         * @param g the {@link Graphics2D} context in which to paint
+         */
+        @Override
+        public void paint(Graphics g) {
+            super.paint(g);
+            if (_standardPoly == null)
+                return;
 
-        // draw center point of polygon
-        final Circle centerShape = new Circle(centerX, centerY, 2);
-        centerShape.setFill(Color.BLACK);
-        centerShape.setStroke(Color.BLACK);
-        _output.getChildren().add(centerShape);
-        
-        // draw inflated polygon in blue, if set
-        if (delta != 0) {
-            final Polygon inflatedShape = new Polygon(PointD.toDoubles(inflated.vertices));
-            inflatedShape.setTranslateX(centerX);
-            inflatedShape.setTranslateY(centerY);
-            inflatedShape.setFill(null);
-            inflatedShape.setStroke(Color.BLUE);
-            _output.getChildren().add(inflatedShape);
+            // draw inscribed and circumscribed circle in red
+            final Graphics2D g2 = (Graphics2D) g;
+            g2.setColor(Color.RED);
+            g2.draw(_innerCircle);
+            g2.draw(_outerCircle);
+
+            // draw center point of polygon
+            _centerPoint = Global.drawCircle(_center, 4);
+            g2.setColor(Color.BLACK);
+            g2.draw(_centerPoint);
+            g2.fill(_centerPoint);
+
+            // move to center point of the nested shapes
+            final AffineTransform saveAT = g2.getTransform();
+            g2.translate(_center.x, _center.y);
+
+            // draw basic polygon in black
+            g2.draw(_standardPoly);
+
+            // draw circumscribed rectangle in green
+            g2.setColor(Color.GREEN);
+            g2.draw(_outerRect);
+
+            // draw inflated polygon in blue, if set
+            if (_inflatedPoly != null) {
+                g2.setColor(Color.BLUE);
+                g2.draw(_inflatedPoly);
+            }
+
+            // redraw border over filled polygon
+            g2.setTransform(saveAT);
+            super.paintBorder(g2);
         }
     }
 }

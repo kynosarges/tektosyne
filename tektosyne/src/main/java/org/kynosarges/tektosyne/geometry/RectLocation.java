@@ -8,7 +8,7 @@ package org.kynosarges.tektosyne.geometry;
  * starting at the minimum coordinate and ending at the maximum coordinate.
  * 
  * @author Christoph Nahr
- * @version 6.0.0
+ * @version 6.3.0
  */
 public final class RectLocation {
     /**
@@ -59,7 +59,7 @@ public final class RectLocation {
      */
     @Override
     public boolean equals(Object obj) {
-        if (obj == null || !(obj instanceof RectLocation))
+        if (!(obj instanceof RectLocation))
             return false;
 
         final RectLocation other = (RectLocation) obj;
