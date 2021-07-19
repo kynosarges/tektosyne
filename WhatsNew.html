@@ -2,14 +2,20 @@
 <html lang="en-US">
 <head>
   <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
-  <title>WhatsNew for Tektosyne 6.3.1</title>
+  <title>WhatsNew for Tektosyne 6.3.2</title>
   <link rel="stylesheet" type="text/css" href="project.css">
 </head>
 <body>
-  <h1>WhatsNew for Tektosyne 6.3.1</h1>
+  <h1>WhatsNew for Tektosyne 6.3.2</h1>
   <p>This file contains the version history for the Tektosyne Library, starting with the initial release for Java. Please refer to the <a href="ReadMe.html">ReadMe</a> file for general information. Entries link to weblog posts with further details where available.</p>
+  <h3>Version 6.3.2 (released 2021-07-18)</h3>
+  <p>Another bugfix release. Thanks again to Jeff Lockhart! See <a href="https://news.kynosarges.org/2021/07/18/tektosyne-6-3-2-released/">announcement</a> for more information.</p>
+  <ul>
+    <li>MultiLineIntersection.Status.handle: Fixed rare search structure corruption when sweep line indices converging at intersection points were ordered inversely to their slope ordering.</li>
+    <li>MultiLineIntersectionTest: Added method testSearch with sample polygon provided by Jeff Lockhart to test for this search structure corruption.</li>
+  </ul>
   <h3>Version 6.3.1 (released 2021-07-10)</h3>
-  <p>Small bugfix release. Thanks to Jeff Lockhart for reporting this bug!</p>
+  <p>Small bugfix release. Thanks to Jeff Lockhart for reporting this bug! See <a href="https://news.kynosarges.org/2021/07/10/tektosyne-6-3-1-released/">announcement</a> for more information.</p>
   <ul>
     <li>Updated build environment to IntelliJ IDEA 2021.1.3. This changes the path to the JUnit library.</li>
     <li>MultiLineIntersection.split: Fixed assertion on line 264 that would misfire for lines intersecting only at start and end points, i.e. <code>points.size() == 2</code>.</li>

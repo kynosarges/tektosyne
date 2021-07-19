@@ -31,7 +31,7 @@ import java.util.*;
  * file gives a detailed description of this comparer.</p>
  * 
  * @author Christoph Nahr
- * @version 6.3.1
+ * @version 6.3.2
  */
 public final class MultiLineIntersection {
     /*
@@ -730,8 +730,11 @@ public final class MultiLineIntersection {
                 return;
             }
 
+            // copy out index sequence to prepare for sorting inversion check
+            final Integer[] indices = sweepLine.toArray(new Integer[sweepLine.size()]);
+
             // update remaining sweep line to prepare for insertion
-            for (int index: sweepLine) {
+            for (int index: indices) {
                 final double slope = slopes[index];
 
                 if (slope != Double.MAX_VALUE) {
@@ -739,6 +742,15 @@ public final class MultiLineIntersection {
                     positions[index] = slope * (cursor.y - start.y) + start.x;
                 }
             }
+
+            // check for indices converging at intersection points ordered
+            // inversely to their slope ordering (see 3.6.2 release notes)
+            for (int i = 0; i < indices.length - 1; i++)
+                if (compareLines(indices[i], indices[i + 1]) > 0) {
+                    sweepLine.clear();
+                    Collections.addAll(sweepLine, indices);
+                    break;
+                }
 
             // (re-)insert start point & crossing nodes
             prevLine = nextLine = null;

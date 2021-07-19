@@ -8,7 +8,7 @@ import java.util.*;
 /**
  * Provides unit tests for class {@link MultiLineIntersection}.
  * @author Christoph Nahr
- * @version 6.3.1
+ * @version 6.3.2
  */
 public class MultiLineIntersectionTest {
 
@@ -165,6 +165,23 @@ public class MultiLineIntersectionTest {
         lines = new LineD[] { new LineD(1, 2, 3, 4) };
         results = findBoth(lines);
         assertEquals(0, results.length);
+    }
+
+    @Test
+    public void testSearch() {
+        /*
+         * Closed self-intersecting polygon triggering search state corruption in 6.3.1.
+         * This is due sweep line indices converging at intersection points ordered
+         * inversely to their slope ordering (see release notes for Tektosyne 6.3.2).
+         */
+        LineD[] lines = new LineD[] {
+                new LineD(3, 2, 4, 0), new LineD(4, 0, 0, 3),
+                new LineD(0, 3, 1, 2), new LineD(1, 2, 2, 1),
+                new LineD(2, 1, 3, 2)
+        };
+
+        MultiLinePoint[] results = findBoth(lines);
+        assertEquals(6, results.length);
     }
 
     @Test
